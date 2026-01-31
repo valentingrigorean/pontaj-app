@@ -4,13 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Pontaj PRO** - A Flutter time-tracking/timesheet application for managing work hours, employee entries, and salary calculations. Supports multiple platforms (iOS, Android, Desktop).
+**Pontaj PRO** - A Flutter time-tracking/timesheet application for managing work hours, employee entries, invoices, and salary calculations. Uses Firebase backend with real-time sync. Supports iOS, Android, Web, and Desktop.
 
 ## Common Commands
 
 ```bash
 # Get dependencies
 flutter pub get
+
+# Generate code (Freezed models, localizations)
+flutter pub run build_runner build --delete-conflicting-outputs
 
 # Run the app
 flutter run
@@ -38,85 +41,114 @@ flutter build macos
 ## Architecture
 
 ### State Management
-- **ChangeNotifier pattern** with global singleton `AppStore` in `lib/store.dart`
-- Screens use `ListenableBuilder` to listen to `appStore` changes
-- Theme management via separate `ThemeProvider` ChangeNotifier
+- **BLoC pattern** using `flutter_bloc` package
+- Feature-specific blocs: `AuthBloc`, `TimeEntryBloc`, `InvoiceBloc`
+- Theme management via `ThemeCubit` with SharedPreferences persistence
 
 ### Code Organization
 ```
 lib/
-├── main.dart              # Entry point, route definitions
-├── store.dart             # AppStore (ChangeNotifier) + data models (UserRec, PontajEntry)
-├── theme_provider.dart    # Theme state management
-├── app_theme.dart         # Static theme definitions
-├── splash_screen.dart     # Initialization screen
+├── core/
+│   ├── config/           # Environment config (envied)
+│   ├── l10n/             # Localizations (EN, IT, RO)
+│   ├── router/           # GoRouter navigation
+│   ├── theme/            # ThemeCubit + theme definitions
+│   └── responsive/       # Responsive utilities
 │
-├── Services (Business Logic)
-│   ├── auth_service.dart           # Authentication with bcrypt
-│   ├── database_service.dart       # SQLite operations
-│   ├── biometric_service.dart      # Fingerprint/Face auth
-│   ├── pdf_service.dart            # PDF report generation
-│   ├── backup_service.dart         # Data backup/restore
-│   ├── import_export_service.dart  # Excel/CSV handling
-│   └── ...
+├── features/             # Feature modules
+│   ├── auth/
+│   │   ├── bloc/         # AuthBloc, AuthEvent, AuthState
+│   │   └── pages/        # LoginPage, RegisterPage, SplashPage
+│   ├── time_entry/
+│   │   ├── bloc/         # TimeEntryBloc
+│   │   └── pages/        # PontajPage
+│   ├── admin/
+│   │   └── pages/        # Dashboard, AllEntriesPage, SalaryPage
+│   ├── invoice/
+│   │   ├── bloc/         # InvoiceBloc
+│   │   └── pages/        # InvoiceListPage, CreateInvoicePage
+│   └── settings/
 │
-├── Pages (Screens)
-│   ├── login_page.dart, register_page.dart
-│   ├── pontaj_page_new.dart        # Time entry recording
-│   ├── dashboard_page_new.dart     # Admin analytics
-│   ├── salary_page.dart            # Salary calculations
-│   └── ...
+├── data/
+│   ├── models/           # Freezed models (User, TimeEntry, Invoice)
+│   │   └── converters/   # Custom JSON converters
+│   └── repositories/     # Firebase data access
+│       ├── firebase_auth_repository.dart
+│       ├── firestore_time_entry_repository.dart
+│       └── firestore_invoice_repository.dart
 │
-├── Widgets (Reusable Components)
-│   ├── glass_card.dart             # Glassmorphism card
-│   ├── gradient_background.dart    # Animated gradient
-│   └── ...
+├── services/
+│   ├── notification_service.dart  # FCM push notifications
+│   ├── pdf_service.dart           # Invoice PDF generation
+│   └── storage_service.dart       # Firebase Storage
 │
-└── Storage (Platform Abstraction)
-    ├── storage_driver.dart         # Abstract interface
-    ├── storage_driver_io.dart      # Desktop implementation
-    └── storage_driver_web.dart     # Web stub
+└── shared/widgets/       # Reusable UI components
 ```
 
-### Key Models (in store.dart)
-- `UserRec` - User with username, password, role (user/admin), salary info
-- `PontajEntry` - Work entry with user, location, time interval, break minutes, date
-- `Role` enum: user, admin
-- `SalaryType` enum: hourly, monthly
-- `Currency` enum: lei, euro
+### Key Models (Freezed)
+- `User` - email, role (user/admin), salaryType, currency, fcmToken
+- `TimeEntry` - userName, location, intervalText, breakMinutes, totalWorked, date
+- `Invoice` - userId, periodStart/End, totalHours, hourlyRate, status, pdfDownloadUrl
 
-### Storage Strategy
-- **SQLite** via `DatabaseService` for production data (`pontaj_pro.db`)
-- **JSON file** via `StorageDriver` for AppStore persistence
-- Platform-specific paths:
-  - Windows: `%APPDATA%\Local\PontajApp\pontaj_data.json`
-  - Mac/Linux: `~/.pontaj_app/pontaj_data.json`
+### Enums
+- `Role`: user, admin
+- `SalaryType`: hourly, monthly
+- `Currency`: lei (RON), euro (€)
+- `InvoiceStatus`: draft, sent, paid, overdue, cancelled
+
+### Firebase Collections
+- `users` - User profiles
+- `entries` - Time entries
+- `invoices` - Invoice documents with PDF URLs
+- `locations` - Available work locations
+
+### BLoC Pattern
+```dart
+// Events trigger state changes
+bloc.add(AddEntry(entry));
+
+// States are emitted
+yield TimeEntrySaved(entry);
+
+// Repositories use Firestore streams for real-time updates
+Stream<List<TimeEntry>> getEntriesStream(String? userId);
+```
+
+### Navigation (GoRouter)
+- `/splash` - Initial loading
+- `/login`, `/register` - Authentication
+- `/admin` - Admin dashboard (role-protected)
+- `/pontaj` - Time entry page
+- `/entries` - All entries list
+- `/invoices` - Invoice management
+- `/invoices/create` - Create invoice
+- `/invoices/:id` - Invoice details
+- `/settings` - App settings
 
 ### Services Pattern
-All services use Singleton pattern:
+Singleton services for cross-cutting concerns:
 ```dart
-class DatabaseService {
-  static final DatabaseService _instance = DatabaseService._internal();
-  factory DatabaseService() => _instance;
+class NotificationService {
+  static final NotificationService _instance = NotificationService._internal();
+  factory NotificationService() => _instance;
 }
 ```
 
-### Navigation Routes
-- `/login` - LoginPage
-- `/admin` - AdminHomePage (DashboardPageNew)
-- `/pontaj` - PontajPageNew (with arguments: user, adminMode, lockName)
-- `/entries` - AllEntriesPage
-- `/userEntries` - UserEntriesPage
-- `/settings` - SettingsPage
-- `/register` - RegisterPage
-- `/splash` - SplashScreen
-
 ## Key Dependencies
-- `sqflite` - SQLite database
-- `fl_chart` - Charts for dashboard
-- `pdf`/`printing` - PDF generation
-- `mobile_scanner`/`qr_flutter` - QR code functionality
-- `bcrypt` - Password hashing
-- `local_auth` - Biometric authentication
-- `excel` - Excel import/export
-- `flutter_animate` - Animation library
+- `flutter_bloc` - State management
+- `go_router` - Navigation
+- `freezed` / `json_annotation` - Immutable models
+- `firebase_core/auth/firestore/storage/messaging` - Firebase backend
+- `google_sign_in` - Google authentication
+- `pdf` / `printing` - PDF generation
+- `fl_chart` - Dashboard charts
+- `shared_preferences` - Local settings
+- `envied` - Environment configuration
+- `flutter_animate` - Animations
+
+## Environment Setup
+Create `.env` file with:
+```
+ADMIN_SECRET_CODE=your_secret_code
+```
+Used for admin registration validation.

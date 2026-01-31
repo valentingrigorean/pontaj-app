@@ -5,35 +5,48 @@ import 'package:go_router/go_router.dart';
 import '../../../data/models/period_summary.dart';
 import '../../../data/models/time_entry.dart';
 import '../../../data/models/user.dart';
+import '../../../data/repositories/firebase_auth_repository.dart';
 import '../../../data/repositories/firestore_time_entry_repository.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_state.dart';
 import '../bloc/invoice_bloc.dart';
 import '../bloc/invoice_event.dart';
+import '../cubit/users_cubit.dart';
 
-class CreateInvoicePage extends StatefulWidget {
+class CreateInvoicePage extends StatelessWidget {
   const CreateInvoicePage({super.key});
 
   @override
-  State<CreateInvoicePage> createState() => _CreateInvoicePageState();
+  Widget build(BuildContext context) {
+    final authState = context.read<AuthBloc>().state;
+    final currentUserId = authState is AuthAuthenticated ? authState.user.id : null;
+
+    return BlocProvider(
+      create: (context) => UsersCubit(
+        authRepository: context.read<FirebaseAuthRepository>(),
+        excludeUserId: currentUserId,
+      )..loadUsers(),
+      child: const _CreateInvoiceView(),
+    );
+  }
 }
 
-class _CreateInvoicePageState extends State<CreateInvoicePage> {
+class _CreateInvoiceView extends StatefulWidget {
+  const _CreateInvoiceView();
+
+  @override
+  State<_CreateInvoiceView> createState() => _CreateInvoiceViewState();
+}
+
+class _CreateInvoiceViewState extends State<_CreateInvoiceView> {
   User? _selectedUser;
   DateTime _periodStart = DateTime.now().subtract(const Duration(days: 30));
   DateTime _periodEnd = DateTime.now();
   DateTime? _dueDate;
   final _notesController = TextEditingController();
 
-  final List<User> _users = [];
   List<TimeEntry> _entries = [];
-  bool _isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUsers();
-  }
+  bool _isLoadingEntries = false;
 
   @override
   void dispose() {
@@ -41,21 +54,10 @@ class _CreateInvoicePageState extends State<CreateInvoicePage> {
     super.dispose();
   }
 
-  Future<void> _loadUsers() async {
-    final authState = context.read<AuthBloc>().state;
-    if (authState is AuthAuthenticated) {
-      // In a real app, load all users from repository
-      // For now, we'll work with the current user list from the bloc
-      setState(() {
-        // This would come from a UserRepository in production
-      });
-    }
-  }
-
   Future<void> _loadEntries() async {
     if (_selectedUser == null) return;
 
-    setState(() => _isLoading = true);
+    setState(() => _isLoadingEntries = true);
 
     try {
       final repository = context.read<FirestoreTimeEntryRepository>();
@@ -68,14 +70,14 @@ class _CreateInvoicePageState extends State<CreateInvoicePage> {
 
       setState(() {
         _entries = filteredEntries;
-        _isLoading = false;
+        _isLoadingEntries = false;
       });
     } catch (e) {
-      setState(() => _isLoading = false);
+      setState(() => _isLoadingEntries = false);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error loading entries: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error loading entries: $e')),
+        );
       }
     }
   }
@@ -162,26 +164,42 @@ class _CreateInvoicePageState extends State<CreateInvoicePage> {
                   children: [
                     Text('Worker', style: theme.textTheme.titleMedium),
                     const SizedBox(height: 8),
-                    if (_users.isEmpty)
-                      const Text('Loading workers...')
-                    else
-                      DropdownButtonFormField<User>(
-                        initialValue: _selectedUser,
-                        decoration: const InputDecoration(
-                          hintText: 'Select a worker',
-                          border: OutlineInputBorder(),
-                        ),
-                        items: _users.map((user) {
-                          return DropdownMenuItem(
-                            value: user,
-                            child: Text(user.displayNameOrEmail),
+                    BlocBuilder<UsersCubit, UsersState>(
+                      builder: (context, state) {
+                        if (state is UsersLoading || state is UsersInitial) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                        if (state is UsersError) {
+                          return Text(
+                            'Error: ${state.message}',
+                            style: TextStyle(color: theme.colorScheme.error),
                           );
-                        }).toList(),
-                        onChanged: (user) {
-                          setState(() => _selectedUser = user);
-                          _loadEntries();
-                        },
-                      ),
+                        }
+                        if (state is UsersLoaded) {
+                          if (state.users.isEmpty) {
+                            return const Text('No workers found');
+                          }
+                          return DropdownButtonFormField<User>(
+                            initialValue: _selectedUser,
+                            decoration: const InputDecoration(
+                              hintText: 'Select a worker',
+                              border: OutlineInputBorder(),
+                            ),
+                            items: state.users.map((user) {
+                              return DropdownMenuItem(
+                                value: user,
+                                child: Text(user.displayNameOrEmail),
+                              );
+                            }).toList(),
+                            onChanged: (user) {
+                              setState(() => _selectedUser = user);
+                              _loadEntries();
+                            },
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -238,7 +256,7 @@ class _CreateInvoicePageState extends State<CreateInvoicePage> {
             const SizedBox(height: 16),
 
             // Summary
-            if (_isLoading)
+            if (_isLoadingEntries)
               const Card(
                 child: Padding(
                   padding: EdgeInsets.all(32),
