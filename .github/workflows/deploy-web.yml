@@ -49,6 +49,7 @@ jobs:
           flutterfire configure \
             --project=pontaj-app-7735a \
             --platforms=web \
+            --web-app-id=1:986562521840:web:15c1ca03678f6182483035 \
             --yes
 
       - name: Create .env file
