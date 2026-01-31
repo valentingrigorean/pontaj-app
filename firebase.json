@@ -1,1 +1,48 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"pontaj-app-7735a","appId":"1:986562521840:android:1c5256eb32dbf58f483035","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"pontaj-app-7735a","appId":"1:986562521840:ios:cfbd114e958d5ad1483035","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"macos":{"default":{"projectId":"pontaj-app-7735a","appId":"1:986562521840:ios:cfbd114e958d5ad1483035","uploadDebugSymbols":false,"fileOutput":"macos/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"pontaj-app-7735a","configurations":{"android":"1:986562521840:android:1c5256eb32dbf58f483035","ios":"1:986562521840:ios:cfbd114e958d5ad1483035","macos":"1:986562521840:ios:cfbd114e958d5ad1483035","web":"1:986562521840:web:15c1ca03678f6182483035","windows":"1:986562521840:web:92d3acb526068b14483035"}}}}}}
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs20"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "pontaj-app-7735a",
+          "appId": "1:986562521840:android:1c5256eb32dbf58f483035",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "pontaj-app-7735a",
+          "appId": "1:986562521840:ios:cfbd114e958d5ad1483035",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "pontaj-app-7735a",
+          "appId": "1:986562521840:ios:cfbd114e958d5ad1483035",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "pontaj-app-7735a",
+          "configurations": {
+            "android": "1:986562521840:android:1c5256eb32dbf58f483035",
+            "ios": "1:986562521840:ios:cfbd114e958d5ad1483035",
+            "macos": "1:986562521840:ios:cfbd114e958d5ad1483035",
+            "web": "1:986562521840:web:15c1ca03678f6182483035",
+            "windows": "1:986562521840:web:92d3acb526068b14483035"
+          }
+        }
+      }
+    }
+  }
+}

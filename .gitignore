@@ -54,3 +54,7 @@ firebase_app_id_file.json
 .env
 *.env
 lib/core/config/env.g.dart
+
+# Firebase Functions
+functions/node_modules/
+functions/lib/

@@ -37,6 +37,9 @@ _User _$UserFromJson(Map<String, dynamic> json) => _User(
       : NotificationPrefs.fromJson(
           json['notificationPrefs'] as Map<String, dynamic>,
         ),
+  banned: json['banned'] as bool? ?? false,
+  bannedAt: const ServerTimestampConverter().fromJson(json['bannedAt']),
+  bannedReason: json['bannedReason'] as String?,
   createdAt: const ServerTimestampConverter().fromJson(json['createdAt']),
   updatedAt: const ServerTimestampConverter().fromJson(json['updatedAt']),
 );
@@ -51,6 +54,9 @@ Map<String, dynamic> _$UserToJson(_User instance) => <String, dynamic>{
   'currency': _$CurrencyEnumMap[instance.currency]!,
   'fcmToken': instance.fcmToken,
   'notificationPrefs': instance.notificationPrefs,
+  'banned': instance.banned,
+  'bannedAt': const ServerTimestampConverter().toJson(instance.bannedAt),
+  'bannedReason': instance.bannedReason,
   'createdAt': const ServerTimestampConverter().toJson(instance.createdAt),
   'updatedAt': const ServerTimestampConverter().toJson(instance.updatedAt),
 };

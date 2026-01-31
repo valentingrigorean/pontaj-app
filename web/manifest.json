@@ -1,11 +1,11 @@
 {
-    "name": "nume_proiect",
-    "short_name": "nume_proiect",
+    "name": "Pontaj PRO",
+    "short_name": "Pontaj",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Pontaj PRO - Time tracking application",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

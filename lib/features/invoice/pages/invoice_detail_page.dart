@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:printing/printing.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../data/models/enums.dart';
 import '../../../data/models/invoice.dart';
@@ -377,10 +378,23 @@ class InvoiceDetailPage extends StatelessWidget {
       return;
     }
 
-    // In a real app, you would use url_launcher to open the URL
-    // or download the file
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Download: ${invoice.pdfDownloadUrl}')),
-    );
+    final url = Uri.parse(invoice.pdfDownloadUrl!);
+    try {
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Could not open PDF')),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error opening PDF: $e')),
+        );
+      }
+    }
   }
 }

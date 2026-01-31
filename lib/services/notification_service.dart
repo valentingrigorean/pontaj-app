@@ -2,16 +2,39 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
+/// Callback type for handling foreground notifications.
+typedef ForegroundMessageCallback = void Function(
+  String? title,
+  String? body,
+  Map<String, dynamic> data,
+);
+
+/// Callback type for handling notification tap navigation.
+typedef MessageOpenedCallback = void Function(Map<String, dynamic> data);
+
 /// Service for Firebase Cloud Messaging (FCM) notifications.
 class NotificationService {
   final FirebaseMessaging _messaging;
   final FirebaseFirestore _firestore;
+
+  ForegroundMessageCallback? _onForegroundMessage;
+  MessageOpenedCallback? _onMessageOpened;
 
   NotificationService({
     FirebaseMessaging? messaging,
     FirebaseFirestore? firestore,
   })  : _messaging = messaging ?? FirebaseMessaging.instance,
         _firestore = firestore ?? FirebaseFirestore.instance;
+
+  /// Set callback for foreground message handling.
+  void setOnForegroundMessage(ForegroundMessageCallback callback) {
+    _onForegroundMessage = callback;
+  }
+
+  /// Set callback for message opened handling (notification tap).
+  void setOnMessageOpened(MessageOpenedCallback callback) {
+    _onMessageOpened = callback;
+  }
 
   /// Initialize FCM and request permissions.
   Future<void> initialize() async {
@@ -64,11 +87,15 @@ class NotificationService {
     }
   }
 
+  String? _currentToken;
+
   /// Save FCM token to user's Firestore document.
+  /// Uses arrayUnion to support multiple devices (web + mobile).
   Future<void> _saveTokenToFirestore(String userId, String token) async {
     try {
+      _currentToken = token;
       await _firestore.collection('users').doc(userId).update({
-        'fcmToken': token,
+        'fcmTokens': FieldValue.arrayUnion([token]),
       });
       debugPrint('FCM: Token saved for user $userId');
     } catch (e) {
@@ -77,30 +104,33 @@ class NotificationService {
   }
 
   /// Remove FCM token on logout.
+  /// Only removes the current device's token, preserving other devices.
   Future<void> removeToken(String userId) async {
     try {
-      await _firestore.collection('users').doc(userId).update({
-        'fcmToken': FieldValue.delete(),
-      });
+      final tokenToRemove = _currentToken ?? await _messaging.getToken();
+      if (tokenToRemove != null) {
+        await _firestore.collection('users').doc(userId).update({
+          'fcmTokens': FieldValue.arrayRemove([tokenToRemove]),
+        });
+      }
       await _messaging.deleteToken();
+      _currentToken = null;
     } catch (e) {
       debugPrint('FCM: Error removing token: $e');
     }
   }
 
   /// Send invoice notification to a user.
-  /// Note: In production, this should be done via Cloud Functions.
-  /// This method just prepares the data - actual sending is via FCM.
+  /// Creates a notification document that triggers the Cloud Function
+  /// to send the FCM push notification.
   Future<void> sendInvoiceNotification({
     required String userId,
+    required String invoiceId,
     required String invoiceNumber,
     required String amount,
   }) async {
-    // In a real app, this would trigger a Cloud Function
-    // that sends the FCM message to the user's device.
-    // For now, we just log the intent.
     debugPrint(
-      'FCM: Would send invoice notification to $userId: '
+      'FCM: Sending invoice notification to $userId: '
       '$invoiceNumber for $amount',
     );
 
@@ -111,6 +141,7 @@ class NotificationService {
       'title': 'New Invoice',
       'body': 'Invoice $invoiceNumber for $amount is ready',
       'data': {
+        'invoiceId': invoiceId,
         'invoiceNumber': invoiceNumber,
         'amount': amount,
       },
@@ -142,15 +173,20 @@ class NotificationService {
     debugPrint('FCM: Body: ${message.notification?.body}');
     debugPrint('FCM: Data: ${message.data}');
 
-    // TODO: Show in-app notification or update UI
+    // Show in-app notification via callback
+    _onForegroundMessage?.call(
+      message.notification?.title,
+      message.notification?.body,
+      Map<String, dynamic>.from(message.data),
+    );
   }
 
   void _handleMessageOpenedApp(RemoteMessage message) {
     debugPrint('FCM: App opened from notification');
     debugPrint('FCM: Data: ${message.data}');
 
-    // TODO: Navigate to relevant screen based on message data
-    // e.g., if message.data['invoiceId'] exists, navigate to invoice detail
+    // Navigate to relevant screen via callback
+    _onMessageOpened?.call(Map<String, dynamic>.from(message.data));
   }
 
   /// Subscribe to a topic (e.g., 'admin' for admin-only notifications).

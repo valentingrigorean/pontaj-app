@@ -24,12 +24,12 @@ class AppRouter {
 
   AppRouter({required this.authBloc}) {
     router = GoRouter(
-      initialLocation: '/splash',
+      initialLocation: '/',
       refreshListenable: GoRouterRefreshStream(authBloc.stream),
       redirect: _guard,
       routes: [
         GoRoute(
-          path: '/splash',
+          path: '/',
           name: 'splash',
           builder: (context, state) => const SplashPage(),
         ),
@@ -193,14 +193,14 @@ class AppRouter {
 
   String? _guard(BuildContext context, GoRouterState state) {
     final authState = authBloc.state;
-    final isOnSplash = state.matchedLocation == '/splash';
+    final isOnSplash = state.matchedLocation == '/';
     final isOnLogin = state.matchedLocation == '/login';
     final isOnRegister = state.matchedLocation == '/register';
 
     if (authState is AuthInitial || authState is AuthLoading) {
       // Allow staying on auth pages during loading (login/register submission)
       if (isOnLogin || isOnRegister) return null;
-      return isOnSplash ? null : '/splash';
+      return isOnSplash ? null : '/';
     }
 
     if (authState is AuthUnauthenticated || authState is AuthFailure) {

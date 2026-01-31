@@ -33,6 +33,9 @@ abstract class User with _$User {
     @Default(Currency.lei) Currency currency,
     String? fcmToken,
     NotificationPrefs? notificationPrefs,
+    @Default(false) bool banned,
+    @ServerTimestampConverter() DateTime? bannedAt,
+    String? bannedReason,
     @ServerTimestampConverter() DateTime? createdAt,
     @ServerTimestampConverter() DateTime? updatedAt,
   }) = _User;
