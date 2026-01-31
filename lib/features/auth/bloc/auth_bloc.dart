@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/config/env.dart';
+import '../../../data/models/enums.dart';
 import '../../../data/repositories/firebase_auth_repository.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
@@ -20,6 +22,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthLogoutRequested>(_onLogoutRequested);
     on<AuthStateChanged>(_onAuthStateChanged);
     on<AuthGoogleSignInRequested>(_onGoogleSignInRequested);
+    on<AuthUpgradeToAdminRequested>(_onUpgradeToAdminRequested);
 
     // Listen to Firebase auth state changes
     _authStateSubscription = _authRepository.authStateChanges.listen((user) {
@@ -155,6 +158,41 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthFailure(FirebaseAuthRepository.getErrorMessage(e)));
     } catch (e) {
       emit(AuthFailure(e.toString()));
+    }
+  }
+
+  Future<void> _onUpgradeToAdminRequested(
+    AuthUpgradeToAdminRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is! AuthAuthenticated) {
+      emit(const AuthFailure('You must be logged in to upgrade'));
+      return;
+    }
+
+    // Validate admin code - use generic error message to prevent enumeration
+    final adminSecretCode = Env.adminCode;
+    if (adminSecretCode.isEmpty ||
+        event.adminCode.isEmpty ||
+        event.adminCode != adminSecretCode) {
+      emit(const AuthFailure('Invalid admin code'));
+      // Re-emit authenticated state so user stays logged in
+      emit(currentState);
+      return;
+    }
+
+    try {
+      // Update user role to admin
+      final updatedUser = currentState.user.copyWith(role: Role.admin);
+      await _authRepository.updateUserProfile(updatedUser);
+
+      // Emit success state with updated user - triggers router redirect to /admin
+      emit(AuthAuthenticated(updatedUser));
+    } catch (e) {
+      emit(const AuthFailure('Failed to upgrade account'));
+      // Re-emit authenticated state so user stays logged in
+      emit(currentState);
     }
   }
 }

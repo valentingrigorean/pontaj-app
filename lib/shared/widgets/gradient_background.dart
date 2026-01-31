@@ -145,7 +145,6 @@ class MeshGradientBackground extends StatelessWidget {
 
     return Stack(
       children: [
-        // Base gradient
         Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -163,7 +162,6 @@ class MeshGradientBackground extends StatelessWidget {
             ),
           ),
         ),
-        // Animated blobs
         Positioned(
           top: -100,
           right: -100,
@@ -180,7 +178,6 @@ class MeshGradientBackground extends StatelessWidget {
             duration: 8,
           ),
         ),
-        // Content
         child,
       ],
     );
@@ -218,26 +215,28 @@ class _AnimatedBlobState extends State<_AnimatedBlob>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: 1.0 + (_controller.value * 0.2),
-          child: Container(
-            width: 400,
-            height: 400,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: [
-                  widget.color,
-                  widget.color.withValues(alpha: 0),
-                ],
+    return RepaintBoundary(
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: 1.0 + (_controller.value * 0.2),
+            child: Container(
+              width: 400,
+              height: 400,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    widget.color,
+                    widget.color.withValues(alpha: 0),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

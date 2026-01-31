@@ -347,4 +347,70 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get continueWithGoogle => 'Continua con Google';
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get adminUpgrade => 'Diventa Amministratore';
+
+  @override
+  String get adminUpgradeDesc =>
+      'Inserisci il codice admin per aggiornare il tuo account';
+
+  @override
+  String get enterAdminCode => 'Inserisci codice admin';
+
+  @override
+  String get adminCodeRequired => 'Il codice admin e obbligatorio';
+
+  @override
+  String get invalidAdminCode => 'Codice admin non valido';
+
+  @override
+  String get upgradeSuccess =>
+      'Account aggiornato ad amministratore con successo';
+
+  @override
+  String get confirmUpgrade => 'Conferma Aggiornamento';
+
+  @override
+  String get confirmUpgradeMessage =>
+      'Sei sicuro di voler diventare amministratore?';
+
+  @override
+  String get youAreAdmin => 'Sei un amministratore';
+
+  @override
+  String get upgrade => 'Aggiorna';
+
+  @override
+  String get cancel => 'Annulla';
+
+  @override
+  String get pontaj => 'Foglio presenze';
+
+  @override
+  String get myEntries => 'Le mie registrazioni';
+
+  @override
+  String get logoutConfirmation => 'Conferma disconnessione';
+
+  @override
+  String get logoutConfirmationMessage =>
+      'Sei sicuro di volerti disconnettere?';
+
+  @override
+  String get entriesTab => 'Registrazioni';
+
+  @override
+  String get addEntry => 'Aggiungi registrazione';
+
+  @override
+  String get timeOverlapError =>
+      'Questo intervallo di tempo si sovrappone con una registrazione esistente';
+
+  @override
+  String get requireCustomInterval =>
+      'Usa l\'intervallo personalizzato quando aggiungi più registrazioni per lo stesso giorno';
 }

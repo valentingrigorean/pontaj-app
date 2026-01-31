@@ -172,5 +172,29 @@
   "registrationError": "Registration Error",
   "ok": "OK",
   "orContinueWith": "or continue with",
-  "continueWithGoogle": "Continue with Google"
+  "continueWithGoogle": "Continue with Google",
+
+  "account": "Account",
+  "adminUpgrade": "Become Administrator",
+  "adminUpgradeDesc": "Enter the admin code to upgrade your account",
+  "enterAdminCode": "Enter admin code",
+  "adminCodeRequired": "Admin code is required",
+  "invalidAdminCode": "Invalid admin code",
+  "upgradeSuccess": "Successfully upgraded to administrator",
+  "confirmUpgrade": "Confirm Upgrade",
+  "confirmUpgradeMessage": "Are you sure you want to upgrade to administrator?",
+  "youAreAdmin": "You are an administrator",
+  "upgrade": "Upgrade",
+  "cancel": "Cancel",
+
+  "pontaj": "Timesheet",
+  "myEntries": "My Entries",
+  "logoutConfirmation": "Confirm Logout",
+  "logoutConfirmationMessage": "Are you sure you want to log out?",
+
+  "entriesTab": "Entries",
+  "addEntry": "Add Entry",
+
+  "timeOverlapError": "This time range overlaps with an existing entry",
+  "requireCustomInterval": "Please use custom time interval when adding multiple entries for the same day"
 }

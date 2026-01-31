@@ -2,10 +2,10 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:flutter/material.dart';
-import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'app.dart';
+import 'url_strategy_stub.dart' if (dart.library.js_interop) 'url_strategy_web.dart';
 import 'data/repositories/firebase_auth_repository.dart';
 import 'data/repositories/firestore_time_entry_repository.dart';
 import 'firebase_options.dart';
@@ -19,7 +19,7 @@ void main() async {
 
   // Initialize Firebase App Check
   await FirebaseAppCheck.instance.activate(
-    providerWeb: ReCaptchaV3Provider(
+    providerWeb: ReCaptchaEnterpriseProvider(
       '6LfnX1wsAAAAACvw99E-e3JQ8wjvUBlLp9uB_8DR',
     ),
     providerAndroid: kDebugMode

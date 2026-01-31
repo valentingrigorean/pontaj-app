@@ -9,6 +9,7 @@ import '../../../core/l10n/app_localizations.dart';
 import '../../../core/responsive/responsive.dart';
 import '../../../data/models/time_entry.dart';
 import '../../../shared/widgets/confetti_widget.dart';
+import '../../../shared/widgets/glass_button.dart';
 import '../../../shared/widgets/glass_card.dart';
 import '../../../shared/widgets/gradient_background.dart';
 import '../../../shared/widgets/pulsing_widget.dart';
@@ -22,12 +23,14 @@ class PontajPage extends StatefulWidget {
   final String userName;
   final bool adminMode;
   final bool lockName;
+  final bool embedded;
 
   const PontajPage({
     super.key,
     required this.userName,
     this.adminMode = false,
     this.lockName = false,
+    this.embedded = false,
   });
 
   @override
@@ -112,7 +115,7 @@ class _PontajPageState extends State<PontajPage> {
         _selectedDate.year, _selectedDate.month, _selectedDate.day, hour, minute);
   }
 
-  void _submitPontaj() {
+  void _submitPontaj(List<TimeEntry> entries) {
     final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
 
@@ -120,6 +123,24 @@ class _PontajPageState extends State<PontajPage> {
     if (workedTime.inMinutes <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.workedTimeMustBePositive)),
+      );
+      return;
+    }
+
+    if (_hasOverlappingEntry(entries)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error, color: Colors.white),
+              const SizedBox(width: 12),
+              Expanded(child: Text(l10n.timeOverlapError)),
+            ],
+          ),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
       );
       return;
     }
@@ -175,28 +196,82 @@ class _PontajPageState extends State<PontajPage> {
     });
   }
 
-  bool _hasExistingPontajToday(List<TimeEntry> entries) {
-    final today =
+  List<TimeEntry> _getEntriesForSelectedDate(List<TimeEntry> entries) {
+    final selectedDay =
         DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
-    return entries.any((entry) {
+    return entries.where((entry) {
       final entryDate =
           DateTime(entry.date.year, entry.date.month, entry.date.day);
-      return entryDate == today && entry.userName == _nameController.text.trim();
-    });
+      return entryDate == selectedDay &&
+          entry.userName == _nameController.text.trim();
+    }).toList();
   }
 
-  TimeEntry? _getExistingPontajToday(List<TimeEntry> entries) {
-    final today =
-        DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
-    try {
-      return entries.firstWhere((entry) {
-        final entryDate =
-            DateTime(entry.date.year, entry.date.month, entry.date.day);
-        return entryDate == today && entry.userName == _nameController.text.trim();
-      });
-    } catch (_) {
-      return null;
+  (DateTime?, DateTime?) _parseIntervalText(String intervalText, DateTime date) {
+    if (!intervalText.contains(' - ')) return (null, null);
+    final parts = intervalText.split(' - ');
+    if (parts.length != 2) return (null, null);
+
+    final startParts = parts[0].trim().split(':');
+    final endParts = parts[1].trim().split(':');
+
+    if (startParts.length != 2 || endParts.length != 2) return (null, null);
+
+    final startHour = int.tryParse(startParts[0]);
+    final startMinute = int.tryParse(startParts[1]);
+    final endHour = int.tryParse(endParts[0]);
+    final endMinute = int.tryParse(endParts[1]);
+
+    if (startHour == null ||
+        startMinute == null ||
+        endHour == null ||
+        endMinute == null) {
+      return (null, null);
     }
+
+    final start = DateTime(date.year, date.month, date.day, startHour, startMinute);
+    var end = DateTime(date.year, date.month, date.day, endHour, endMinute);
+
+    return (start, end);
+  }
+
+  bool _timeRangesOverlap(
+      DateTime start1, DateTime end1, DateTime start2, DateTime end2) {
+    var adjustedEnd1 = end1;
+    var adjustedEnd2 = end2;
+
+    if (end1.isBefore(start1) || end1.isAtSameMomentAs(start1)) {
+      adjustedEnd1 = end1.add(const Duration(days: 1));
+    }
+    if (end2.isBefore(start2) || end2.isAtSameMomentAs(start2)) {
+      adjustedEnd2 = end2.add(const Duration(days: 1));
+    }
+
+    return start1.isBefore(adjustedEnd2) && start2.isBefore(adjustedEnd1);
+  }
+
+  bool _hasOverlappingEntry(List<TimeEntry> entries) {
+    if (_quickHours != null) return false;
+
+    final newStart = _parseTime(_startTimeController.text);
+    final newEnd = _parseTime(_endTimeController.text);
+
+    if (newStart == null || newEnd == null) return false;
+
+    final existingEntries = _getEntriesForSelectedDate(entries);
+
+    for (final entry in existingEntries) {
+      final (existingStart, existingEnd) =
+          _parseIntervalText(entry.intervalText, entry.date);
+
+      if (existingStart == null || existingEnd == null) continue;
+
+      if (_timeRangesOverlap(newStart, newEnd, existingStart, existingEnd)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   void _removeExistingPontaj(TimeEntry entry) {
@@ -229,21 +304,23 @@ class _PontajPageState extends State<PontajPage> {
         final locations =
             state is TimeEntryLoaded ? state.locations : <String>[];
         final workedTime = _calculateWorkedTime();
-        final hasExisting = _hasExistingPontajToday(entries);
-        final existingEntry = _getExistingPontajToday(entries);
+        final existingEntries = _getEntriesForSelectedDate(entries);
+        final hasExistingEntries = existingEntries.isNotEmpty;
 
         return ConfettiWidget(
           isCelebrating: _isCelebrating,
           child: Scaffold(
-            appBar: AppBar(
-              title: Text(l10n.addPontaj),
-              leading: widget.adminMode
-                  ? IconButton(
-                      icon: const Icon(Icons.arrow_back),
-                      onPressed: () => context.pop(),
-                    )
-                  : null,
-            ),
+            appBar: widget.embedded
+                ? null
+                : AppBar(
+                    title: Text(l10n.addPontaj),
+                    leading: widget.adminMode
+                        ? IconButton(
+                            icon: const Icon(Icons.arrow_back),
+                            onPressed: () => context.pop(),
+                          )
+                        : null,
+                  ),
             body: GradientBackground(
               animated: false,
               child: SafeArea(
@@ -278,19 +355,13 @@ class _PontajPageState extends State<PontajPage> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        if (hasExisting && existingEntry != null)
-                          _ExistingEntryWarning(
-                            entry: existingEntry,
-                            onDelete: () => _removeExistingPontaj(existingEntry),
-                            onChangeDate: () {
-                              setState(() {
-                                _selectedDate =
-                                    DateTime.now().add(const Duration(days: 1));
-                              });
-                            },
+                        if (hasExistingEntries)
+                          _ExistingEntriesInfo(
+                            entries: existingEntries,
+                            onDelete: _removeExistingPontaj,
                             l10n: l10n,
                           ),
-                        if (hasExisting) const SizedBox(height: 16),
+                        if (hasExistingEntries) const SizedBox(height: 16),
                         _UserInfoCard(
                           userName: widget.userName,
                           selectedDate: _selectedDate,
@@ -312,9 +383,10 @@ class _PontajPageState extends State<PontajPage> {
                           onSelected: (hours) =>
                               setState(() => _quickHours = hours),
                           onClear: () => setState(() => _quickHours = null),
+                          disabled: hasExistingEntries,
                           l10n: l10n,
                         ),
-                        if (_quickHours == null) ...[
+                        if (_quickHours == null || hasExistingEntries) ...[
                           const SizedBox(height: 16),
                           _TimeIntervalCard(
                             startController: _startTimeController,
@@ -340,9 +412,9 @@ class _PontajPageState extends State<PontajPage> {
                         _SummaryCard(workedTime: workedTime, l10n: l10n),
                         const SizedBox(height: 24),
                         PulsingWidget(
-                          enabled: workedTime.inMinutes > 0 && !hasExisting,
+                          enabled: workedTime.inMinutes > 0,
                           child: GlassButton(
-                            onPressed: _submitPontaj,
+                            onPressed: () => _submitPontaj(entries),
                             padding: const EdgeInsets.symmetric(vertical: 18),
                             color: Theme.of(context)
                                 .colorScheme
@@ -384,16 +456,14 @@ class _PontajPageState extends State<PontajPage> {
   }
 }
 
-class _ExistingEntryWarning extends StatelessWidget {
-  final TimeEntry entry;
-  final VoidCallback onDelete;
-  final VoidCallback onChangeDate;
+class _ExistingEntriesInfo extends StatelessWidget {
+  final List<TimeEntry> entries;
+  final void Function(TimeEntry) onDelete;
   final AppLocalizations l10n;
 
-  const _ExistingEntryWarning({
-    required this.entry,
+  const _ExistingEntriesInfo({
+    required this.entries,
     required this.onDelete,
-    required this.onChangeDate,
     required this.l10n,
   });
 
@@ -401,88 +471,62 @@ class _ExistingEntryWarning extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassCard(
       padding: const EdgeInsets.all(16),
-      color: Colors.orange.withValues(alpha: 0.1),
+      color: Colors.blue.withValues(alpha: 0.1),
       enableBlur: false,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.warning, color: Colors.orange[700]),
+              Icon(Icons.info_outline, color: Colors.blue[700]),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  l10n.existingPontajWarning,
+                  l10n.requireCustomInterval,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.orange[900],
+                    color: Colors.blue[900],
                   ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  entry.location,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  entry.intervalText,
-                  style: const TextStyle(fontSize: 13),
-                ),
-                Text(
-                  '${l10n.total}: ${TimeEntry.formatDuration(entry.totalWorked)}',
-                  style: const TextStyle(fontSize: 13),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: GlassButton(
-                  onPressed: onDelete,
-                  color: Colors.red.withValues(alpha: 0.1),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  enableBlur: false,
+          ...entries.map((entry) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.delete, size: 18, color: Colors.red[700]),
-                      const SizedBox(width: 8),
-                      Text(l10n.delete, style: TextStyle(color: Colors.red[700])),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              entry.location,
+                              style: const TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${entry.intervalText} • ${TimeEntry.formatDuration(entry.totalWorked)}',
+                              style: const TextStyle(fontSize: 13),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete_outline, color: Colors.red[700]),
+                        onPressed: () => onDelete(entry),
+                        tooltip: l10n.delete,
+                      ),
                     ],
                   ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: GlassButton(
-                  onPressed: onChangeDate,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  enableBlur: false,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.calendar_today, size: 18),
-                      const SizedBox(width: 8),
-                      Text(l10n.otherDay),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+              )),
         ],
       ),
     );
@@ -672,6 +716,7 @@ class _QuickHoursCard extends StatelessWidget {
   final List<int> options;
   final ValueChanged<int> onSelected;
   final VoidCallback onClear;
+  final bool disabled;
   final AppLocalizations l10n;
 
   const _QuickHoursCard({
@@ -679,6 +724,7 @@ class _QuickHoursCard extends StatelessWidget {
     required this.options,
     required this.onSelected,
     required this.onClear,
+    this.disabled = false,
     required this.l10n,
   });
 
@@ -701,9 +747,9 @@ class _QuickHoursCard extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             children: options.map((hours) {
-              final isSelected = quickHours == hours;
+              final isSelected = quickHours == hours && !disabled;
               return GestureDetector(
-                onTap: () => onSelected(hours),
+                onTap: disabled ? null : () => onSelected(hours),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   padding:
@@ -717,7 +763,11 @@ class _QuickHoursCard extends StatelessWidget {
                             ],
                           )
                         : null,
-                    color: isSelected ? null : Colors.grey[200],
+                    color: isSelected
+                        ? null
+                        : disabled
+                            ? Colors.grey[300]
+                            : Colors.grey[200],
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: isSelected
@@ -729,7 +779,11 @@ class _QuickHoursCard extends StatelessWidget {
                   child: Text(
                     l10n.nHours(hours),
                     style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.black87,
+                      color: disabled
+                          ? Colors.grey[500]
+                          : isSelected
+                              ? Colors.white
+                              : Colors.black87,
                       fontWeight:
                           isSelected ? FontWeight.bold : FontWeight.normal,
                     ),
@@ -738,7 +792,7 @@ class _QuickHoursCard extends StatelessWidget {
               );
             }).toList(),
           ),
-          if (quickHours != null) ...[
+          if (quickHours != null && !disabled) ...[
             const SizedBox(height: 12),
             TextButton.icon(
               icon: const Icon(Icons.clear),

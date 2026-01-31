@@ -4,221 +4,224 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/app_localizations.dart';
 import '../../../core/responsive/responsive.dart';
-import '../../../shared/widgets/glass_card.dart';
-import '../../../shared/widgets/gradient_background.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_event.dart';
 import '../../auth/bloc/auth_state.dart';
+import '../../time_entry/bloc/time_entry_bloc.dart';
+import '../../time_entry/bloc/time_entry_event.dart';
+import '../../time_entry/pages/pontaj_page.dart';
+import 'all_entries_page.dart';
+import 'dashboard_page.dart';
+import 'salary_page.dart';
 
-class AdminHomePage extends StatelessWidget {
+class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
+
+  @override
+  State<AdminHomePage> createState() => _AdminHomePageState();
+}
+
+class _AdminHomePageState extends State<AdminHomePage> {
+  int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<TimeEntryBloc>().add(const LoadEntries(isAdmin: true));
+  }
+
+  Future<void> _showLogoutConfirmation(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.logoutConfirmation),
+        content: Text(l10n.logoutConfirmationMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: Text(l10n.logout),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      context.read<AuthBloc>().add(const AuthLogoutRequested());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final authState = context.watch<AuthBloc>().state;
+    final adminName = authState is AuthAuthenticated
+        ? authState.user.displayNameOrEmail
+        : l10n.administrator;
 
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) {
-        final adminName =
-            state is AuthAuthenticated ? state.user.displayNameOrEmail : l10n.administrator;
+    final destinations = [
+      _NavigationDestination(
+        icon: Icons.dashboard_outlined,
+        selectedIcon: Icons.dashboard,
+        label: l10n.dashboard,
+      ),
+      _NavigationDestination(
+        icon: Icons.people_outline,
+        selectedIcon: Icons.people,
+        label: l10n.entriesTab,
+      ),
+      _NavigationDestination(
+        icon: Icons.attach_money_outlined,
+        selectedIcon: Icons.attach_money,
+        label: l10n.salaries,
+      ),
+      _NavigationDestination(
+        icon: Icons.add_circle_outline,
+        selectedIcon: Icons.add_circle,
+        label: l10n.addEntry,
+      ),
+    ];
 
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(l10n.administrator),
-            centerTitle: true,
-            actions: [
-              IconButton(
-                tooltip: l10n.settings,
-                icon: const Icon(Icons.settings),
-                onPressed: () => context.push('/settings'),
-              ),
-              IconButton(
-                tooltip: l10n.logout,
-                icon: const Icon(Icons.logout),
-                onPressed: () {
-                  context.read<AuthBloc>().add(const AuthLogoutRequested());
-                },
-              ),
-            ],
+    final pages = [
+      const DashboardPage(embedded: true),
+      const AllEntriesPage(embedded: true),
+      const SalaryPage(embedded: true),
+      PontajPage(userName: adminName, lockName: true, embedded: true),
+    ];
+
+    if (context.isMobile) {
+      return Scaffold(
+        appBar: _buildAppBar(l10n),
+        body: IndexedStack(
+          index: _selectedIndex,
+          children: pages,
+        ),
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: _selectedIndex,
+          onDestinationSelected: (index) {
+            setState(() => _selectedIndex = index);
+          },
+          destinations: destinations
+              .map((d) => NavigationDestination(
+                    icon: Icon(d.icon),
+                    selectedIcon: Icon(d.selectedIcon),
+                    label: d.label,
+                  ))
+              .toList(),
+        ),
+      );
+    }
+
+    return Scaffold(
+      appBar: _buildAppBar(l10n),
+      body: Row(
+        children: [
+          NavigationRail(
+            selectedIndex: _selectedIndex,
+            onDestinationSelected: (index) {
+              setState(() => _selectedIndex = index);
+            },
+            extended: context.isDesktop,
+            minExtendedWidth: 200,
+            labelType: context.isDesktop
+                ? NavigationRailLabelType.none
+                : NavigationRailLabelType.all,
+            leading: context.isDesktop
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: _AppLogo(),
+                  )
+                : const SizedBox(height: 16),
+            destinations: destinations
+                .map((d) => NavigationRailDestination(
+                      icon: Icon(d.icon),
+                      selectedIcon: Icon(d.selectedIcon),
+                      label: Text(d.label),
+                    ))
+                .toList(),
           ),
-          body: MeshGradientBackground(
-            child: SafeArea(
-              child: SingleChildScrollView(
-                padding: ResponsiveSpacing.pagePadding(context),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 800),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                    GlassCard(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                width: 60,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Theme.of(context).colorScheme.primary,
-                                      Theme.of(context).colorScheme.secondary,
-                                    ],
-                                  ),
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary
-                                          .withValues(alpha: 0.3),
-                                      blurRadius: 15,
-                                      spreadRadius: 2,
-                                    ),
-                                  ],
-                                ),
-                                child: const Icon(Icons.admin_panel_settings,
-                                    color: Colors.white, size: 32),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      l10n.hello(adminName),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleLarge
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      l10n.chooseAction,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(color: Colors.grey[600]),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    GlassCard(
-                      padding: const EdgeInsets.all(6),
-                      child: Column(
-                        children: [
-                          _AdminActionTile(
-                            icon: Icons.person_add_alt,
-                            title: l10n.pontajAs(adminName),
-                            subtitle: l10n.addPontajForToday,
-                            color: Theme.of(context).colorScheme.primary,
-                            onTap: () => context.push('/pontaj', extra: {
-                              'user': adminName,
-                              'adminMode': true,
-                              'lockName': true,
-                            }),
-                          ),
-                          const Divider(height: 1),
-                          _AdminActionTile(
-                            icon: Icons.table_chart,
-                            title: l10n.viewAllEntries,
-                            subtitle: l10n.manageAndAnalyze,
-                            color: Theme.of(context).colorScheme.secondary,
-                            onTap: () => context.push('/entries'),
-                          ),
-                          const Divider(height: 1),
-                          _AdminActionTile(
-                            icon: Icons.attach_money,
-                            title: l10n.manageSalaries,
-                            subtitle: l10n.configureAndCalculate,
-                            color: Colors.green,
-                            onTap: () => context.push('/entries', extra: {'initialTab': 3}),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                    ),
-                  ),
-                ),
-              ),
+          const VerticalDivider(thickness: 1, width: 1),
+          Expanded(
+            child: IndexedStack(
+              index: _selectedIndex,
+              children: pages,
             ),
           ),
-        );
-      },
+        ],
+      ),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar(AppLocalizations l10n) {
+    return AppBar(
+      title: Text(l10n.pontajAdmin),
+      centerTitle: true,
+      actions: [
+        IconButton(
+          tooltip: l10n.settings,
+          icon: const Icon(Icons.settings),
+          onPressed: () => context.push('/settings'),
+        ),
+        IconButton(
+          tooltip: l10n.logout,
+          icon: const Icon(Icons.logout),
+          onPressed: () => _showLogoutConfirmation(context),
+        ),
+      ],
     );
   }
 }
 
-class _AdminActionTile extends StatelessWidget {
+class _NavigationDestination {
   final IconData icon;
-  final String title;
-  final String subtitle;
-  final Color color;
-  final VoidCallback onTap;
+  final IconData selectedIcon;
+  final String label;
 
-  const _AdminActionTile({
+  const _NavigationDestination({
     required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.color,
-    required this.onTap,
+    required this.selectedIcon,
+    required this.label,
   });
+}
 
+class _AppLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: color, size: 26),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(Icons.chevron_right, color: Colors.grey[400]),
+    return Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.secondary,
           ],
+        ),
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+            blurRadius: 12,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
+      child: const Center(
+        child: Text(
+          'JR',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w900,
+            color: Colors.white,
+            letterSpacing: 2,
+          ),
         ),
       ),
     );

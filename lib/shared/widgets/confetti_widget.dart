@@ -86,10 +86,12 @@ class _ConfettiWidgetState extends State<ConfettiWidget> with TickerProviderStat
         if (widget.isCelebrating && _controller.isAnimating)
           Positioned.fill(
             child: IgnorePointer(
-              child: CustomPaint(
-                painter: _ConfettiPainter(
-                  particles: _particles,
-                  progress: _controller.value,
+              child: RepaintBoundary(
+                child: CustomPaint(
+                  painter: _ConfettiPainter(
+                    particles: _particles,
+                    progress: _controller.value,
+                  ),
                 ),
               ),
             ),

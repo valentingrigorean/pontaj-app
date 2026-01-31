@@ -138,7 +138,6 @@ class PdfService {
         3: const pw.FlexColumnWidth(1),
       },
       children: [
-        // Header
         pw.TableRow(
           decoration: const pw.BoxDecoration(color: PdfColors.grey200),
           children: [
@@ -148,7 +147,6 @@ class PdfService {
             _buildTableCell('Amount', isHeader: true),
           ],
         ),
-        // Data row
         pw.TableRow(
           children: [
             _buildTableCell('Work hours for period ${invoice.periodDisplay}'),

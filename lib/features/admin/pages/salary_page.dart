@@ -10,7 +10,9 @@ import '../../time_entry/bloc/time_entry_bloc.dart';
 import '../../time_entry/bloc/time_entry_state.dart';
 
 class SalaryPage extends StatelessWidget {
-  const SalaryPage({super.key});
+  final bool embedded;
+
+  const SalaryPage({super.key, this.embedded = false});
 
   @override
   Widget build(BuildContext context) {

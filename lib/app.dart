@@ -78,10 +78,15 @@ class _PontajAppState extends State<PontajApp> {
     await _notificationService.initialize();
   }
 
-  void _showInAppNotification(String? title, String? body, Map<String, dynamic> data) {
+  void _showInAppNotification(
+    String? title,
+    String? body,
+    Map<String, dynamic> data,
+  ) {
     // Show in-app notification using a global key or BuildContext
     // This will be called when a notification arrives while the app is in foreground
-    final context = _appRouter.router.routerDelegate.navigatorKey.currentContext;
+    final context =
+        _appRouter.router.routerDelegate.navigatorKey.currentContext;
     if (context != null && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -89,14 +94,19 @@ class _PontajAppState extends State<PontajApp> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (title != null) Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+              if (title != null)
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               if (body != null) Text(body),
             ],
           ),
           action: data['invoiceId'] != null
               ? SnackBarAction(
                   label: 'View',
-                  onPressed: () => _appRouter.router.go('/invoices/${data['invoiceId']}'),
+                  onPressed: () =>
+                      _appRouter.router.go('/invoices/${data['invoiceId']}'),
                 )
               : null,
           duration: const Duration(seconds: 4),
@@ -118,9 +128,15 @@ class _PontajAppState extends State<PontajApp> {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<FirebaseAuthRepository>.value(value: widget.authRepository),
-        RepositoryProvider<FirestoreTimeEntryRepository>.value(value: widget.timeEntryRepository),
-        RepositoryProvider<NotificationService>.value(value: _notificationService),
+        RepositoryProvider<FirebaseAuthRepository>.value(
+          value: widget.authRepository,
+        ),
+        RepositoryProvider<FirestoreTimeEntryRepository>.value(
+          value: widget.timeEntryRepository,
+        ),
+        RepositoryProvider<NotificationService>.value(
+          value: _notificationService,
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -154,8 +170,5 @@ class _AppScrollBehavior extends MaterialScrollBehavior {
   const _AppScrollBehavior();
 
   @override
-  Set<PointerDeviceKind> get dragDevices => {
-        PointerDeviceKind.touch,
-        PointerDeviceKind.mouse,
-      };
+  Set<PointerDeviceKind> get dragDevices => {.touch, .mouse};
 }

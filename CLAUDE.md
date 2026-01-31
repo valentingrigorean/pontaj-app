@@ -152,3 +152,12 @@ Create `.env` file with:
 ADMIN_SECRET_CODE=your_secret_code
 ```
 Used for admin registration validation.
+
+## Code Style Guidelines
+
+### Comments
+- **Do NOT add extensive comments** - code should be self-documenting
+- Only add comments for truly complex logic that isn't self-evident
+- Avoid documentation comments (`///`) unless documenting a public API
+- Never add TODO/FIXME comments - fix issues immediately or create tickets
+- Do not add inline comments that restate what the code does

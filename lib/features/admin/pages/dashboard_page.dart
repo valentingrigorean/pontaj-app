@@ -11,7 +11,9 @@ import '../../time_entry/bloc/time_entry_bloc.dart';
 import '../../time_entry/bloc/time_entry_state.dart';
 
 class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
+  final bool embedded;
+
+  const DashboardPage({super.key, this.embedded = false});
 
   @override
   Widget build(BuildContext context) {
