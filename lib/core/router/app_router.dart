@@ -94,7 +94,7 @@ class AppRouter {
     }
 
     if (authState is AuthUnauthenticated || authState is AuthFailure) {
-      if (isOnLogin || isOnRegister || isOnSplash) return null;
+      if (isOnLogin || isOnRegister) return null;
       return '/login';
     }
 
