@@ -16,7 +16,11 @@ enum Currency {
   lei,
   euro;
 
+  /// Display symbol for UI (uses € for euro)
   String get symbol => this == .euro ? '\u20AC' : 'RON';
+
+  /// PDF-safe symbol (uses EUR text instead of € symbol)
+  String get pdfSymbol => this == .euro ? 'EUR' : 'RON';
 }
 
 @JsonEnum(alwaysCreate: true)

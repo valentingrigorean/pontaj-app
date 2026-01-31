@@ -13,6 +13,7 @@ import '../../dashboard/pages/user_dashboard_page.dart';
 import '../../invoice/bloc/invoice_bloc.dart';
 import '../../invoice/bloc/invoice_event.dart';
 import '../../invoice/pages/invoice_list_page.dart';
+import '../../invoice/widgets/invoice_bottom_sheet.dart';
 import '../../time_entry/bloc/time_entry_bloc.dart';
 import '../../time_entry/bloc/time_entry_event.dart';
 import '../../time_entry/pages/my_entries_page.dart';
@@ -72,6 +73,16 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _showInvoiceBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const InvoiceBottomSheet(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -104,11 +115,7 @@ class _HomePageState extends State<HomePage> {
               )
               .toList(),
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: _showEntryBottomSheet,
-          icon: const Icon(Icons.add),
-          label: Text(l10n.addEntry),
-        ),
+        floatingActionButton: _buildFab(l10n, isAdmin),
       );
     }
 
@@ -130,15 +137,17 @@ class _HomePageState extends State<HomePage> {
               children: [
                 if (context.isDesktop)
                   Padding(
-                    padding: const .symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                     child: _AppLogo(),
                   )
                 else
                   const SizedBox(height: 16),
                 Padding(
-                  padding: const .symmetric(horizontal: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: FloatingActionButton.small(
-                    onPressed: _showEntryBottomSheet,
+                    onPressed: isAdmin && _selectedIndex == 3
+                        ? _showInvoiceBottomSheet
+                        : _showEntryBottomSheet,
                     child: const Icon(Icons.add),
                   ),
                 ),
@@ -218,6 +227,24 @@ class _HomePageState extends State<HomePage> {
     }
 
     return const [UserDashboardPage(), MyEntriesPage(embedded: true)];
+  }
+
+  Widget? _buildFab(AppLocalizations l10n, bool isAdmin) {
+    final isInvoicesTab = isAdmin && _selectedIndex == 3;
+
+    if (isInvoicesTab) {
+      return FloatingActionButton.extended(
+        onPressed: _showInvoiceBottomSheet,
+        icon: const Icon(Icons.add),
+        label: Text(l10n.createInvoice),
+      );
+    }
+
+    return FloatingActionButton.extended(
+      onPressed: _showEntryBottomSheet,
+      icon: const Icon(Icons.add),
+      label: Text(l10n.addEntry),
+    );
   }
 
   PreferredSizeWidget _buildAppBar(AppLocalizations l10n) {

@@ -149,9 +149,11 @@ class PdfService {
             _buildTableCell('Work hours for period ${invoice.periodDisplay}'),
             _buildTableCell(invoice.totalHours.toStringAsFixed(2)),
             _buildTableCell(
-              '${invoice.hourlyRate.toStringAsFixed(2)} ${invoice.currency.symbol}',
+              '${invoice.hourlyRate.toStringAsFixed(2)} ${invoice.currency.pdfSymbol}',
             ),
-            _buildTableCell(invoice.formattedAmount),
+            _buildTableCell(
+              '${invoice.totalAmount.toStringAsFixed(2)} ${invoice.currency.pdfSymbol}',
+            ),
           ],
         ),
       ],
@@ -186,7 +188,7 @@ class PdfService {
               style: pw.TextStyle(fontSize: 16, fontWeight: .bold),
             ),
             pw.Text(
-              invoice.formattedAmount,
+              '${invoice.totalAmount.toStringAsFixed(2)} ${invoice.currency.pdfSymbol}',
               style: pw.TextStyle(
                 fontSize: 16,
                 fontWeight: .bold,
