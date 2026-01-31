@@ -29,6 +29,22 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      # Authenticate with Firebase using service account
+      - name: Setup Firebase service account
+        run: |
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | base64 -d > $HOME/firebase-sa.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/firebase-sa.json" >> $GITHUB_ENV
+
+      - name: Install FlutterFire CLI
+        run: dart pub global activate flutterfire_cli
+
+      - name: Generate Firebase config
+        run: |
+          flutterfire configure \
+            --project=pontaj-app-7735a \
+            --platforms=web \
+            --yes
+
       - name: Create .env file
         run: |
           echo "ADMIN_CODE=${{ secrets.ADMIN_CODE }}" > .env
@@ -38,6 +54,10 @@ jobs:
 
       - name: Build web
         run: flutter build web --release --base-href "/${{ github.event.repository.name }}/"
+
+      - name: Cleanup secrets
+        if: always()
+        run: rm -f $HOME/firebase-sa.json
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

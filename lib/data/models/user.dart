@@ -1,111 +1,69 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'converters/server_timestamp_converter.dart';
 import 'enums.dart';
 
-class User extends Equatable {
-  final String id;
-  final String email;
-  final String? displayName;
-  final Role role;
-  final double? salaryAmount;
-  final SalaryType salaryType;
-  final Currency currency;
+part 'user.freezed.dart';
+part 'user.g.dart';
 
-  const User({
-    required this.id,
-    required this.email,
-    this.displayName,
-    required this.role,
-    this.salaryAmount,
-    this.salaryType = .hourly,
-    this.currency = .lei,
-  });
+@freezed
+abstract class NotificationPrefs with _$NotificationPrefs {
+  const factory NotificationPrefs({
+    @Default(true) bool dailyReminder,
+    @Default(true) bool weeklyReport,
+    @Default(true) bool invoiceAlerts,
+  }) = _NotificationPrefs;
 
-  /// Returns display name or email prefix for UI display
-  String get displayNameOrEmail => displayName ?? email.split('@').first;
+  factory NotificationPrefs.fromJson(Map<String, dynamic> json) =>
+      _$NotificationPrefsFromJson(json);
+}
 
-  @override
-  List<Object?> get props => [
-        id,
-        email,
-        displayName,
-        role,
-        salaryAmount,
-        salaryType,
-        currency,
-      ];
+@freezed
+abstract class User with _$User {
+  const User._(); // Private constructor for custom methods
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'email': email,
-        if (displayName != null) 'displayName': displayName,
-        'role': role.name,
-        if (salaryAmount != null) 'salaryAmount': salaryAmount,
-        'salaryType': salaryType.name,
-        'currency': currency.name,
-      };
+  const factory User({
+    String? id,
+    required String email,
+    String? displayName,
+    @Default(Role.user) Role role,
+    double? salaryAmount,
+    @Default(SalaryType.hourly) SalaryType salaryType,
+    @Default(Currency.lei) Currency currency,
+    String? fcmToken,
+    NotificationPrefs? notificationPrefs,
+    @ServerTimestampConverter() DateTime? createdAt,
+    @ServerTimestampConverter() DateTime? updatedAt,
+  }) = _User;
 
-  Map<String, dynamic> toFirestore() => {
-        'email': email,
-        if (displayName != null) 'displayName': displayName,
-        'role': role.name,
-        if (salaryAmount != null) 'salaryAmount': salaryAmount,
-        'salaryType': salaryType.name,
-        'currency': currency.name,
-        'createdAt': FieldValue.serverTimestamp(),
-      };
-
-  factory User.fromJson(Map<String, dynamic> json) => User(
-        id: json['id'] as String? ?? '',
-        email: json['email'] as String? ?? json['username'] as String? ?? '',
-        displayName: json['displayName'] as String?,
-        role: (json['role'] as String?) == 'admin' ? .admin : .user,
-        salaryAmount: (json['salaryAmount'] as num?)?.toDouble() ??
-            (json['hourlyRate'] as num?)?.toDouble(),
-        salaryType: (json['salaryType'] as String?) == 'monthly'
-            ? .monthly
-            : .hourly,
-        currency: (json['currency'] as String?) == 'euro'
-            ? .euro
-            : .lei,
-      );
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
   factory User.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    return User(
-      id: doc.id,
-      email: data['email'] as String? ?? '',
-      displayName: data['displayName'] as String?,
-      role: (data['role'] as String?) == 'admin' ? .admin : .user,
-      salaryAmount: (data['salaryAmount'] as num?)?.toDouble(),
-      salaryType: (data['salaryType'] as String?) == 'monthly'
-          ? .monthly
-          : .hourly,
-      currency: (data['currency'] as String?) == 'euro'
-          ? .euro
-          : .lei,
-    );
+    final data = doc.data() as Map<String, dynamic>? ?? {};
+    return User.fromJson({...data, 'id': doc.id});
   }
 
-  User copyWith({
-    String? id,
-    String? email,
-    String? displayName,
-    Role? role,
-    double? salaryAmount,
-    SalaryType? salaryType,
-    Currency? currency,
-  }) =>
-      User(
-        id: id ?? this.id,
-        email: email ?? this.email,
-        displayName: displayName ?? this.displayName,
-        role: role ?? this.role,
-        salaryAmount: salaryAmount ?? this.salaryAmount,
-        salaryType: salaryType ?? this.salaryType,
-        currency: currency ?? this.currency,
-      );
+  // Getters
+  String get displayNameOrEmail => displayName ?? email.split('@').first;
+  bool get isAdmin => role == Role.admin;
 
-  bool get isAdmin => role == .admin;
+  // Firestore methods
+  Map<String, dynamic> toFirestore() {
+    final json = toJson()..remove('id');
+    if (createdAt == null) json['createdAt'] = FieldValue.serverTimestamp();
+    json['updatedAt'] = FieldValue.serverTimestamp();
+    return json;
+  }
+
+  Map<String, dynamic> toFirestoreUpdate() => {
+        if (displayName != null) 'displayName': displayName,
+        'role': role.name,
+        if (salaryAmount != null) 'salaryAmount': salaryAmount,
+        'salaryType': salaryType.name,
+        'currency': currency.name,
+        if (fcmToken != null) 'fcmToken': fcmToken,
+        if (notificationPrefs != null) 'notificationPrefs': notificationPrefs!.toJson(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      };
 }

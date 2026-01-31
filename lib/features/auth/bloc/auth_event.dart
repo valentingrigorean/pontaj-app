@@ -1,10 +1,5 @@
-import 'package:equatable/equatable.dart';
-
-sealed class AuthEvent extends Equatable {
+sealed class AuthEvent {
   const AuthEvent();
-
-  @override
-  List<Object?> get props => [];
 }
 
 final class AuthCheckRequested extends AuthEvent {
@@ -19,9 +14,6 @@ final class AuthLoginRequested extends AuthEvent {
     required this.email,
     required this.password,
   });
-
-  @override
-  List<Object?> get props => [email, password];
 }
 
 final class AuthRegisterRequested extends AuthEvent {
@@ -36,9 +28,6 @@ final class AuthRegisterRequested extends AuthEvent {
     this.displayName,
     this.adminCode,
   });
-
-  @override
-  List<Object?> get props => [email, password, displayName, adminCode];
 }
 
 final class AuthLogoutRequested extends AuthEvent {
@@ -50,9 +39,6 @@ final class AuthStateChanged extends AuthEvent {
   final String? userId;
 
   const AuthStateChanged({this.userId});
-
-  @override
-  List<Object?> get props => [userId];
 }
 
 /// Event fired when user requests Google Sign-In

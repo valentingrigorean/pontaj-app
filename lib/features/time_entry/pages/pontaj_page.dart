@@ -131,7 +131,7 @@ class _PontajPageState extends State<PontajPage> {
     final entry = TimeEntry(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       userId: _currentUserId,
-      user: _nameController.text.trim(),
+      userName: _nameController.text.trim(),
       location: _locationController.text.trim(),
       intervalText: intervalText,
       breakMinutes: _breakMinutes,
@@ -181,7 +181,7 @@ class _PontajPageState extends State<PontajPage> {
     return entries.any((entry) {
       final entryDate =
           DateTime(entry.date.year, entry.date.month, entry.date.day);
-      return entryDate == today && entry.user == _nameController.text.trim();
+      return entryDate == today && entry.userName == _nameController.text.trim();
     });
   }
 
@@ -192,7 +192,7 @@ class _PontajPageState extends State<PontajPage> {
       return entries.firstWhere((entry) {
         final entryDate =
             DateTime(entry.date.year, entry.date.month, entry.date.day);
-        return entryDate == today && entry.user == _nameController.text.trim();
+        return entryDate == today && entry.userName == _nameController.text.trim();
       });
     } catch (_) {
       return null;
@@ -200,8 +200,10 @@ class _PontajPageState extends State<PontajPage> {
   }
 
   void _removeExistingPontaj(TimeEntry entry) {
+    final entryId = entry.id;
+    if (entryId == null) return;
     final l10n = AppLocalizations.of(context)!;
-    context.read<TimeEntryBloc>().add(DeleteEntry(entry.id));
+    context.read<TimeEntryBloc>().add(DeleteEntry(entryId));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(

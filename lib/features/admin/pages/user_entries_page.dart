@@ -53,7 +53,7 @@ class _UserEntriesPageState extends State<UserEntriesPage> {
           }
 
           final entries =
-              state.entries.where((e) => e.user == widget.userName).toList()
+              state.entries.where((e) => e.userName == widget.userName).toList()
                 ..sort((a, b) => b.date.compareTo(a.date));
 
           final total = entries.fold<Duration>(

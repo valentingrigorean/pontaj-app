@@ -28,13 +28,13 @@ class DashboardPage extends StatelessWidget {
             entries.fold<double>(0, (sum, e) => sum + e.totalWorked.inMinutes / 60);
         final totalDays = entries.length;
         final uniqueUsers =
-            entries.map((e) => e.user).toSet().length;
+            entries.map((e) => e.userName).toSet().length;
         final avgHoursPerDay = totalDays > 0 ? totalHours / totalDays : 0.0;
 
         final hoursPerUser = <String, double>{};
         for (final e in entries) {
-          hoursPerUser[e.user] =
-              (hoursPerUser[e.user] ?? 0) + e.totalWorked.inMinutes / 60;
+          hoursPerUser[e.userName] =
+              (hoursPerUser[e.userName] ?? 0) + e.totalWorked.inMinutes / 60;
         }
 
         return GradientBackground(
@@ -287,7 +287,7 @@ class _ActivityTile extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                entry.user[0].toUpperCase(),
+                entry.userName[0].toUpperCase(),
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -301,7 +301,7 @@ class _ActivityTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  entry.user,
+                  entry.userName,
                   style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
                 Text(

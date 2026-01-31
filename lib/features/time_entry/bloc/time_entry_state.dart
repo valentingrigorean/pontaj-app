@@ -1,12 +1,7 @@
-import 'package:equatable/equatable.dart';
-
 import '../../../data/models/time_entry.dart';
 
-sealed class TimeEntryState extends Equatable {
+sealed class TimeEntryState {
   const TimeEntryState();
-
-  @override
-  List<Object?> get props => [];
 }
 
 final class TimeEntryInitial extends TimeEntryState {
@@ -25,9 +20,6 @@ final class TimeEntrySaved extends TimeEntryState {
   final TimeEntry entry;
 
   const TimeEntrySaved(this.entry);
-
-  @override
-  List<Object?> get props => [entry];
 }
 
 final class TimeEntryLoaded extends TimeEntryState {
@@ -39,9 +31,6 @@ final class TimeEntryLoaded extends TimeEntryState {
     required this.locations,
   });
 
-  @override
-  List<Object?> get props => [entries, locations];
-
   Duration get totalWorked => entries.fold(
         Duration.zero,
         (sum, e) => sum + e.totalWorked,
@@ -50,7 +39,7 @@ final class TimeEntryLoaded extends TimeEntryState {
   Map<String, List<TimeEntry>> get entriesByUser {
     final map = <String, List<TimeEntry>>{};
     for (final entry in entries) {
-      map.putIfAbsent(entry.user, () => []).add(entry);
+      map.putIfAbsent(entry.userName, () => []).add(entry);
     }
     return map;
   }
@@ -60,7 +49,4 @@ final class TimeEntryFailure extends TimeEntryState {
   final String message;
 
   const TimeEntryFailure(this.message);
-
-  @override
-  List<Object?> get props => [message];
 }

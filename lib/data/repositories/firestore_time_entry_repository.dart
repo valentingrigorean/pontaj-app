@@ -42,11 +42,13 @@ class FirestoreTimeEntryRepository {
     }
 
     if (startDate != null) {
-      query = query.where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate));
+      query = query.where('date',
+          isGreaterThanOrEqualTo: Timestamp.fromDate(startDate));
     }
 
     if (endDate != null) {
-      query = query.where('date', isLessThanOrEqualTo: Timestamp.fromDate(endDate));
+      query =
+          query.where('date', isLessThanOrEqualTo: Timestamp.fromDate(endDate));
     }
 
     return query.orderBy('date', descending: true).snapshots().map((snapshot) {
@@ -66,6 +68,26 @@ class FirestoreTimeEntryRepository {
     return snapshot.docs.map((doc) => TimeEntry.fromFirestore(doc)).toList();
   }
 
+  /// Get entries for a date range (one-time fetch)
+  Future<List<TimeEntry>> getEntriesForDateRange({
+    String? userId,
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    Query<Map<String, dynamic>> query = _entriesCollection;
+
+    if (userId != null) {
+      query = query.where('userId', isEqualTo: userId);
+    }
+
+    query = query
+        .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
+        .where('date', isLessThanOrEqualTo: Timestamp.fromDate(endDate));
+
+    final snapshot = await query.orderBy('date', descending: true).get();
+    return snapshot.docs.map((doc) => TimeEntry.fromFirestore(doc)).toList();
+  }
+
   /// Add a new time entry
   Future<TimeEntry> addEntry(TimeEntry entry) async {
     final docRef = await _entriesCollection.add(entry.toFirestore());
@@ -80,14 +102,7 @@ class FirestoreTimeEntryRepository {
 
   /// Update an existing time entry
   Future<void> updateEntry(TimeEntry entry) async {
-    await _entriesCollection.doc(entry.id).update({
-      'userName': entry.user,
-      'location': entry.location,
-      'intervalText': entry.intervalText,
-      'breakMinutes': entry.breakMinutes,
-      'date': Timestamp.fromDate(entry.date),
-      'totalWorkedMinutes': entry.totalWorked.inMinutes,
-    });
+    await _entriesCollection.doc(entry.id).update(entry.toFirestoreUpdate());
 
     // Add location if it doesn't exist
     if (entry.location.isNotEmpty) {
@@ -158,7 +173,7 @@ class FirestoreTimeEntryRepository {
     final map = <String, List<TimeEntry>>{};
 
     for (final entry in entries) {
-      map.putIfAbsent(entry.user, () => []).add(entry);
+      map.putIfAbsent(entry.userName, () => []).add(entry);
     }
 
     return map;
@@ -170,15 +185,17 @@ class FirestoreTimeEntryRepository {
     DateTime? startDate,
     DateTime? endDate,
   }) async {
-    Query<Map<String, dynamic>> query = _entriesCollection
-        .where('userId', isEqualTo: userId);
+    Query<Map<String, dynamic>> query =
+        _entriesCollection.where('userId', isEqualTo: userId);
 
     if (startDate != null) {
-      query = query.where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate));
+      query = query.where('date',
+          isGreaterThanOrEqualTo: Timestamp.fromDate(startDate));
     }
 
     if (endDate != null) {
-      query = query.where('date', isLessThanOrEqualTo: Timestamp.fromDate(endDate));
+      query =
+          query.where('date', isLessThanOrEqualTo: Timestamp.fromDate(endDate));
     }
 
     final snapshot = await query.get();

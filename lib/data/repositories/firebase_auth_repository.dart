@@ -61,8 +61,8 @@ class FirebaseAuthRepository {
               adminCode.isNotEmpty &&
               adminSecretCode.isNotEmpty &&
               adminCode == adminSecretCode)
-          ? .admin
-          : .user;
+          ? Role.admin
+          : Role.user;
 
       // Create Firebase Auth user
       final credential = await _auth.createUserWithEmailAndPassword(
@@ -80,18 +80,11 @@ class FirebaseAuthRepository {
         email: email.trim(),
         displayName: displayName,
         role: role,
-        salaryType: .hourly,
-        currency: .lei,
+        salaryType: SalaryType.hourly,
+        currency: Currency.lei,
       );
 
-      await _firestore.collection('users').doc(uid).set({
-        'email': user.email,
-        if (user.displayName != null) 'displayName': user.displayName,
-        'role': user.role.name,
-        'salaryType': user.salaryType.name,
-        'currency': user.currency.name,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
+      await _firestore.collection('users').doc(uid).set(user.toFirestore());
 
       return user;
     } on firebase_auth.FirebaseAuthException {
@@ -152,14 +145,10 @@ class FirebaseAuthRepository {
         salaryType: SalaryType.hourly,
         currency: Currency.lei,
       );
-      await _firestore.collection('users').doc(firebaseUser.uid).set({
-        'email': user.email,
-        if (user.displayName != null) 'displayName': user.displayName,
-        'role': user.role.name,
-        'salaryType': user.salaryType.name,
-        'currency': user.currency.name,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
+      await _firestore
+          .collection('users')
+          .doc(firebaseUser.uid)
+          .set(user.toFirestore());
     }
     return user;
   }
@@ -189,12 +178,31 @@ class FirebaseAuthRepository {
 
   /// Update user profile in Firestore
   Future<void> updateUserProfile(User user) async {
-    await _firestore.collection('users').doc(user.id).update({
-      if (user.displayName != null) 'displayName': user.displayName,
-      'role': user.role.name,
-      if (user.salaryAmount != null) 'salaryAmount': user.salaryAmount,
-      'salaryType': user.salaryType.name,
-      'currency': user.currency.name,
+    await _firestore.collection('users').doc(user.id).update(
+          user.toFirestoreUpdate(),
+        );
+  }
+
+  /// Update FCM token for push notifications
+  Future<void> updateFcmToken(String userId, String? token) async {
+    if (token != null) {
+      await _firestore.collection('users').doc(userId).update({
+        'fcmToken': token,
+      });
+    } else {
+      await _firestore.collection('users').doc(userId).update({
+        'fcmToken': FieldValue.delete(),
+      });
+    }
+  }
+
+  /// Update notification preferences
+  Future<void> updateNotificationPrefs(
+    String userId,
+    NotificationPrefs prefs,
+  ) async {
+    await _firestore.collection('users').doc(userId).update({
+      'notificationPrefs': prefs.toJson(),
     });
   }
 

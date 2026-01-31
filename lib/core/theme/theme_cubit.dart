@@ -1,34 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum AppThemeMode { light, dark, system }
 
-class ThemeState extends Equatable {
+class ThemeState {
   final AppThemeMode themeMode;
   final Color accentColor;
   final Locale? locale;
 
   const ThemeState({
-    this.themeMode = .system,
+    this.themeMode = AppThemeMode.system,
     this.accentColor = const Color(0xFF0F8D6E),
     this.locale,
   });
 
   ThemeMode get effectiveThemeMode {
     switch (themeMode) {
-      case .light:
+      case AppThemeMode.light:
         return ThemeMode.light;
-      case .dark:
+      case AppThemeMode.dark:
         return ThemeMode.dark;
-      case .system:
+      case AppThemeMode.system:
         return ThemeMode.system;
     }
   }
-
-  @override
-  List<Object?> get props => [themeMode, accentColor, locale];
 
   ThemeState copyWith({
     AppThemeMode? themeMode,
@@ -57,11 +53,11 @@ class ThemeCubit extends Cubit<ThemeState> {
     final accentColorInt = prefs.getInt(_accentColorKey);
     final localeStr = prefs.getString(_localeKey);
 
-    AppThemeMode themeMode = .system;
+    AppThemeMode themeMode = AppThemeMode.system;
     if (themeModeStr == 'light') {
-      themeMode = .light;
+      themeMode = AppThemeMode.light;
     } else if (themeModeStr == 'dark') {
-      themeMode = .dark;
+      themeMode = AppThemeMode.dark;
     }
 
     final accentColor = accentColorInt != null

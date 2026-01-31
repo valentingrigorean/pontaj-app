@@ -21,7 +21,7 @@ void main() {
       final entry = TimeEntry(
         id: '123',
         userId: 'user-123',
-        user: 'TestUser',
+        userName: 'TestUser',
         location: 'Office',
         intervalText: '08:00 - 17:00',
         breakMinutes: 30,
@@ -34,7 +34,7 @@ void main() {
 
       expect(restored.id, entry.id);
       expect(restored.userId, entry.userId);
-      expect(restored.user, entry.user);
+      expect(restored.userName, entry.userName);
       expect(restored.location, entry.location);
       expect(restored.intervalText, entry.intervalText);
       expect(restored.breakMinutes, entry.breakMinutes);

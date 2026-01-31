@@ -12,6 +12,9 @@ import '../../features/auth/bloc/auth_state.dart';
 import '../../features/auth/pages/login_page.dart';
 import '../../features/auth/pages/register_page.dart';
 import '../../features/auth/pages/splash_page.dart';
+import '../../features/invoice/pages/create_invoice_page.dart';
+import '../../features/invoice/pages/invoice_detail_page.dart';
+import '../../features/invoice/pages/invoice_list_page.dart';
 import '../../features/settings/pages/settings_page.dart';
 import '../../features/time_entry/pages/pontaj_page.dart';
 
@@ -151,6 +154,35 @@ class AppRouter {
           path: '/settings',
           name: 'settings',
           builder: (context, state) => const SettingsPage(),
+        ),
+        GoRoute(
+          path: '/invoices',
+          name: 'invoices',
+          builder: (context, state) {
+            final authState = authBloc.state;
+            final isAdmin = authState is AuthAuthenticated && authState.user.isAdmin;
+            return InvoiceListPage(isAdmin: isAdmin);
+          },
+          routes: [
+            GoRoute(
+              path: 'create',
+              name: 'create-invoice',
+              builder: (context, state) => const CreateInvoicePage(),
+            ),
+            GoRoute(
+              path: ':invoiceId',
+              name: 'invoice-detail',
+              builder: (context, state) {
+                final invoiceId = state.pathParameters['invoiceId']!;
+                final authState = authBloc.state;
+                final isAdmin = authState is AuthAuthenticated && authState.user.isAdmin;
+                return InvoiceDetailPage(
+                  invoiceId: invoiceId,
+                  isAdmin: isAdmin,
+                );
+              },
+            ),
+          ],
         ),
       ],
       errorBuilder: (context, state) => _UnknownRouteScreen(
