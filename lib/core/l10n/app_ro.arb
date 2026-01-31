@@ -172,5 +172,29 @@
   "registrationError": "Eroare la inregistrare",
   "ok": "OK",
   "orContinueWith": "sau continua cu",
-  "continueWithGoogle": "Continua cu Google"
+  "continueWithGoogle": "Continua cu Google",
+
+  "account": "Cont",
+  "adminUpgrade": "Devino Administrator",
+  "adminUpgradeDesc": "Introdu codul de admin pentru a-ti actualiza contul",
+  "enterAdminCode": "Introdu codul admin",
+  "adminCodeRequired": "Codul admin este obligatoriu",
+  "invalidAdminCode": "Cod admin invalid",
+  "upgradeSuccess": "Cont actualizat la administrator cu succes",
+  "confirmUpgrade": "Confirma Actualizarea",
+  "confirmUpgradeMessage": "Esti sigur ca vrei sa devii administrator?",
+  "youAreAdmin": "Esti administrator",
+  "upgrade": "Actualizeaza",
+  "cancel": "Anuleaza",
+
+  "pontaj": "Pontaj",
+  "myEntries": "Inregistrarile mele",
+  "logoutConfirmation": "Confirma deconectarea",
+  "logoutConfirmationMessage": "Esti sigur ca vrei sa te deconectezi?",
+
+  "entriesTab": "Inregistrari",
+  "addEntry": "Adauga pontaj",
+
+  "timeOverlapError": "Acest interval de timp se suprapune cu o inregistrare existenta",
+  "requireCustomInterval": "Foloseste intervalul personalizat cand adaugi mai multe inregistrari pentru aceeasi zi"
 }

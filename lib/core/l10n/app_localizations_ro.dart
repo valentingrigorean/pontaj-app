@@ -346,4 +346,69 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get continueWithGoogle => 'Continua cu Google';
+
+  @override
+  String get account => 'Cont';
+
+  @override
+  String get adminUpgrade => 'Devino Administrator';
+
+  @override
+  String get adminUpgradeDesc =>
+      'Introdu codul de admin pentru a-ti actualiza contul';
+
+  @override
+  String get enterAdminCode => 'Introdu codul admin';
+
+  @override
+  String get adminCodeRequired => 'Codul admin este obligatoriu';
+
+  @override
+  String get invalidAdminCode => 'Cod admin invalid';
+
+  @override
+  String get upgradeSuccess => 'Cont actualizat la administrator cu succes';
+
+  @override
+  String get confirmUpgrade => 'Confirma Actualizarea';
+
+  @override
+  String get confirmUpgradeMessage =>
+      'Esti sigur ca vrei sa devii administrator?';
+
+  @override
+  String get youAreAdmin => 'Esti administrator';
+
+  @override
+  String get upgrade => 'Actualizeaza';
+
+  @override
+  String get cancel => 'Anuleaza';
+
+  @override
+  String get pontaj => 'Pontaj';
+
+  @override
+  String get myEntries => 'Inregistrarile mele';
+
+  @override
+  String get logoutConfirmation => 'Confirma deconectarea';
+
+  @override
+  String get logoutConfirmationMessage =>
+      'Esti sigur ca vrei sa te deconectezi?';
+
+  @override
+  String get entriesTab => 'Inregistrari';
+
+  @override
+  String get addEntry => 'Adauga pontaj';
+
+  @override
+  String get timeOverlapError =>
+      'Acest interval de timp se suprapune cu o inregistrare existenta';
+
+  @override
+  String get requireCustomInterval =>
+      'Foloseste intervalul personalizat cand adaugi mai multe inregistrari pentru aceeasi zi';
 }

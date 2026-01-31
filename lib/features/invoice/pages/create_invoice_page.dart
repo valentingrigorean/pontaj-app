@@ -63,7 +63,6 @@ class _CreateInvoiceViewState extends State<_CreateInvoiceView> {
       final repository = context.read<FirestoreTimeEntryRepository>();
       final entries = await repository.getEntries(userId: _selectedUser!.id);
 
-      // Filter by date range
       final filteredEntries = entries.where((e) {
         return !e.date.isBefore(_periodStart) && !e.date.isAfter(_periodEnd);
       }).toList();
@@ -155,7 +154,6 @@ class _CreateInvoiceViewState extends State<_CreateInvoiceView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // User selection
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -205,8 +203,6 @@ class _CreateInvoiceViewState extends State<_CreateInvoiceView> {
               ),
             ),
             const SizedBox(height: 16),
-
-            // Period selection
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -227,8 +223,6 @@ class _CreateInvoiceViewState extends State<_CreateInvoiceView> {
               ),
             ),
             const SizedBox(height: 16),
-
-            // Due date
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -254,8 +248,6 @@ class _CreateInvoiceViewState extends State<_CreateInvoiceView> {
               ),
             ),
             const SizedBox(height: 16),
-
-            // Summary
             if (_isLoadingEntries)
               const Card(
                 child: Padding(
@@ -294,8 +286,6 @@ class _CreateInvoiceViewState extends State<_CreateInvoiceView> {
                 ),
               ),
             const SizedBox(height: 16),
-
-            // Notes
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -320,8 +310,6 @@ class _CreateInvoiceViewState extends State<_CreateInvoiceView> {
               ),
             ),
             const SizedBox(height: 24),
-
-            // Create button
             FilledButton.icon(
               onPressed: _selectedUser != null && _entries.isNotEmpty
                   ? _createInvoice

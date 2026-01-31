@@ -49,7 +49,6 @@ abstract class PeriodSummary with _$PeriodSummary {
     );
   }
 
-  // Getters
   double get totalHours => totalWorked.inMinutes / 60.0;
   double? get totalAmount => hourlyRate != null ? totalHours * hourlyRate! : null;
   String get formattedHours => TimeEntry.formatDuration(totalWorked);

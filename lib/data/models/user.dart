@@ -47,11 +47,9 @@ abstract class User with _$User {
     return User.fromJson({...data, 'id': doc.id});
   }
 
-  // Getters
   String get displayNameOrEmail => displayName ?? email.split('@').first;
   bool get isAdmin => role == Role.admin;
 
-  // Firestore methods
   Map<String, dynamic> toFirestore() {
     final json = toJson()..remove('id');
     if (createdAt == null) json['createdAt'] = FieldValue.serverTimestamp();

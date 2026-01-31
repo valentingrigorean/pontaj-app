@@ -35,7 +35,6 @@ abstract class TimeEntry with _$TimeEntry {
     });
   }
 
-  // Helpers
   static String formatDuration(Duration d) {
     final h = d.inHours;
     final m = d.inMinutes % 60;
@@ -44,7 +43,6 @@ abstract class TimeEntry with _$TimeEntry {
 
   String get formattedTotalWorked => formatDuration(totalWorked);
 
-  // Firestore
   Map<String, dynamic> toFirestore() => {
         'userId': userId,
         'userName': userName,

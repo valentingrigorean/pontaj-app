@@ -172,5 +172,29 @@
   "registrationError": "Errore di registrazione",
   "ok": "OK",
   "orContinueWith": "oppure continua con",
-  "continueWithGoogle": "Continua con Google"
+  "continueWithGoogle": "Continua con Google",
+
+  "account": "Account",
+  "adminUpgrade": "Diventa Amministratore",
+  "adminUpgradeDesc": "Inserisci il codice admin per aggiornare il tuo account",
+  "enterAdminCode": "Inserisci codice admin",
+  "adminCodeRequired": "Il codice admin e obbligatorio",
+  "invalidAdminCode": "Codice admin non valido",
+  "upgradeSuccess": "Account aggiornato ad amministratore con successo",
+  "confirmUpgrade": "Conferma Aggiornamento",
+  "confirmUpgradeMessage": "Sei sicuro di voler diventare amministratore?",
+  "youAreAdmin": "Sei un amministratore",
+  "upgrade": "Aggiorna",
+  "cancel": "Annulla",
+
+  "pontaj": "Foglio presenze",
+  "myEntries": "Le mie registrazioni",
+  "logoutConfirmation": "Conferma disconnessione",
+  "logoutConfirmationMessage": "Sei sicuro di volerti disconnettere?",
+
+  "entriesTab": "Registrazioni",
+  "addEntry": "Aggiungi registrazione",
+
+  "timeOverlapError": "Questo intervallo di tempo si sovrappone con una registrazione esistente",
+  "requireCustomInterval": "Usa l'intervallo personalizzato quando aggiungi più registrazioni per lo stesso giorno"
 }

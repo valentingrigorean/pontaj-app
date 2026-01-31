@@ -345,4 +345,67 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get continueWithGoogle => 'Continue with Google';
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get adminUpgrade => 'Become Administrator';
+
+  @override
+  String get adminUpgradeDesc => 'Enter the admin code to upgrade your account';
+
+  @override
+  String get enterAdminCode => 'Enter admin code';
+
+  @override
+  String get adminCodeRequired => 'Admin code is required';
+
+  @override
+  String get invalidAdminCode => 'Invalid admin code';
+
+  @override
+  String get upgradeSuccess => 'Successfully upgraded to administrator';
+
+  @override
+  String get confirmUpgrade => 'Confirm Upgrade';
+
+  @override
+  String get confirmUpgradeMessage =>
+      'Are you sure you want to upgrade to administrator?';
+
+  @override
+  String get youAreAdmin => 'You are an administrator';
+
+  @override
+  String get upgrade => 'Upgrade';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get pontaj => 'Timesheet';
+
+  @override
+  String get myEntries => 'My Entries';
+
+  @override
+  String get logoutConfirmation => 'Confirm Logout';
+
+  @override
+  String get logoutConfirmationMessage => 'Are you sure you want to log out?';
+
+  @override
+  String get entriesTab => 'Entries';
+
+  @override
+  String get addEntry => 'Add Entry';
+
+  @override
+  String get timeOverlapError =>
+      'This time range overlaps with an existing entry';
+
+  @override
+  String get requireCustomInterval =>
+      'Please use custom time interval when adding multiple entries for the same day';
 }

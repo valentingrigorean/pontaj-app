@@ -12,6 +12,7 @@ import '../../features/auth/bloc/auth_state.dart';
 import '../../features/auth/pages/login_page.dart';
 import '../../features/auth/pages/register_page.dart';
 import '../../features/auth/pages/splash_page.dart';
+import '../../features/home/pages/user_home_page.dart';
 import '../../features/invoice/pages/create_invoice_page.dart';
 import '../../features/invoice/pages/invoice_detail_page.dart';
 import '../../features/invoice/pages/invoice_list_page.dart';
@@ -31,7 +32,9 @@ class AppRouter {
         GoRoute(
           path: '/',
           name: 'splash',
-          builder: (context, state) => const SplashPage(),
+          pageBuilder: (context, state) => const NoTransitionPage(
+            child: SplashPage(),
+          ),
         ),
         GoRoute(
           path: '/login',
@@ -39,15 +42,10 @@ class AppRouter {
           pageBuilder: (context, state) => CustomTransitionPage<void>(
             key: state.pageKey,
             child: const LoginPage(),
+            transitionDuration: const Duration(milliseconds: 300),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(1.0, 0.0),
-                  end: Offset.zero,
-                ).animate(CurvedAnimation(
-                  parent: animation,
-                  curve: Curves.easeOutCubic,
-                )),
+              return FadeTransition(
+                opacity: animation,
                 child: child,
               );
             },
@@ -79,15 +77,25 @@ class AppRouter {
           pageBuilder: (context, state) => CustomTransitionPage<void>(
             key: state.pageKey,
             child: const AdminHomePage(),
+            transitionDuration: const Duration(milliseconds: 300),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(1.0, 0.0),
-                  end: Offset.zero,
-                ).animate(CurvedAnimation(
-                  parent: animation,
-                  curve: Curves.easeOutCubic,
-                )),
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+          ),
+        ),
+        GoRoute(
+          path: '/home',
+          name: 'home',
+          pageBuilder: (context, state) => CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: const UserHomePage(),
+            transitionDuration: const Duration(milliseconds: 300),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: animation,
                 child: child,
               );
             },
@@ -133,12 +141,7 @@ class AppRouter {
         GoRoute(
           path: '/entries',
           name: 'entries',
-          builder: (context, state) {
-            final extra = state.extra as Map<String, dynamic>?;
-            return AllEntriesPage(
-              initialTab: extra?['initialTab'] as int? ?? 0,
-            );
-          },
+          builder: (context, state) => const AllEntriesPage(),
         ),
         GoRoute(
           path: '/userEntries',
@@ -217,8 +220,8 @@ class AppRouter {
         if (authState.user.isAdmin) {
           return '/admin';
         }
-        // Regular user - go to pontaj with their info
-        return '/pontaj';
+        // Regular user - go to home with bottom/rail navigation
+        return '/home';
       }
     }
 

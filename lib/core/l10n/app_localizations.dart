@@ -735,6 +735,126 @@ abstract class AppLocalizations {
   /// In ro, this message translates to:
   /// **'Continua cu Google'**
   String get continueWithGoogle;
+
+  /// No description provided for @account.
+  ///
+  /// In ro, this message translates to:
+  /// **'Cont'**
+  String get account;
+
+  /// No description provided for @adminUpgrade.
+  ///
+  /// In ro, this message translates to:
+  /// **'Devino Administrator'**
+  String get adminUpgrade;
+
+  /// No description provided for @adminUpgradeDesc.
+  ///
+  /// In ro, this message translates to:
+  /// **'Introdu codul de admin pentru a-ti actualiza contul'**
+  String get adminUpgradeDesc;
+
+  /// No description provided for @enterAdminCode.
+  ///
+  /// In ro, this message translates to:
+  /// **'Introdu codul admin'**
+  String get enterAdminCode;
+
+  /// No description provided for @adminCodeRequired.
+  ///
+  /// In ro, this message translates to:
+  /// **'Codul admin este obligatoriu'**
+  String get adminCodeRequired;
+
+  /// No description provided for @invalidAdminCode.
+  ///
+  /// In ro, this message translates to:
+  /// **'Cod admin invalid'**
+  String get invalidAdminCode;
+
+  /// No description provided for @upgradeSuccess.
+  ///
+  /// In ro, this message translates to:
+  /// **'Cont actualizat la administrator cu succes'**
+  String get upgradeSuccess;
+
+  /// No description provided for @confirmUpgrade.
+  ///
+  /// In ro, this message translates to:
+  /// **'Confirma Actualizarea'**
+  String get confirmUpgrade;
+
+  /// No description provided for @confirmUpgradeMessage.
+  ///
+  /// In ro, this message translates to:
+  /// **'Esti sigur ca vrei sa devii administrator?'**
+  String get confirmUpgradeMessage;
+
+  /// No description provided for @youAreAdmin.
+  ///
+  /// In ro, this message translates to:
+  /// **'Esti administrator'**
+  String get youAreAdmin;
+
+  /// No description provided for @upgrade.
+  ///
+  /// In ro, this message translates to:
+  /// **'Actualizeaza'**
+  String get upgrade;
+
+  /// No description provided for @cancel.
+  ///
+  /// In ro, this message translates to:
+  /// **'Anuleaza'**
+  String get cancel;
+
+  /// No description provided for @pontaj.
+  ///
+  /// In ro, this message translates to:
+  /// **'Pontaj'**
+  String get pontaj;
+
+  /// No description provided for @myEntries.
+  ///
+  /// In ro, this message translates to:
+  /// **'Inregistrarile mele'**
+  String get myEntries;
+
+  /// No description provided for @logoutConfirmation.
+  ///
+  /// In ro, this message translates to:
+  /// **'Confirma deconectarea'**
+  String get logoutConfirmation;
+
+  /// No description provided for @logoutConfirmationMessage.
+  ///
+  /// In ro, this message translates to:
+  /// **'Esti sigur ca vrei sa te deconectezi?'**
+  String get logoutConfirmationMessage;
+
+  /// No description provided for @entriesTab.
+  ///
+  /// In ro, this message translates to:
+  /// **'Inregistrari'**
+  String get entriesTab;
+
+  /// No description provided for @addEntry.
+  ///
+  /// In ro, this message translates to:
+  /// **'Adauga pontaj'**
+  String get addEntry;
+
+  /// No description provided for @timeOverlapError.
+  ///
+  /// In ro, this message translates to:
+  /// **'Acest interval de timp se suprapune cu o inregistrare existenta'**
+  String get timeOverlapError;
+
+  /// No description provided for @requireCustomInterval.
+  ///
+  /// In ro, this message translates to:
+  /// **'Foloseste intervalul personalizat cand adaugi mai multe inregistrari pentru aceeasi zi'**
+  String get requireCustomInterval;
 }
 
 class _AppLocalizationsDelegate

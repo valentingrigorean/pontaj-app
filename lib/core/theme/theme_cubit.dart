@@ -7,12 +7,12 @@ enum AppThemeMode { light, dark, system }
 class ThemeState {
   final AppThemeMode themeMode;
   final Color accentColor;
-  final Locale? locale;
+  final Locale locale;
 
   const ThemeState({
     this.themeMode = AppThemeMode.system,
     this.accentColor = const Color(0xFF0F8D6E),
-    this.locale,
+    this.locale = const Locale('ro'),
   });
 
   ThemeMode get effectiveThemeMode {
@@ -30,12 +30,11 @@ class ThemeState {
     AppThemeMode? themeMode,
     Color? accentColor,
     Locale? locale,
-    bool clearLocale = false,
   }) =>
       ThemeState(
         themeMode: themeMode ?? this.themeMode,
         accentColor: accentColor ?? this.accentColor,
-        locale: clearLocale ? null : (locale ?? this.locale),
+        locale: locale ?? this.locale,
       );
 }
 
@@ -64,9 +63,11 @@ class ThemeCubit extends Cubit<ThemeState> {
         ? Color(accentColorInt)
         : const Color(0xFF0F8D6E);
 
-    Locale? locale;
+    Locale locale;
     if (localeStr != null && localeStr.isNotEmpty) {
       locale = Locale(localeStr);
+    } else {
+      locale = const Locale('ro');
     }
 
     emit(ThemeState(themeMode: themeMode, accentColor: accentColor, locale: locale));
@@ -84,15 +85,10 @@ class ThemeCubit extends Cubit<ThemeState> {
     emit(state.copyWith(accentColor: color));
   }
 
-  Future<void> setLocale(Locale? locale) async {
+  Future<void> setLocale(Locale locale) async {
     final prefs = await SharedPreferences.getInstance();
-    if (locale == null) {
-      await prefs.setString(_localeKey, '');
-      emit(state.copyWith(clearLocale: true));
-    } else {
-      await prefs.setString(_localeKey, locale.languageCode);
-      emit(state.copyWith(locale: locale));
-    }
+    await prefs.setString(_localeKey, locale.languageCode);
+    emit(state.copyWith(locale: locale));
   }
 
   ThemeData getLightTheme() {

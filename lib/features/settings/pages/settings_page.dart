@@ -6,21 +6,32 @@ import '../../../core/responsive/responsive.dart';
 import '../../../core/theme/theme_cubit.dart';
 import '../../../shared/widgets/glass_card.dart';
 import '../../../shared/widgets/gradient_background.dart';
+import '../../auth/bloc/auth_bloc.dart';
+import '../../auth/bloc/auth_event.dart';
+import '../../auth/bloc/auth_state.dart';
+import '../widgets/admin_upgrade_card.dart';
 
 class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
+  final bool embedded;
+
+  const SettingsPage({super.key, this.embedded = false});
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
+    final authState = context.watch<AuthBloc>().state;
+    final user = authState is AuthAuthenticated ? authState.user : null;
+
     return BlocBuilder<ThemeCubit, ThemeState>(
       builder: (context, themeState) {
         return Scaffold(
-          appBar: AppBar(
-            title: Text(l10n.settings),
-            centerTitle: true,
-          ),
+          appBar: embedded
+              ? null
+              : AppBar(
+                  title: Text(l10n.settings),
+                  centerTitle: true,
+                ),
           body: GradientBackground(
             animated: false,
             child: SingleChildScrollView(
@@ -114,6 +125,11 @@ class SettingsPage extends StatelessWidget {
                 _ColorSelector(themeState: themeState, l10n: l10n),
                 const SizedBox(height: 12),
                 _LanguageSelector(themeState: themeState, l10n: l10n),
+                if (user != null) ...[
+                  const SizedBox(height: 32),
+                  _SectionHeader(title: l10n.account),
+                  AdminUpgradeCard(user: user),
+                ],
                 const SizedBox(height: 32),
                 _SectionHeader(title: l10n.information),
                 GlassCard(
@@ -196,6 +212,8 @@ class SettingsPage extends StatelessWidget {
                     ],
                   ),
                 ),
+                const SizedBox(height: 32),
+                _LogoutSection(l10n: l10n),
                 const SizedBox(height: 80),
               ],
                   ),
@@ -205,6 +223,66 @@ class SettingsPage extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _LogoutSection extends StatelessWidget {
+  final AppLocalizations l10n;
+
+  const _LogoutSection({required this.l10n});
+
+  Future<void> _showLogoutConfirmation(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.logoutConfirmation),
+        content: Text(l10n.logoutConfirmationMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: Text(l10n.logout),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      context.read<AuthBloc>().add(const AuthLogoutRequested());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GlassCard(
+      padding: EdgeInsets.zero,
+      enableBlur: false,
+      child: ListTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.red.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Icon(Icons.logout, color: Colors.red),
+        ),
+        title: Text(
+          l10n.logout,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Colors.red,
+          ),
+        ),
+        trailing: const Icon(Icons.chevron_right, color: Colors.red),
+        onTap: () => _showLogoutConfirmation(context),
+      ),
     );
   }
 }
@@ -420,7 +498,7 @@ class _LanguageSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentLocale = themeState.locale?.languageCode ?? 'ro';
+    final currentLocale = themeState.locale.languageCode;
 
     return GlassCard(
       padding: const EdgeInsets.all(20),
@@ -471,8 +549,7 @@ class _LanguageSelector extends StatelessWidget {
             ],
             selected: {currentLocale},
             onSelectionChanged: (Set<String> selection) {
-              final locale = selection.first == 'ro' ? null : Locale(selection.first);
-              context.read<ThemeCubit>().setLocale(locale);
+              context.read<ThemeCubit>().setLocale(Locale(selection.first));
             },
           ),
         ],

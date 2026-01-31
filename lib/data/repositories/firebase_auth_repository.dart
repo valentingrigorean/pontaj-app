@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../core/config/env.dart';
@@ -106,29 +107,41 @@ class FirebaseAuthRepository {
 
   /// Sign in with Google (auto-registers new users)
   Future<User?> signInWithGoogle() async {
-    final googleSignIn = GoogleSignIn.instance;
+    firebase_auth.UserCredential userCredential;
 
-    // Authenticate with Google
-    GoogleSignInAccount? googleUser;
-    if (googleSignIn.supportsAuthenticate()) {
-      googleUser = await googleSignIn.authenticate();
+    if (kIsWeb) {
+      // Web: Use Firebase Auth's signInWithPopup - handles OAuth flow properly
+      final provider = firebase_auth.GoogleAuthProvider();
+      userCredential = await _auth.signInWithPopup(provider);
     } else {
-      // For platforms that don't support authenticate, try lightweight auth
-      googleUser = await googleSignIn.attemptLightweightAuthentication();
+      // Mobile: Use google_sign_in package
+      final googleSignIn = GoogleSignIn.instance;
+      GoogleSignInAccount? googleUser;
+
+      if (googleSignIn.supportsAuthenticate()) {
+        // authenticate() throws GoogleSignInException if user cancels or error
+        googleUser = await googleSignIn.authenticate();
+      } else {
+        // This shouldn't happen on iOS/Android, but handle gracefully
+        // Try lightweight authentication for returning users
+        googleUser = await googleSignIn.attemptLightweightAuthentication();
+        if (googleUser == null) {
+          // No cached credentials - can't authenticate without user interaction
+          throw Exception('Google Sign-In not supported on this platform');
+        }
+      }
+
+      // Get authentication token (idToken)
+      final googleAuth = googleUser.authentication;
+
+      // Create Firebase credential with ID token
+      final credential = firebase_auth.GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+      );
+
+      userCredential = await _auth.signInWithCredential(credential);
     }
 
-    if (googleUser == null) return null; // User cancelled
-
-    // Get authentication token (idToken)
-    // Note: google_sign_in v7.x only provides idToken, not accessToken
-    final googleAuth = googleUser.authentication;
-
-    // Create Firebase credential with ID token
-    final credential = firebase_auth.GoogleAuthProvider.credential(
-      idToken: googleAuth.idToken,
-    );
-
-    final userCredential = await _auth.signInWithCredential(credential);
     final firebaseUser = userCredential.user;
     if (firebaseUser == null) return null;
 

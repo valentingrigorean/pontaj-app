@@ -93,21 +93,23 @@ class _SplashPageState extends State<SplashPage>
                         Stack(
                           alignment: Alignment.center,
                           children: [
-                            Opacity(
-                              opacity: glowOpacity * 0.6,
-                              child: Container(
-                                width: 300,
-                                height: 300,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(0xFF0F8D6E)
-                                          .withValues(alpha: 0.5),
-                                      blurRadius: 80,
-                                      spreadRadius: 20,
+                            RepaintBoundary(
+                              child: Opacity(
+                                opacity: glowOpacity * 0.6,
+                                child: Container(
+                                  width: 300,
+                                  height: 300,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: RadialGradient(
+                                      colors: [
+                                        const Color(0xFF0F8D6E)
+                                            .withValues(alpha: 0.5),
+                                        const Color(0xFF0F8D6E)
+                                            .withValues(alpha: 0),
+                                      ],
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -119,62 +121,66 @@ class _SplashPageState extends State<SplashPage>
                           ],
                         ),
                         const SizedBox(height: 40),
-                        Opacity(
-                          opacity: jrOpacity,
-                          child: Builder(
-                            builder: (context) {
-                              final l10n = AppLocalizations.of(context)!;
-                              return Column(
-                                children: [
-                                  ShaderMask(
-                                    shaderCallback: (bounds) =>
-                                        const LinearGradient(
-                                      colors: [
-                                        Color(0xFF0F8D6E),
-                                        Color(0xFF0A6B54),
-                                      ],
-                                    ).createShader(bounds),
-                                    child: Text(
-                                      l10n.appTitle.toUpperCase(),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 8,
+                        RepaintBoundary(
+                          child: Opacity(
+                            opacity: jrOpacity,
+                            child: Builder(
+                              builder: (context) {
+                                final l10n = AppLocalizations.of(context)!;
+                                return Column(
+                                  children: [
+                                    ShaderMask(
+                                      shaderCallback: (bounds) =>
+                                          const LinearGradient(
+                                        colors: [
+                                          Color(0xFF0F8D6E),
+                                          Color(0xFF0A6B54),
+                                        ],
+                                      ).createShader(bounds),
+                                      child: Text(
+                                        l10n.appTitle.toUpperCase(),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 32,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 8,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    l10n.appSubtitle,
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontSize: 14,
-                                      letterSpacing: 2,
-                                      fontWeight: FontWeight.w300,
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      l10n.appSubtitle,
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 14,
+                                        letterSpacing: 2,
+                                        fontWeight: FontWeight.w300,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              );
-                            },
+                                  ],
+                                );
+                              },
+                            ),
                           ),
                         ),
                         const SizedBox(height: 60),
-                        Opacity(
-                          opacity: jrOpacity,
-                          child: SizedBox(
-                            width: 200,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: LinearProgressIndicator(
-                                value: progress,
-                                backgroundColor:
-                                    Colors.grey[800]!.withValues(alpha: 0.2),
-                                valueColor:
-                                    const AlwaysStoppedAnimation<Color>(
-                                  Color(0xFF0F8D6E),
+                        RepaintBoundary(
+                          child: Opacity(
+                            opacity: jrOpacity,
+                            child: SizedBox(
+                              width: 200,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: LinearProgressIndicator(
+                                  value: progress,
+                                  backgroundColor:
+                                      Colors.grey[800]!.withValues(alpha: 0.2),
+                                  valueColor:
+                                      const AlwaysStoppedAnimation<Color>(
+                                    Color(0xFF0F8D6E),
+                                  ),
+                                  minHeight: 6,
                                 ),
-                                minHeight: 6,
                               ),
                             ),
                           ),
@@ -257,15 +263,8 @@ class _FloatingParticleState extends State<_FloatingParticle>
             width: size,
             height: size,
             decoration: BoxDecoration(
-              color: const Color(0xFF0F8D6E).withValues(alpha: 0.4),
+              color: const Color(0xFF0F8D6E).withValues(alpha: 0.6),
               shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF0F8D6E).withValues(alpha: 0.3),
-                  blurRadius: 8,
-                  spreadRadius: 2,
-                ),
-              ],
             ),
           ),
         );
@@ -293,22 +292,26 @@ class _AnimatedLogo extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Transform.rotate(
-            angle: rotation,
-            child: CustomPaint(
-              painter: _JrLogoPainter(progress: progress.clamp(0, 1)),
-              size: const Size.square(220),
+          RepaintBoundary(
+            child: Transform.rotate(
+              angle: rotation,
+              child: CustomPaint(
+                painter: _JrLogoPainter(progress: progress.clamp(0, 1)),
+                size: const Size.square(220),
+              ),
             ),
           ),
-          Opacity(
-            opacity: jrOpacity,
-            child: const Text(
-              'JR',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 72,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 4,
+          RepaintBoundary(
+            child: Opacity(
+              opacity: jrOpacity,
+              child: const Text(
+                'JR',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 72,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 4,
+                ),
               ),
             ),
           ),

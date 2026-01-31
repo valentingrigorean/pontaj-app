@@ -45,3 +45,10 @@ final class AuthStateChanged extends AuthEvent {
 final class AuthGoogleSignInRequested extends AuthEvent {
   const AuthGoogleSignInRequested();
 }
+
+/// Event fired when authenticated user wants to upgrade to admin role
+final class AuthUpgradeToAdminRequested extends AuthEvent {
+  final String adminCode;
+
+  const AuthUpgradeToAdminRequested({required this.adminCode});
+}

@@ -40,7 +40,6 @@ abstract class Invoice with _$Invoice {
     return Invoice.fromJson({...data, 'id': doc.id});
   }
 
-  // Getters
   bool get canEdit => !status.isFinal;
   bool get canCancel => status != InvoiceStatus.cancelled && status != InvoiceStatus.paid;
   String get formattedAmount => '${totalAmount.toStringAsFixed(2)} ${currency.symbol}';
@@ -48,7 +47,6 @@ abstract class Invoice with _$Invoice {
       '${periodStart.day}/${periodStart.month}/${periodStart.year} - '
       '${periodEnd.day}/${periodEnd.month}/${periodEnd.year}';
 
-  // Firestore
   Map<String, dynamic> toFirestore() => {
         'userId': userId,
         'userName': userName,
