@@ -224,6 +224,67 @@ class _LoginPageState extends State<LoginPage>
                                       );
                                     },
                                   ),
+                                  const SizedBox(height: 24),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Divider(color: Colors.grey[400]),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        child: Text(
+                                          l10n.orContinueWith,
+                                          style: TextStyle(
+                                            color: Colors.grey[600],
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Divider(color: Colors.grey[400]),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 24),
+                                  BlocBuilder<AuthBloc, AuthState>(
+                                    builder: (context, state) {
+                                      final isLoading = state is AuthLoading;
+                                      return GlassButton(
+                                        onPressed: isLoading
+                                            ? null
+                                            : () => context
+                                                .read<AuthBloc>()
+                                                .add(const AuthGoogleSignInRequested()),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 14),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Image.network(
+                                              'https://www.google.com/favicon.ico',
+                                              height: 20,
+                                              width: 20,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) =>
+                                                      const Icon(Icons.g_mobiledata,
+                                                          size: 24),
+                                            ),
+                                            const SizedBox(width: 12),
+                                            Text(
+                                              l10n.continueWithGoogle,
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.grey[700],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
                                   const SizedBox(height: 16),
                                   GlassButton(
                                     onPressed: () => context.push('/register'),

@@ -53,3 +53,4 @@ firebase_app_id_file.json
 # Environment/secrets
 .env
 *.env
+lib/core/config/env.g.dart

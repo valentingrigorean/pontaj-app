@@ -54,3 +54,8 @@ final class AuthStateChanged extends AuthEvent {
   @override
   List<Object?> get props => [userId];
 }
+
+/// Event fired when user requests Google Sign-In
+final class AuthGoogleSignInRequested extends AuthEvent {
+  const AuthGoogleSignInRequested();
+}

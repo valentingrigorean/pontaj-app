@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../core/config/env.dart';
 import '../models/enums.dart';
 import '../models/user.dart';
 
@@ -10,13 +12,9 @@ class FirebaseAuthRepository {
   final firebase_auth.FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
 
-  /// Admin registration secret code - set via --dart-define=ADMIN_CODE=your_secret
-  /// Example: flutter run --dart-define=ADMIN_CODE=MySecretCode123
+  /// Admin registration secret code - loaded from .env file via envied
   /// If not set, admin registration is disabled
-  static const String adminSecretCode = String.fromEnvironment(
-    'ADMIN_CODE',
-    defaultValue: '',
-  );
+  static String get adminSecretCode => Env.adminCode;
 
   FirebaseAuthRepository({
     firebase_auth.FirebaseAuth? auth,
@@ -103,7 +101,67 @@ class FirebaseAuthRepository {
 
   /// Sign out current user
   Future<void> signOut() async {
+    try {
+      final googleSignIn = GoogleSignIn.instance;
+      await googleSignIn.signOut();
+    } catch (_) {
+      // Ignore Google Sign-In sign out errors
+    }
     await _auth.signOut();
+  }
+
+  /// Sign in with Google (auto-registers new users)
+  Future<User?> signInWithGoogle() async {
+    final googleSignIn = GoogleSignIn.instance;
+
+    // Authenticate with Google
+    GoogleSignInAccount? googleUser;
+    if (googleSignIn.supportsAuthenticate()) {
+      googleUser = await googleSignIn.authenticate();
+    } else {
+      // For platforms that don't support authenticate, try lightweight auth
+      googleUser = await googleSignIn.attemptLightweightAuthentication();
+    }
+
+    if (googleUser == null) return null; // User cancelled
+
+    // Get server authorization with auth code for Firebase
+    final serverAuth =
+        await googleUser.authorizationClient.authorizeServer(['email']);
+    if (serverAuth == null) return null;
+
+    // Use the server auth code to sign in with Firebase
+    // For Firebase, we need to use the serverAuthCode
+    final credential = firebase_auth.GoogleAuthProvider.credential(
+      accessToken: serverAuth.serverAuthCode,
+    );
+
+    final userCredential = await _auth.signInWithCredential(credential);
+    final firebaseUser = userCredential.user;
+    if (firebaseUser == null) return null;
+
+    // Auto-register: Get existing profile or create new one
+    var user = await getUserProfile(firebaseUser.uid);
+    if (user == null) {
+      // New user - create default profile
+      user = User(
+        id: firebaseUser.uid,
+        email: firebaseUser.email ?? '',
+        displayName: firebaseUser.displayName,
+        role: Role.user,
+        salaryType: SalaryType.hourly,
+        currency: Currency.lei,
+      );
+      await _firestore.collection('users').doc(firebaseUser.uid).set({
+        'email': user.email,
+        if (user.displayName != null) 'displayName': user.displayName,
+        'role': user.role.name,
+        'salaryType': user.salaryType.name,
+        'currency': user.currency.name,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    }
+    return user;
   }
 
   /// Get user profile from Firestore

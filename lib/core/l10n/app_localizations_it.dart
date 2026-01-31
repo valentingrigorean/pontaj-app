@@ -335,4 +335,16 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get invalidFormat => 'Formato non valido';
+
+  @override
+  String get registrationError => 'Errore di registrazione';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get orContinueWith => 'oppure continua con';
+
+  @override
+  String get continueWithGoogle => 'Continua con Google';
 }

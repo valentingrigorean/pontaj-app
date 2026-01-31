@@ -19,6 +19,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthRegisterRequested>(_onRegisterRequested);
     on<AuthLogoutRequested>(_onLogoutRequested);
     on<AuthStateChanged>(_onAuthStateChanged);
+    on<AuthGoogleSignInRequested>(_onGoogleSignInRequested);
 
     // Listen to Firebase auth state changes
     _authStateSubscription = _authRepository.authStateChanges.listen((user) {
@@ -114,6 +115,28 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // Sign in is handled by login/register events
     if (event.userId == null && state is AuthAuthenticated) {
       emit(const AuthUnauthenticated());
+    }
+  }
+
+  Future<void> _onGoogleSignInRequested(
+    AuthGoogleSignInRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+
+    try {
+      final user = await _authRepository.signInWithGoogle();
+
+      if (user != null) {
+        emit(AuthAuthenticated(user));
+      } else {
+        // User cancelled the sign-in
+        emit(const AuthUnauthenticated());
+      }
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      emit(AuthFailure(FirebaseAuthRepository.getErrorMessage(e)));
+    } catch (e) {
+      emit(AuthFailure(e.toString()));
     }
   }
 }

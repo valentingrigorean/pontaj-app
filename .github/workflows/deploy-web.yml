@@ -29,6 +29,13 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Create .env file
+        run: |
+          echo "ADMIN_CODE=${{ secrets.ADMIN_CODE }}" > .env
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
       - name: Build web
         run: flutter build web --release --base-href "/${{ github.event.repository.name }}/"
 

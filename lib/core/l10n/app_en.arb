@@ -167,5 +167,10 @@
   "routeNotDefined": "The requested route is not defined.",
   "backToLogin": "Back to Login",
 
-  "invalidFormat": "Invalid format"
+  "invalidFormat": "Invalid format",
+
+  "registrationError": "Registration Error",
+  "ok": "OK",
+  "orContinueWith": "or continue with",
+  "continueWithGoogle": "Continue with Google"
 }

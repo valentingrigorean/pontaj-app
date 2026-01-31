@@ -67,8 +67,18 @@ class _RegisterPageState extends State<RegisterPage> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text(l10n.registrationError),
+              content: Text(state.message),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(l10n.ok),
+                ),
+              ],
+            ),
           );
         } else if (state is AuthRegistrationSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(

@@ -33,22 +33,67 @@ class AppRouter {
         GoRoute(
           path: '/login',
           name: 'login',
-          builder: (context, state) => const LoginPage(),
+          pageBuilder: (context, state) => CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: const LoginPage(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(1.0, 0.0),
+                  end: Offset.zero,
+                ).animate(CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeOutCubic,
+                )),
+                child: child,
+              );
+            },
+          ),
         ),
         GoRoute(
           path: '/register',
           name: 'register',
-          builder: (context, state) => const RegisterPage(),
+          pageBuilder: (context, state) => CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: const RegisterPage(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(1.0, 0.0),
+                  end: Offset.zero,
+                ).animate(CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeOutCubic,
+                )),
+                child: child,
+              );
+            },
+          ),
         ),
         GoRoute(
           path: '/admin',
           name: 'admin',
-          builder: (context, state) => const AdminHomePage(),
+          pageBuilder: (context, state) => CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: const AdminHomePage(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(1.0, 0.0),
+                  end: Offset.zero,
+                ).animate(CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeOutCubic,
+                )),
+                child: child,
+              );
+            },
+          ),
         ),
         GoRoute(
           path: '/pontaj',
           name: 'pontaj',
-          builder: (context, state) {
+          pageBuilder: (context, state) {
             final extra = state.extra as Map<String, dynamic>?;
             // Get userName from extras, or from authBloc if not provided
             String userName = extra?['user'] as String? ?? '';
@@ -60,10 +105,25 @@ class AppRouter {
                 userName = 'User';
               }
             }
-            return PontajPage(
-              userName: userName,
-              adminMode: extra?['adminMode'] as bool? ?? false,
-              lockName: extra?['lockName'] as bool? ?? false,
+            return CustomTransitionPage<void>(
+              key: state.pageKey,
+              child: PontajPage(
+                userName: userName,
+                adminMode: extra?['adminMode'] as bool? ?? false,
+                lockName: extra?['lockName'] as bool? ?? false,
+              ),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                return SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(1.0, 0.0),
+                    end: Offset.zero,
+                  ).animate(CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOutCubic,
+                  )),
+                  child: child,
+                );
+              },
             );
           },
         ),
@@ -106,6 +166,8 @@ class AppRouter {
     final isOnRegister = state.matchedLocation == '/register';
 
     if (authState is AuthInitial || authState is AuthLoading) {
+      // Allow staying on auth pages during loading (login/register submission)
+      if (isOnLogin || isOnRegister) return null;
       return isOnSplash ? null : '/splash';
     }
 

@@ -167,5 +167,10 @@
   "routeNotDefined": "Ruta solicitata nu este definita.",
   "backToLogin": "Inapoi la Login",
 
-  "invalidFormat": "Format invalid"
+  "invalidFormat": "Format invalid",
+
+  "registrationError": "Eroare la inregistrare",
+  "ok": "OK",
+  "orContinueWith": "sau continua cu",
+  "continueWithGoogle": "Continua cu Google"
 }

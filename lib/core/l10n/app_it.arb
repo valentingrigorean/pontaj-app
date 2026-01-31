@@ -167,5 +167,10 @@
   "routeNotDefined": "Il percorso richiesto non e definito.",
   "backToLogin": "Torna al Login",
 
-  "invalidFormat": "Formato non valido"
+  "invalidFormat": "Formato non valido",
+
+  "registrationError": "Errore di registrazione",
+  "ok": "OK",
+  "orContinueWith": "oppure continua con",
+  "continueWithGoogle": "Continua con Google"
 }

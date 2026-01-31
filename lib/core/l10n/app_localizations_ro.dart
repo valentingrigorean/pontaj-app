@@ -334,4 +334,16 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get invalidFormat => 'Format invalid';
+
+  @override
+  String get registrationError => 'Eroare la inregistrare';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get orContinueWith => 'sau continua cu';
+
+  @override
+  String get continueWithGoogle => 'Continua cu Google';
 }

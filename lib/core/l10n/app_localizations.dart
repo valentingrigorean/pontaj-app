@@ -711,6 +711,30 @@ abstract class AppLocalizations {
   /// In ro, this message translates to:
   /// **'Format invalid'**
   String get invalidFormat;
+
+  /// No description provided for @registrationError.
+  ///
+  /// In ro, this message translates to:
+  /// **'Eroare la inregistrare'**
+  String get registrationError;
+
+  /// No description provided for @ok.
+  ///
+  /// In ro, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// No description provided for @orContinueWith.
+  ///
+  /// In ro, this message translates to:
+  /// **'sau continua cu'**
+  String get orContinueWith;
+
+  /// No description provided for @continueWithGoogle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Continua cu Google'**
+  String get continueWithGoogle;
 }
 
 class _AppLocalizationsDelegate
