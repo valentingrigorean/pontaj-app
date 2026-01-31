@@ -198,6 +198,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
       // Send notification to worker
       await _notificationService.sendInvoiceNotification(
         userId: event.invoice.userId,
+        invoiceId: invoiceId,
         invoiceNumber: event.invoice.invoiceNumber,
         amount: event.invoice.formattedAmount,
       );

@@ -73,6 +73,14 @@ class GlassCard extends StatelessWidget {
   }
 }
 
+enum GlassButtonVariant {
+  /// Default glass effect with subtle background
+  secondary,
+
+  /// Accent-tinted glass with gradient border
+  outlined,
+}
+
 class GlassButton extends StatefulWidget {
   final VoidCallback? onPressed;
   final Widget child;
@@ -80,6 +88,7 @@ class GlassButton extends StatefulWidget {
   final double? borderRadius;
   final Color? color;
   final bool enableBlur;
+  final GlassButtonVariant variant;
 
   const GlassButton({
     super.key,
@@ -89,6 +98,7 @@ class GlassButton extends StatefulWidget {
     this.borderRadius,
     this.color,
     this.enableBlur = true,
+    this.variant = GlassButtonVariant.secondary,
   });
 
   @override
@@ -132,30 +142,73 @@ class _GlassButtonState extends State<GlassButton>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryColor = theme.colorScheme.primary;
+    final radius = widget.borderRadius ?? 12;
 
-    final innerContainer = Container(
-      padding: widget.padding ?? const EdgeInsets.symmetric(
-        horizontal: 24,
-        vertical: 12,
-      ),
-      decoration: BoxDecoration(
-        color: widget.color ??
+    // Determine colors based on variant
+    Color backgroundColor;
+    Border border;
+    List<BoxShadow> shadows;
+
+    switch (widget.variant) {
+      case GlassButtonVariant.outlined:
+        // Accent-tinted with gradient-like border
+        backgroundColor = widget.color ??
             (isDark
-                ? Colors.white.withValues(alpha: 0.15)
-                : Colors.white.withValues(alpha: 0.3)),
-        borderRadius: BorderRadius.circular(widget.borderRadius ?? 12),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: isDark ? 0.2 : 0.4),
+                ? primaryColor.withValues(alpha: 0.08)
+                : primaryColor.withValues(alpha: 0.05));
+        border = Border.all(
+          color: primaryColor.withValues(alpha: isDark ? 0.4 : 0.3),
           width: 1.5,
-        ),
-        boxShadow: [
+        );
+        shadows = [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
+            color: primaryColor.withValues(alpha: isDark ? 0.15 : 0.1),
+            blurRadius: 12,
             offset: const Offset(0, 4),
           ),
-        ],
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ];
+        break;
+      case GlassButtonVariant.secondary:
+        // Improved secondary with better contrast
+        backgroundColor = widget.color ??
+            (isDark
+                ? Colors.white.withValues(alpha: 0.08)
+                : Colors.grey.shade100.withValues(alpha: 0.8));
+        border = Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.15)
+              : Colors.grey.shade300.withValues(alpha: 0.8),
+          width: 1.0,
+        );
+        shadows = [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ];
+        break;
+    }
+
+    final innerContainer = Container(
+      padding: widget.padding ??
+          const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 12,
+          ),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(radius),
+        border: border,
+        boxShadow: shadows,
       ),
       child: widget.child,
     );
@@ -168,7 +221,7 @@ class _GlassButtonState extends State<GlassButton>
       child: ScaleTransition(
         scale: _scaleAnimation,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(widget.borderRadius ?? 12),
+          borderRadius: BorderRadius.circular(radius),
           child: widget.enableBlur
               ? BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),

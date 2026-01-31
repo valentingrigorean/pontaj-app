@@ -87,11 +87,15 @@ class NotificationService {
     }
   }
 
+  String? _currentToken;
+
   /// Save FCM token to user's Firestore document.
+  /// Uses arrayUnion to support multiple devices (web + mobile).
   Future<void> _saveTokenToFirestore(String userId, String token) async {
     try {
+      _currentToken = token;
       await _firestore.collection('users').doc(userId).update({
-        'fcmToken': token,
+        'fcmTokens': FieldValue.arrayUnion([token]),
       });
       debugPrint('FCM: Token saved for user $userId');
     } catch (e) {
@@ -100,30 +104,33 @@ class NotificationService {
   }
 
   /// Remove FCM token on logout.
+  /// Only removes the current device's token, preserving other devices.
   Future<void> removeToken(String userId) async {
     try {
-      await _firestore.collection('users').doc(userId).update({
-        'fcmToken': FieldValue.delete(),
-      });
+      final tokenToRemove = _currentToken ?? await _messaging.getToken();
+      if (tokenToRemove != null) {
+        await _firestore.collection('users').doc(userId).update({
+          'fcmTokens': FieldValue.arrayRemove([tokenToRemove]),
+        });
+      }
       await _messaging.deleteToken();
+      _currentToken = null;
     } catch (e) {
       debugPrint('FCM: Error removing token: $e');
     }
   }
 
   /// Send invoice notification to a user.
-  /// Note: In production, this should be done via Cloud Functions.
-  /// This method just prepares the data - actual sending is via FCM.
+  /// Creates a notification document that triggers the Cloud Function
+  /// to send the FCM push notification.
   Future<void> sendInvoiceNotification({
     required String userId,
+    required String invoiceId,
     required String invoiceNumber,
     required String amount,
   }) async {
-    // In a real app, this would trigger a Cloud Function
-    // that sends the FCM message to the user's device.
-    // For now, we just log the intent.
     debugPrint(
-      'FCM: Would send invoice notification to $userId: '
+      'FCM: Sending invoice notification to $userId: '
       '$invoiceNumber for $amount',
     );
 
@@ -134,6 +141,7 @@ class NotificationService {
       'title': 'New Invoice',
       'body': 'Invoice $invoiceNumber for $amount is ready',
       'data': {
+        'invoiceId': invoiceId,
         'invoiceNumber': invoiceNumber,
         'amount': amount,
       },

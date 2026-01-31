@@ -19,8 +19,8 @@ class FirebaseAuthRepository {
   FirebaseAuthRepository({
     firebase_auth.FirebaseAuth? auth,
     FirebaseFirestore? firestore,
-  })  : _auth = auth ?? firebase_auth.FirebaseAuth.instance,
-        _firestore = firestore ?? FirebaseFirestore.instance;
+  }) : _auth = auth ?? firebase_auth.FirebaseAuth.instance,
+       _firestore = firestore ?? FirebaseFirestore.instance;
 
   /// Stream for auth state changes (for auto-login)
   Stream<firebase_auth.User?> get authStateChanges => _auth.authStateChanges();
@@ -57,7 +57,8 @@ class FirebaseAuthRepository {
     try {
       // Determine role based on admin code
       // Admin registration only works if ADMIN_CODE is set via --dart-define
-      final Role role = (adminCode != null &&
+      final Role role =
+          (adminCode != null &&
               adminCode.isNotEmpty &&
               adminSecretCode.isNotEmpty &&
               adminCode == adminSecretCode)
@@ -118,15 +119,13 @@ class FirebaseAuthRepository {
 
     if (googleUser == null) return null; // User cancelled
 
-    // Get server authorization with auth code for Firebase
-    final serverAuth =
-        await googleUser.authorizationClient.authorizeServer(['email']);
-    if (serverAuth == null) return null;
+    // Get authentication token (idToken)
+    // Note: google_sign_in v7.x only provides idToken, not accessToken
+    final googleAuth = googleUser.authentication;
 
-    // Use the server auth code to sign in with Firebase
-    // For Firebase, we need to use the serverAuthCode
+    // Create Firebase credential with ID token
     final credential = firebase_auth.GoogleAuthProvider.credential(
-      accessToken: serverAuth.serverAuthCode,
+      idToken: googleAuth.idToken,
     );
 
     final userCredential = await _auth.signInWithCredential(credential);
@@ -178,9 +177,10 @@ class FirebaseAuthRepository {
 
   /// Update user profile in Firestore
   Future<void> updateUserProfile(User user) async {
-    await _firestore.collection('users').doc(user.id).update(
-          user.toFirestoreUpdate(),
-        );
+    await _firestore
+        .collection('users')
+        .doc(user.id)
+        .update(user.toFirestoreUpdate());
   }
 
   /// Update FCM token for push notifications
@@ -222,6 +222,30 @@ class FirebaseAuthRepository {
   /// Send password reset email
   Future<void> sendPasswordResetEmail(String email) async {
     await _auth.sendPasswordResetEmail(email: email.trim());
+  }
+
+  /// Ban a user (admin only)
+  Future<void> banUser(String userId, {String? reason}) async {
+    await _firestore.collection('users').doc(userId).update({
+      'banned': true,
+      'bannedAt': FieldValue.serverTimestamp(),
+      'bannedReason': ?reason,
+    });
+  }
+
+  /// Unban a user (admin only)
+  Future<void> unbanUser(String userId) async {
+    await _firestore.collection('users').doc(userId).update({
+      'banned': false,
+      'bannedAt': FieldValue.delete(),
+      'bannedReason': FieldValue.delete(),
+    });
+  }
+
+  /// Delete a user completely (admin only)
+  /// This only deletes the Firestore profile, not the Firebase Auth account
+  Future<void> deleteUser(String userId) async {
+    await _firestore.collection('users').doc(userId).delete();
   }
 
   /// Translate Firebase Auth error codes to user-friendly messages

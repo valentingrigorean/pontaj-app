@@ -284,7 +284,7 @@ as bool,
 /// @nodoc
 mixin _$User {
 
- String? get id; String get email; String? get displayName; Role get role; double? get salaryAmount; SalaryType get salaryType; Currency get currency; String? get fcmToken; NotificationPrefs? get notificationPrefs;@ServerTimestampConverter() DateTime? get createdAt;@ServerTimestampConverter() DateTime? get updatedAt;
+ String? get id; String get email; String? get displayName; Role get role; double? get salaryAmount; SalaryType get salaryType; Currency get currency; String? get fcmToken; NotificationPrefs? get notificationPrefs; bool get banned;@ServerTimestampConverter() DateTime? get bannedAt; String? get bannedReason;@ServerTimestampConverter() DateTime? get createdAt;@ServerTimestampConverter() DateTime? get updatedAt;
 /// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -297,16 +297,16 @@ $UserCopyWith<User> get copyWith => _$UserCopyWithImpl<User>(this as User, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is User&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.role, role) || other.role == role)&&(identical(other.salaryAmount, salaryAmount) || other.salaryAmount == salaryAmount)&&(identical(other.salaryType, salaryType) || other.salaryType == salaryType)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.fcmToken, fcmToken) || other.fcmToken == fcmToken)&&(identical(other.notificationPrefs, notificationPrefs) || other.notificationPrefs == notificationPrefs)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is User&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.role, role) || other.role == role)&&(identical(other.salaryAmount, salaryAmount) || other.salaryAmount == salaryAmount)&&(identical(other.salaryType, salaryType) || other.salaryType == salaryType)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.fcmToken, fcmToken) || other.fcmToken == fcmToken)&&(identical(other.notificationPrefs, notificationPrefs) || other.notificationPrefs == notificationPrefs)&&(identical(other.banned, banned) || other.banned == banned)&&(identical(other.bannedAt, bannedAt) || other.bannedAt == bannedAt)&&(identical(other.bannedReason, bannedReason) || other.bannedReason == bannedReason)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,email,displayName,role,salaryAmount,salaryType,currency,fcmToken,notificationPrefs,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,email,displayName,role,salaryAmount,salaryType,currency,fcmToken,notificationPrefs,banned,bannedAt,bannedReason,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'User(id: $id, email: $email, displayName: $displayName, role: $role, salaryAmount: $salaryAmount, salaryType: $salaryType, currency: $currency, fcmToken: $fcmToken, notificationPrefs: $notificationPrefs, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'User(id: $id, email: $email, displayName: $displayName, role: $role, salaryAmount: $salaryAmount, salaryType: $salaryType, currency: $currency, fcmToken: $fcmToken, notificationPrefs: $notificationPrefs, banned: $banned, bannedAt: $bannedAt, bannedReason: $bannedReason, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -317,7 +317,7 @@ abstract mixin class $UserCopyWith<$Res>  {
   factory $UserCopyWith(User value, $Res Function(User) _then) = _$UserCopyWithImpl;
 @useResult
 $Res call({
- String? id, String email, String? displayName, Role role, double? salaryAmount, SalaryType salaryType, Currency currency, String? fcmToken, NotificationPrefs? notificationPrefs,@ServerTimestampConverter() DateTime? createdAt,@ServerTimestampConverter() DateTime? updatedAt
+ String? id, String email, String? displayName, Role role, double? salaryAmount, SalaryType salaryType, Currency currency, String? fcmToken, NotificationPrefs? notificationPrefs, bool banned,@ServerTimestampConverter() DateTime? bannedAt, String? bannedReason,@ServerTimestampConverter() DateTime? createdAt,@ServerTimestampConverter() DateTime? updatedAt
 });
 
 
@@ -334,7 +334,7 @@ class _$UserCopyWithImpl<$Res>
 
 /// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? email = null,Object? displayName = freezed,Object? role = null,Object? salaryAmount = freezed,Object? salaryType = null,Object? currency = null,Object? fcmToken = freezed,Object? notificationPrefs = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? email = null,Object? displayName = freezed,Object? role = null,Object? salaryAmount = freezed,Object? salaryType = null,Object? currency = null,Object? fcmToken = freezed,Object? notificationPrefs = freezed,Object? banned = null,Object? bannedAt = freezed,Object? bannedReason = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(_self.copyWith(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
@@ -345,7 +345,10 @@ as double?,salaryType: null == salaryType ? _self.salaryType : salaryType // ign
 as SalaryType,currency: null == currency ? _self.currency : currency // ignore: cast_nullable_to_non_nullable
 as Currency,fcmToken: freezed == fcmToken ? _self.fcmToken : fcmToken // ignore: cast_nullable_to_non_nullable
 as String?,notificationPrefs: freezed == notificationPrefs ? _self.notificationPrefs : notificationPrefs // ignore: cast_nullable_to_non_nullable
-as NotificationPrefs?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as NotificationPrefs?,banned: null == banned ? _self.banned : banned // ignore: cast_nullable_to_non_nullable
+as bool,bannedAt: freezed == bannedAt ? _self.bannedAt : bannedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,bannedReason: freezed == bannedReason ? _self.bannedReason : bannedReason // ignore: cast_nullable_to_non_nullable
+as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
@@ -444,10 +447,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  String email,  String? displayName,  Role role,  double? salaryAmount,  SalaryType salaryType,  Currency currency,  String? fcmToken,  NotificationPrefs? notificationPrefs, @ServerTimestampConverter()  DateTime? createdAt, @ServerTimestampConverter()  DateTime? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  String email,  String? displayName,  Role role,  double? salaryAmount,  SalaryType salaryType,  Currency currency,  String? fcmToken,  NotificationPrefs? notificationPrefs,  bool banned, @ServerTimestampConverter()  DateTime? bannedAt,  String? bannedReason, @ServerTimestampConverter()  DateTime? createdAt, @ServerTimestampConverter()  DateTime? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _User() when $default != null:
-return $default(_that.id,_that.email,_that.displayName,_that.role,_that.salaryAmount,_that.salaryType,_that.currency,_that.fcmToken,_that.notificationPrefs,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.email,_that.displayName,_that.role,_that.salaryAmount,_that.salaryType,_that.currency,_that.fcmToken,_that.notificationPrefs,_that.banned,_that.bannedAt,_that.bannedReason,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -465,10 +468,10 @@ return $default(_that.id,_that.email,_that.displayName,_that.role,_that.salaryAm
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  String email,  String? displayName,  Role role,  double? salaryAmount,  SalaryType salaryType,  Currency currency,  String? fcmToken,  NotificationPrefs? notificationPrefs, @ServerTimestampConverter()  DateTime? createdAt, @ServerTimestampConverter()  DateTime? updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  String email,  String? displayName,  Role role,  double? salaryAmount,  SalaryType salaryType,  Currency currency,  String? fcmToken,  NotificationPrefs? notificationPrefs,  bool banned, @ServerTimestampConverter()  DateTime? bannedAt,  String? bannedReason, @ServerTimestampConverter()  DateTime? createdAt, @ServerTimestampConverter()  DateTime? updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _User():
-return $default(_that.id,_that.email,_that.displayName,_that.role,_that.salaryAmount,_that.salaryType,_that.currency,_that.fcmToken,_that.notificationPrefs,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.email,_that.displayName,_that.role,_that.salaryAmount,_that.salaryType,_that.currency,_that.fcmToken,_that.notificationPrefs,_that.banned,_that.bannedAt,_that.bannedReason,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -485,10 +488,10 @@ return $default(_that.id,_that.email,_that.displayName,_that.role,_that.salaryAm
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  String email,  String? displayName,  Role role,  double? salaryAmount,  SalaryType salaryType,  Currency currency,  String? fcmToken,  NotificationPrefs? notificationPrefs, @ServerTimestampConverter()  DateTime? createdAt, @ServerTimestampConverter()  DateTime? updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  String email,  String? displayName,  Role role,  double? salaryAmount,  SalaryType salaryType,  Currency currency,  String? fcmToken,  NotificationPrefs? notificationPrefs,  bool banned, @ServerTimestampConverter()  DateTime? bannedAt,  String? bannedReason, @ServerTimestampConverter()  DateTime? createdAt, @ServerTimestampConverter()  DateTime? updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _User() when $default != null:
-return $default(_that.id,_that.email,_that.displayName,_that.role,_that.salaryAmount,_that.salaryType,_that.currency,_that.fcmToken,_that.notificationPrefs,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.email,_that.displayName,_that.role,_that.salaryAmount,_that.salaryType,_that.currency,_that.fcmToken,_that.notificationPrefs,_that.banned,_that.bannedAt,_that.bannedReason,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -500,7 +503,7 @@ return $default(_that.id,_that.email,_that.displayName,_that.role,_that.salaryAm
 @JsonSerializable()
 
 class _User extends User {
-  const _User({this.id, required this.email, this.displayName, this.role = Role.user, this.salaryAmount, this.salaryType = SalaryType.hourly, this.currency = Currency.lei, this.fcmToken, this.notificationPrefs, @ServerTimestampConverter() this.createdAt, @ServerTimestampConverter() this.updatedAt}): super._();
+  const _User({this.id, required this.email, this.displayName, this.role = Role.user, this.salaryAmount, this.salaryType = SalaryType.hourly, this.currency = Currency.lei, this.fcmToken, this.notificationPrefs, this.banned = false, @ServerTimestampConverter() this.bannedAt, this.bannedReason, @ServerTimestampConverter() this.createdAt, @ServerTimestampConverter() this.updatedAt}): super._();
   factory _User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
 @override final  String? id;
@@ -512,6 +515,9 @@ class _User extends User {
 @override@JsonKey() final  Currency currency;
 @override final  String? fcmToken;
 @override final  NotificationPrefs? notificationPrefs;
+@override@JsonKey() final  bool banned;
+@override@ServerTimestampConverter() final  DateTime? bannedAt;
+@override final  String? bannedReason;
 @override@ServerTimestampConverter() final  DateTime? createdAt;
 @override@ServerTimestampConverter() final  DateTime? updatedAt;
 
@@ -528,16 +534,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _User&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.role, role) || other.role == role)&&(identical(other.salaryAmount, salaryAmount) || other.salaryAmount == salaryAmount)&&(identical(other.salaryType, salaryType) || other.salaryType == salaryType)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.fcmToken, fcmToken) || other.fcmToken == fcmToken)&&(identical(other.notificationPrefs, notificationPrefs) || other.notificationPrefs == notificationPrefs)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _User&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.role, role) || other.role == role)&&(identical(other.salaryAmount, salaryAmount) || other.salaryAmount == salaryAmount)&&(identical(other.salaryType, salaryType) || other.salaryType == salaryType)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.fcmToken, fcmToken) || other.fcmToken == fcmToken)&&(identical(other.notificationPrefs, notificationPrefs) || other.notificationPrefs == notificationPrefs)&&(identical(other.banned, banned) || other.banned == banned)&&(identical(other.bannedAt, bannedAt) || other.bannedAt == bannedAt)&&(identical(other.bannedReason, bannedReason) || other.bannedReason == bannedReason)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,email,displayName,role,salaryAmount,salaryType,currency,fcmToken,notificationPrefs,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,email,displayName,role,salaryAmount,salaryType,currency,fcmToken,notificationPrefs,banned,bannedAt,bannedReason,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'User(id: $id, email: $email, displayName: $displayName, role: $role, salaryAmount: $salaryAmount, salaryType: $salaryType, currency: $currency, fcmToken: $fcmToken, notificationPrefs: $notificationPrefs, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'User(id: $id, email: $email, displayName: $displayName, role: $role, salaryAmount: $salaryAmount, salaryType: $salaryType, currency: $currency, fcmToken: $fcmToken, notificationPrefs: $notificationPrefs, banned: $banned, bannedAt: $bannedAt, bannedReason: $bannedReason, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -548,7 +554,7 @@ abstract mixin class _$UserCopyWith<$Res> implements $UserCopyWith<$Res> {
   factory _$UserCopyWith(_User value, $Res Function(_User) _then) = __$UserCopyWithImpl;
 @override @useResult
 $Res call({
- String? id, String email, String? displayName, Role role, double? salaryAmount, SalaryType salaryType, Currency currency, String? fcmToken, NotificationPrefs? notificationPrefs,@ServerTimestampConverter() DateTime? createdAt,@ServerTimestampConverter() DateTime? updatedAt
+ String? id, String email, String? displayName, Role role, double? salaryAmount, SalaryType salaryType, Currency currency, String? fcmToken, NotificationPrefs? notificationPrefs, bool banned,@ServerTimestampConverter() DateTime? bannedAt, String? bannedReason,@ServerTimestampConverter() DateTime? createdAt,@ServerTimestampConverter() DateTime? updatedAt
 });
 
 
@@ -565,7 +571,7 @@ class __$UserCopyWithImpl<$Res>
 
 /// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? email = null,Object? displayName = freezed,Object? role = null,Object? salaryAmount = freezed,Object? salaryType = null,Object? currency = null,Object? fcmToken = freezed,Object? notificationPrefs = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? email = null,Object? displayName = freezed,Object? role = null,Object? salaryAmount = freezed,Object? salaryType = null,Object? currency = null,Object? fcmToken = freezed,Object? notificationPrefs = freezed,Object? banned = null,Object? bannedAt = freezed,Object? bannedReason = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(_User(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
@@ -576,7 +582,10 @@ as double?,salaryType: null == salaryType ? _self.salaryType : salaryType // ign
 as SalaryType,currency: null == currency ? _self.currency : currency // ignore: cast_nullable_to_non_nullable
 as Currency,fcmToken: freezed == fcmToken ? _self.fcmToken : fcmToken // ignore: cast_nullable_to_non_nullable
 as String?,notificationPrefs: freezed == notificationPrefs ? _self.notificationPrefs : notificationPrefs // ignore: cast_nullable_to_non_nullable
-as NotificationPrefs?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as NotificationPrefs?,banned: null == banned ? _self.banned : banned // ignore: cast_nullable_to_non_nullable
+as bool,bannedAt: freezed == bannedAt ? _self.bannedAt : bannedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,bannedReason: freezed == bannedReason ? _self.bannedReason : bannedReason // ignore: cast_nullable_to_non_nullable
+as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));

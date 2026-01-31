@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Pontaj PRO</title>
+  <script>
+    // GitHub Pages SPA 404 workaround
+    // Save the original URL and redirect to root
+    sessionStorage.redirect = location.href;
+    location.replace(location.pathname.split('/').slice(0, -1).join('/') + '/');
+  </script>
+</head>
+<body></body>
+</html>

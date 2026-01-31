@@ -44,6 +44,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (firebaseUser != null) {
       final user = await _authRepository.getUserProfile(firebaseUser.uid);
       if (user != null) {
+        // Check if user is banned
+        if (user.banned) {
+          await _authRepository.signOut();
+          emit(const AuthFailure('Account suspended. Please contact support.'));
+          return;
+        }
         emit(AuthAuthenticated(user));
         return;
       }
@@ -62,6 +68,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final user = await _authRepository.signIn(event.email, event.password);
 
       if (user != null) {
+        // Check if user is banned
+        if (user.banned) {
+          await _authRepository.signOut();
+          emit(const AuthFailure('Account suspended. Please contact support.'));
+          return;
+        }
         emit(AuthAuthenticated(user));
       } else {
         emit(const AuthFailure('Authentication failed'));
@@ -128,6 +140,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final user = await _authRepository.signInWithGoogle();
 
       if (user != null) {
+        // Check if user is banned
+        if (user.banned) {
+          await _authRepository.signOut();
+          emit(const AuthFailure('Account suspended. Please contact support.'));
+          return;
+        }
         emit(AuthAuthenticated(user));
       } else {
         // User cancelled the sign-in

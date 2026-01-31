@@ -194,12 +194,14 @@ class _LoginPageState extends State<LoginPage>
                                         color: theme.colorScheme.primary
                                             .withValues(alpha: 0.2),
                                         child: isLoading
-                                            ? const SizedBox(
-                                                height: 24,
-                                                width: 24,
-                                                child:
-                                                    CircularProgressIndicator(
-                                                        strokeWidth: 2),
+                                            ? const Center(
+                                                child: SizedBox(
+                                                  height: 24,
+                                                  width: 24,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                          strokeWidth: 2),
+                                                ),
                                               )
                                             : Row(
                                                 mainAxisAlignment:
@@ -250,6 +252,11 @@ class _LoginPageState extends State<LoginPage>
                                   BlocBuilder<AuthBloc, AuthState>(
                                     builder: (context, state) {
                                       final isLoading = state is AuthLoading;
+                                      final isDark = theme.brightness ==
+                                          Brightness.dark;
+                                      final textColor = isDark
+                                          ? Colors.grey[300]
+                                          : Colors.grey[800];
                                       return GlassButton(
                                         onPressed: isLoading
                                             ? null
@@ -258,6 +265,7 @@ class _LoginPageState extends State<LoginPage>
                                                 .add(const AuthGoogleSignInRequested()),
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 14),
+                                        variant: GlassButtonVariant.secondary,
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
@@ -277,7 +285,7 @@ class _LoginPageState extends State<LoginPage>
                                               style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w500,
-                                                color: Colors.grey[700],
+                                                color: textColor,
                                               ),
                                             ),
                                           ],
@@ -286,27 +294,39 @@ class _LoginPageState extends State<LoginPage>
                                     },
                                   ),
                                   const SizedBox(height: 16),
-                                  GlassButton(
-                                    onPressed: () => context.push('/register'),
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 16),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.person_add,
-                                            size: 20, color: Colors.grey[700]),
-                                        const SizedBox(width: 12),
-                                        Text(
-                                          l10n.createAccount,
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            color: Colors.grey[700],
+                                  Builder(builder: (context) {
+                                    final isDark = theme.brightness ==
+                                        Brightness.dark;
+                                    return GlassButton(
+                                      onPressed: () => context.push('/register'),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 16),
+                                      variant: GlassButtonVariant.outlined,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.person_add_outlined,
+                                            size: 20,
+                                            color: theme.colorScheme.primary,
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                          const SizedBox(width: 12),
+                                          Text(
+                                            l10n.createAccount,
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w500,
+                                              color: isDark
+                                                  ? theme.colorScheme.primary
+                                                      .withValues(alpha: 0.9)
+                                                  : theme.colorScheme.primary,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }),
                                 ],
                               ),
                             ),
