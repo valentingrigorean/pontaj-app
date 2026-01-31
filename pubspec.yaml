@@ -59,7 +59,7 @@ dependencies:
   firebase_app_check: ^0.4.1+4
 
   # Web platform detection
-  web: ^1.1.0
+  web: ^1.1.1
 
 dev_dependencies:
   flutter_test:
