@@ -1,15 +1,20 @@
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:nume_proiect/models/time_entry.dart';
-import 'package:nume_proiect/models/user.dart';
-import 'package:nume_proiect/models/enums.dart';
+import 'package:pontaj_app/models/enums.dart';
+import 'package:pontaj_app/models/time_entry.dart';
+import 'package:pontaj_app/models/user.dart';
 
 void main() {
   group('TimeEntry', () {
     test('formatDuration formats correctly', () {
       expect(TimeEntry.formatDuration(const Duration(hours: 8)), '8h');
-      expect(TimeEntry.formatDuration(const Duration(hours: 8, minutes: 30)), '8h 30m');
-      expect(TimeEntry.formatDuration(const Duration(hours: 0, minutes: 45)), '0h 45m');
+      expect(
+        TimeEntry.formatDuration(const Duration(hours: 8, minutes: 30)),
+        '8h 30m',
+      );
+      expect(
+        TimeEntry.formatDuration(const Duration(hours: 0, minutes: 45)),
+        '0h 45m',
+      );
     });
 
     test('toJson and fromJson work correctly', () {

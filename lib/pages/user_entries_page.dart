@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/time_entry/time_entry_bloc.dart';
 import '../blocs/time_entry/time_entry_event.dart';
 import '../blocs/time_entry/time_entry_state.dart';
+import '../core/l10n/app_localizations.dart';
 import '../models/time_entry.dart';
 
 class UserEntriesPage extends StatefulWidget {
@@ -36,9 +37,11 @@ class _UserEntriesPageState extends State<UserEntriesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pontaje - ${widget.userName}'),
+        title: Text(l10n.pontajUser(widget.userName)),
       ),
       body: BlocBuilder<TimeEntryBloc, TimeEntryState>(
         builder: (context, state) {
@@ -47,7 +50,7 @@ class _UserEntriesPageState extends State<UserEntriesPage> {
           }
 
           if (state is! TimeEntryLoaded) {
-            return const Center(child: Text('Nu s-au putut incarca datele'));
+            return Center(child: Text(l10n.couldNotLoadData));
           }
 
           final entries = state.entries
@@ -61,8 +64,8 @@ class _UserEntriesPageState extends State<UserEntriesPage> {
           );
 
           if (entries.isEmpty) {
-            return const Center(
-              child: Text('Nu exista pontaje pentru acest utilizator.'),
+            return Center(
+              child: Text(l10n.noPontajForUser),
             );
           }
 
@@ -73,12 +76,12 @@ class _UserEntriesPageState extends State<UserEntriesPage> {
                 child: Row(
                   children: [
                     Text(
-                      '${entries.length} zile inregistrate',
+                      l10n.nDaysRegistered(entries.length),
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const Spacer(),
                     Text(
-                      'Total: ${TimeEntry.formatDuration(total)}',
+                      '${l10n.total}: ${TimeEntry.formatDuration(total)}',
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ],
@@ -96,12 +99,12 @@ class _UserEntriesPageState extends State<UserEntriesPage> {
                       controller: _horizontalScroll,
                       scrollDirection: Axis.horizontal,
                       child: DataTable(
-                        columns: const [
-                          DataColumn(label: Text('Data')),
-                          DataColumn(label: Text('Locatie')),
-                          DataColumn(label: Text('Interval')),
-                          DataColumn(label: Text('Pauza')),
-                          DataColumn(label: Text('Total')),
+                        columns: [
+                          DataColumn(label: Text(l10n.date)),
+                          DataColumn(label: Text(l10n.location)),
+                          DataColumn(label: Text(l10n.interval)),
+                          DataColumn(label: Text(l10n.breakTime)),
+                          DataColumn(label: Text(l10n.total)),
                         ],
                         rows: entries
                             .map(

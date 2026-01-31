@@ -43,9 +43,18 @@ class TimeEntryBloc extends Bloc<TimeEntryEvent, TimeEntryState> {
     AddEntry event,
     Emitter<TimeEntryState> emit,
   ) async {
+    emit(const TimeEntrySaving());
     try {
       await _repository.addEntry(event.entry);
-      add(LoadEntries(username: _currentUserFilter));
+      emit(TimeEntrySaved(event.entry));
+
+      // Reload entries to refresh the list
+      final entries = _currentUserFilter != null
+          ? _repository.getEntriesForUser(_currentUserFilter!)
+          : _repository.getEntries();
+      final locations = _repository.getLocations();
+
+      emit(TimeEntryLoaded(entries: entries, locations: locations));
     } catch (e) {
       emit(TimeEntryFailure(e.toString()));
     }

@@ -4,6 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 
 import '../blocs/time_entry/time_entry_bloc.dart';
 import '../blocs/time_entry/time_entry_state.dart';
+import '../core/l10n/app_localizations.dart';
 import '../models/time_entry.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/gradient_background.dart';
@@ -13,6 +14,8 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return BlocBuilder<TimeEntryBloc, TimeEntryState>(
       builder: (context, state) {
         if (state is! TimeEntryLoaded) {
@@ -34,7 +37,7 @@ class DashboardPage extends StatelessWidget {
         }
 
         return GradientBackground(
-          animated: true,
+          animated: false,
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -45,7 +48,7 @@ class DashboardPage extends StatelessWidget {
                     Expanded(
                       child: _StatCard(
                         icon: Icons.access_time,
-                        label: 'Total Ore',
+                        label: l10n.totalHours,
                         value: '${totalHours.toStringAsFixed(1)}h',
                         color: Colors.blue,
                       ),
@@ -54,7 +57,7 @@ class DashboardPage extends StatelessWidget {
                     Expanded(
                       child: _StatCard(
                         icon: Icons.calendar_today,
-                        label: 'Total Zile',
+                        label: l10n.totalDays,
                         value: '$totalDays',
                         color: Colors.green,
                       ),
@@ -67,7 +70,7 @@ class DashboardPage extends StatelessWidget {
                     Expanded(
                       child: _StatCard(
                         icon: Icons.people,
-                        label: 'Utilizatori',
+                        label: l10n.users,
                         value: '$uniqueUsers',
                         color: Colors.purple,
                       ),
@@ -76,7 +79,7 @@ class DashboardPage extends StatelessWidget {
                     Expanded(
                       child: _StatCard(
                         icon: Icons.trending_up,
-                        label: 'Medie/Zi',
+                        label: l10n.averagePerDay,
                         value: '${avgHoursPerDay.toStringAsFixed(1)}h',
                         color: Colors.orange,
                       ),
@@ -87,11 +90,12 @@ class DashboardPage extends StatelessWidget {
                 if (hoursPerUser.isNotEmpty) ...[
                   GlassCard(
                     padding: const EdgeInsets.all(20),
+                    enableBlur: false,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Ore pe utilizator',
+                          l10n.hoursPerUser,
                           style:
                               Theme.of(context).textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
@@ -180,11 +184,12 @@ class DashboardPage extends StatelessWidget {
                 ],
                 GlassCard(
                   padding: const EdgeInsets.all(20),
+                  enableBlur: false,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Activitate recenta',
+                        l10n.recentActivity,
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
@@ -196,7 +201,7 @@ class DashboardPage extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(20),
                             child: Text(
-                              'Nicio activitate',
+                              l10n.noActivity,
                               style: TextStyle(color: Colors.grey[600]),
                             ),
                           ),
@@ -232,6 +237,7 @@ class _StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassCard(
       padding: const EdgeInsets.all(16),
+      enableBlur: false,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

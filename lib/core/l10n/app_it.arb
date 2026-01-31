@@ -1,0 +1,166 @@
+{
+  "@@locale": "it",
+  "appTitle": "Pontaj PRO",
+  "appSubtitle": "10,000x Better Edition",
+
+  "login": "Accesso",
+  "loginTitle": "Accedi",
+  "loginSubtitle": "Gestisci i fogli presenze in modo rapido e intuitivo",
+  "loginButton": "Accedi",
+  "createAccount": "Crea un nuovo account",
+
+  "register": "Registrazione",
+  "createAccountButton": "Crea account",
+  "processing": "Elaborazione...",
+  "accountCreated": "Account creato. Effettua l'accesso.",
+
+  "username": "Nome utente",
+  "password": "Password",
+  "confirmPassword": "Conferma password",
+  "required": "Obbligatorio",
+  "minCharacters": "Minimo {count} caratteri",
+  "@minCharacters": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "passwordsDoNotMatch": "Le password non corrispondono",
+
+  "administrator": "Amministratore",
+  "settings": "Impostazioni",
+  "logout": "Esci",
+
+  "hello": "Ciao, {name}",
+  "@hello": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "chooseAction": "Scegli l'azione desiderata per continuare",
+
+  "pontajAs": "Foglio presenze come {name}",
+  "@pontajAs": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "addPontajForToday": "Aggiungi foglio presenze per oggi",
+  "viewAllEntries": "Visualizza tutte le voci",
+  "manageAndAnalyze": "Gestisci e analizza tutte le voci",
+  "manageSalaries": "Gestisci stipendi",
+  "configureAndCalculate": "Configura e calcola gli stipendi",
+
+  "addPontaj": "Aggiungi foglio presenze",
+  "location": "Posizione",
+  "locationHint": "Es: Casa A, Fabbrica",
+  "enterLocation": "Inserisci posizione",
+  "quickHours": "Ore lavorate rapide",
+  "nHours": "{count} ore",
+  "@nHours": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "useCustomInterval": "Usa intervallo personalizzato",
+  "customInterval": "Intervallo personalizzato",
+  "startTime": "Ora inizio",
+  "endTime": "Ora fine",
+
+  "breakTime": "Pausa",
+  "noBreak": "Nessuna pausa",
+  "nMinutes": "{count} min",
+  "@nMinutes": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "totalHoursWorked": "Totale ore lavorate",
+  "savePontaj": "Salva foglio presenze",
+  "pontajSaved": "Foglio presenze salvato",
+  "pontajDeleted": "Foglio presenze eliminato",
+  "workedTimeMustBePositive": "Il tempo lavorato deve essere positivo",
+
+  "existingPontajWarning": "Hai gia un foglio presenze per il giorno selezionato!",
+  "delete": "Elimina",
+  "otherDay": "Altro giorno",
+  "total": "Totale",
+
+  "pontajAdmin": "Fogli presenze - Amministratore",
+  "dashboard": "Pannello di controllo",
+  "users": "Utenti",
+  "table": "Tabella",
+  "salaries": "Stipendi",
+
+  "noPontaj": "Nessun foglio presenze",
+  "couldNotLoadData": "Impossibile caricare i dati",
+  "nDays": "{count} giorni",
+  "@nDays": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "nDaysRegistered": "{count} giorni registrati",
+  "@nDaysRegistered": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "nDaysWorked": "{count} giorni lavorati",
+  "@nDaysWorked": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "usersTable": "Tabella Utenti",
+  "user": "Utente",
+  "days": "Giorni",
+  "totalHours": "Ore totali",
+  "totalDays": "Giorni Totali",
+  "averagePerDay": "Media/Giorno",
+
+  "pontajUser": "Fogli presenze - {name}",
+  "@pontajUser": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "noPontajForUser": "Nessun foglio presenze per questo utente.",
+  "date": "Data",
+  "interval": "Intervallo",
+
+  "hoursPerUser": "Ore per utente",
+  "recentActivity": "Attivita recente",
+  "noActivity": "Nessuna attivita",
+
+  "salarySummary": "Riepilogo Stipendi",
+  "calculationBasedOnPontaj": "Calcolo basato sulle voci registrate",
+  "noPontajForSalary": "Nessuna voce per il calcolo degli stipendi",
+  "hoursDecimal": "Ore (decimale)",
+
+  "appearance": "Aspetto",
+  "darkMode": "Modalita scura",
+  "light": "Chiaro",
+  "dark": "Scuro",
+  "auto": "Automatico",
+  "accentColor": "Colore accento",
+  "current": "Attuale",
+
+  "information": "Informazioni",
+  "version": "Versione",
+  "developedBy": "Sviluppato da",
+  "status": "Stato",
+  "allSystemsOperational": "Tutti i sistemi operativi",
+
+  "language": "Lingua",
+  "romanian": "Rumeno",
+  "english": "Inglese",
+  "italian": "Italiano",
+
+  "unknownRoute": "Percorso sconosciuto",
+  "routeNotDefined": "Il percorso richiesto non e definito.",
+  "backToLogin": "Torna al Login",
+
+  "invalidFormat": "Formato non valido"
+}

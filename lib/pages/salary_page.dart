@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blocs/time_entry/time_entry_bloc.dart';
 import '../blocs/time_entry/time_entry_state.dart';
+import '../core/l10n/app_localizations.dart';
 import '../models/time_entry.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/gradient_background.dart';
@@ -12,6 +13,8 @@ class SalaryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return BlocBuilder<TimeEntryBloc, TimeEntryState>(
       builder: (context, state) {
         if (state is! TimeEntryLoaded) {
@@ -22,10 +25,11 @@ class SalaryPage extends StatelessWidget {
 
         if (entriesByUser.isEmpty) {
           return GradientBackground(
-            animated: true,
+            animated: false,
             child: Center(
               child: GlassCard(
                 padding: const EdgeInsets.all(40),
+                enableBlur: false,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -33,7 +37,7 @@ class SalaryPage extends StatelessWidget {
                         size: 64, color: Colors.grey[400]),
                     const SizedBox(height: 16),
                     Text(
-                      'Niciun pontaj pentru calcul salarii',
+                      l10n.noPontajForSalary,
                       style: Theme.of(context)
                           .textTheme
                           .titleLarge
@@ -47,12 +51,13 @@ class SalaryPage extends StatelessWidget {
         }
 
         return GradientBackground(
-          animated: true,
+          animated: false,
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
               GlassCard(
                 padding: const EdgeInsets.all(20),
+                enableBlur: false,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -64,7 +69,7 @@ class SalaryPage extends StatelessWidget {
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          'Sumar Salarii',
+                          l10n.salarySummary,
                           style:
                               Theme.of(context).textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
@@ -74,7 +79,7 @@ class SalaryPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Calcul pe baza pontajelor inregistrate',
+                      l10n.calculationBasedOnPontaj,
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                   ],
@@ -93,6 +98,7 @@ class SalaryPage extends StatelessWidget {
                 return GlassCard(
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: const EdgeInsets.all(16),
+                  enableBlur: false,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -135,7 +141,7 @@ class SalaryPage extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  '${entries.length} zile lucrate',
+                                  l10n.nDaysWorked(entries.length),
                                   style: TextStyle(
                                     color: Colors.grey[600],
                                     fontSize: 13,
@@ -163,7 +169,7 @@ class SalaryPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Total ore',
+                                  l10n.totalHours,
                                   style: TextStyle(
                                     color: Colors.grey[600],
                                     fontSize: 12,
@@ -184,7 +190,7 @@ class SalaryPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  'Ore (decimal)',
+                                  l10n.hoursDecimal,
                                   style: TextStyle(
                                     color: Colors.grey[600],
                                     fontSize: 12,

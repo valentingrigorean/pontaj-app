@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../blocs/auth/auth_bloc.dart';
 import '../blocs/auth/auth_event.dart';
 import '../blocs/auth/auth_state.dart';
+import '../core/l10n/app_localizations.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -37,6 +38,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthFailure) {
@@ -45,13 +48,13 @@ class _RegisterPageState extends State<RegisterPage> {
           );
         } else if (state is AuthRegistrationSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Cont creat. Autentificati-va.')),
+            SnackBar(content: Text(l10n.accountCreated)),
           );
           context.pop();
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('Inregistrare')),
+        appBar: AppBar(title: Text(l10n.register)),
         body: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
@@ -64,34 +67,34 @@ class _RegisterPageState extends State<RegisterPage> {
                   children: [
                     TextFormField(
                       controller: _userCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Utilizator',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: l10n.username,
+                        border: const OutlineInputBorder(),
                       ),
                       validator: (v) =>
-                          v == null || v.trim().isEmpty ? 'Obligatoriu' : null,
+                          v == null || v.trim().isEmpty ? l10n.required : null,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _passCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Parola',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: l10n.password,
+                        border: const OutlineInputBorder(),
                       ),
                       obscureText: true,
                       validator: (v) =>
-                          v == null || v.length < 4 ? 'Minim 4 caractere' : null,
+                          v == null || v.length < 4 ? l10n.minCharacters(4) : null,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _confirmCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Confirma parola',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: l10n.confirmPassword,
+                        border: const OutlineInputBorder(),
                       ),
                       obscureText: true,
                       validator: (v) =>
-                          v != _passCtrl.text ? 'Parolele nu coincid' : null,
+                          v != _passCtrl.text ? l10n.passwordsDoNotMatch : null,
                     ),
                     const SizedBox(height: 20),
                     BlocBuilder<AuthBloc, AuthState>(
@@ -103,7 +106,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             onPressed: isLoading ? null : _submit,
                             icon: const Icon(Icons.person_add),
                             label: Text(
-                              isLoading ? 'Se proceseaza...' : 'Creeaza cont',
+                              isLoading ? l10n.processing : l10n.createAccountButton,
                             ),
                           ),
                         );

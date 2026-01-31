@@ -9,10 +9,12 @@ enum AppThemeMode { light, dark, system }
 class ThemeState extends Equatable {
   final AppThemeMode themeMode;
   final Color accentColor;
+  final Locale? locale;
 
   const ThemeState({
     this.themeMode = AppThemeMode.system,
     this.accentColor = const Color(0xFF0F8D6E),
+    this.locale,
   });
 
   ThemeMode get effectiveThemeMode {
@@ -27,15 +29,18 @@ class ThemeState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [themeMode, accentColor];
+  List<Object?> get props => [themeMode, accentColor, locale];
 
   ThemeState copyWith({
     AppThemeMode? themeMode,
     Color? accentColor,
+    Locale? locale,
+    bool clearLocale = false,
   }) =>
       ThemeState(
         themeMode: themeMode ?? this.themeMode,
         accentColor: accentColor ?? this.accentColor,
+        locale: clearLocale ? null : (locale ?? this.locale),
       );
 }
 
@@ -48,10 +53,12 @@ class ThemeCubit extends Cubit<ThemeState> {
 
   static const _themeModeKey = 'themeMode';
   static const _accentColorKey = 'accentColor';
+  static const _localeKey = 'locale';
 
   void loadTheme() {
     final themeModeStr = _storage.read<String>(_themeModeKey);
     final accentColorInt = _storage.read<int>(_accentColorKey);
+    final localeStr = _storage.read<String>(_localeKey);
 
     AppThemeMode themeMode = AppThemeMode.system;
     if (themeModeStr == 'light') {
@@ -64,7 +71,12 @@ class ThemeCubit extends Cubit<ThemeState> {
         ? Color(accentColorInt)
         : const Color(0xFF0F8D6E);
 
-    emit(ThemeState(themeMode: themeMode, accentColor: accentColor));
+    Locale? locale;
+    if (localeStr != null && localeStr.isNotEmpty) {
+      locale = Locale(localeStr);
+    }
+
+    emit(ThemeState(themeMode: themeMode, accentColor: accentColor, locale: locale));
   }
 
   Future<void> setThemeMode(AppThemeMode mode) async {
@@ -75,6 +87,16 @@ class ThemeCubit extends Cubit<ThemeState> {
   Future<void> setAccentColor(Color color) async {
     await _storage.write(_accentColorKey, color.toARGB32());
     emit(state.copyWith(accentColor: color));
+  }
+
+  Future<void> setLocale(Locale? locale) async {
+    if (locale == null) {
+      await _storage.write(_localeKey, '');
+      emit(state.copyWith(clearLocale: true));
+    } else {
+      await _storage.write(_localeKey, locale.languageCode);
+      emit(state.copyWith(locale: locale));
+    }
   }
 
   ThemeData getLightTheme() {

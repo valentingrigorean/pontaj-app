@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../blocs/auth/auth_bloc.dart';
 import '../blocs/auth/auth_event.dart';
 import '../blocs/auth/auth_state.dart';
+import '../core/l10n/app_localizations.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/gradient_background.dart';
 
@@ -61,6 +62,7 @@ class _LoginPageState extends State<LoginPage>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
@@ -85,7 +87,7 @@ class _LoginPageState extends State<LoginPage>
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _LogoHeader(theme: theme),
+                        _LogoHeader(theme: theme, l10n: l10n),
                         const SizedBox(height: 32),
                         ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 460),
@@ -104,7 +106,7 @@ class _LoginPageState extends State<LoginPage>
                                       ],
                                     ).createShader(bounds),
                                     child: Text(
-                                      'Intra in cont',
+                                      l10n.loginTitle,
                                       style: theme.textTheme.headlineSmall
                                           ?.copyWith(
                                         color: Colors.white,
@@ -114,7 +116,7 @@ class _LoginPageState extends State<LoginPage>
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Gestioneaza pontajele rapid si intuitiv',
+                                    l10n.loginSubtitle,
                                     style: theme.textTheme.bodyMedium?.copyWith(
                                       color: Colors.grey[600],
                                     ),
@@ -124,7 +126,7 @@ class _LoginPageState extends State<LoginPage>
                                     controller: _userController,
                                     textInputAction: TextInputAction.next,
                                     decoration: InputDecoration(
-                                      labelText: 'Utilizator',
+                                      labelText: l10n.username,
                                       prefixIcon: Icon(
                                         Icons.person_outline,
                                         color: theme.colorScheme.primary,
@@ -135,7 +137,7 @@ class _LoginPageState extends State<LoginPage>
                                     ),
                                     validator: (v) =>
                                         v == null || v.trim().isEmpty
-                                            ? 'Obligatoriu'
+                                            ? l10n.required
                                             : null,
                                   ),
                                   const SizedBox(height: 20),
@@ -144,7 +146,7 @@ class _LoginPageState extends State<LoginPage>
                                     obscureText: _hidePassword,
                                     textInputAction: TextInputAction.done,
                                     decoration: InputDecoration(
-                                      labelText: 'Parola',
+                                      labelText: l10n.password,
                                       prefixIcon: Icon(
                                         Icons.lock_outline,
                                         color: theme.colorScheme.primary,
@@ -164,7 +166,7 @@ class _LoginPageState extends State<LoginPage>
                                     ),
                                     onFieldSubmitted: (_) => _login(),
                                     validator: (v) => v == null || v.length < 4
-                                        ? 'Minim 4 caractere'
+                                        ? l10n.minCharacters(4)
                                         : null,
                                   ),
                                   const SizedBox(height: 32),
@@ -194,7 +196,7 @@ class _LoginPageState extends State<LoginPage>
                                                           .colorScheme.primary),
                                                   const SizedBox(width: 12),
                                                   Text(
-                                                    'Intra in aplicatie',
+                                                    l10n.loginButton,
                                                     style: TextStyle(
                                                       fontSize: 16,
                                                       fontWeight:
@@ -221,7 +223,7 @@ class _LoginPageState extends State<LoginPage>
                                             size: 20, color: Colors.grey[700]),
                                         const SizedBox(width: 12),
                                         Text(
-                                          'Creeaza un cont nou',
+                                          l10n.createAccount,
                                           style: TextStyle(
                                             fontSize: 15,
                                             color: Colors.grey[700],
@@ -249,8 +251,9 @@ class _LoginPageState extends State<LoginPage>
 }
 
 class _LogoHeader extends StatelessWidget {
-  const _LogoHeader({required this.theme});
+  const _LogoHeader({required this.theme, required this.l10n});
   final ThemeData theme;
+  final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) {
@@ -297,7 +300,7 @@ class _LogoHeader extends StatelessWidget {
             ],
           ).createShader(bounds),
           child: Text(
-            'PONTAJ PRO',
+            l10n.appTitle.toUpperCase(),
             style: theme.textTheme.headlineMedium?.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -307,7 +310,7 @@ class _LogoHeader extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          '10,000x Better Edition',
+          l10n.appSubtitle,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: Colors.grey[500],
             letterSpacing: 1,

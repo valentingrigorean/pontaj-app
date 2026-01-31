@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'blocs/auth/auth_bloc.dart';
 import 'blocs/time_entry/time_entry_bloc.dart';
 import 'blocs/theme/theme_cubit.dart';
+import 'core/l10n/app_localizations.dart';
 import 'core/router/app_router.dart';
 import 'repositories/auth_repository.dart';
 import 'repositories/time_entry_repository.dart';
@@ -64,6 +65,9 @@ class _PontajAppState extends State<PontajApp> {
             themeMode: themeState.effectiveThemeMode,
             theme: _themeCubit.getLightTheme(),
             darkTheme: _themeCubit.getDarkTheme(),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: themeState.locale,
           );
         },
       ),

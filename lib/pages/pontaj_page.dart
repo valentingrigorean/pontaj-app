@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../blocs/time_entry/time_entry_bloc.dart';
 import '../blocs/time_entry/time_entry_event.dart';
 import '../blocs/time_entry/time_entry_state.dart';
+import '../core/l10n/app_localizations.dart';
 import '../models/time_entry.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/gradient_background.dart';
@@ -97,18 +98,19 @@ class _PontajPageState extends State<PontajPage> {
   }
 
   void _submitPontaj() {
+    final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
 
     final workedTime = _calculateWorkedTime();
     if (workedTime.inMinutes <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Timpul lucrat trebuie sa fie pozitiv')),
+        SnackBar(content: Text(l10n.workedTimeMustBePositive)),
       );
       return;
     }
 
     final intervalText = _quickHours != null
-        ? 'Lucrat $_quickHours ore'
+        ? l10n.nHours(_quickHours!)
         : '${_startTimeController.text} - ${_endTimeController.text}';
 
     final entry = TimeEntry(
@@ -133,7 +135,7 @@ class _PontajPageState extends State<PontajPage> {
           children: [
             const Icon(Icons.check_circle, color: Colors.white),
             const SizedBox(width: 12),
-            Text('Pontaj salvat - ${TimeEntry.formatDuration(workedTime)}'),
+            Text('${l10n.pontajSaved} - ${TimeEntry.formatDuration(workedTime)}'),
           ],
         ),
         backgroundColor: Colors.green,
@@ -182,14 +184,15 @@ class _PontajPageState extends State<PontajPage> {
   }
 
   void _removeExistingPontaj(TimeEntry entry) {
+    final l10n = AppLocalizations.of(context)!;
     context.read<TimeEntryBloc>().add(DeleteEntry(entry.id));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
+      SnackBar(
         content: Row(
           children: [
-            Icon(Icons.delete, color: Colors.white),
-            SizedBox(width: 12),
-            Text('Pontaj sters'),
+            const Icon(Icons.delete, color: Colors.white),
+            const SizedBox(width: 12),
+            Text(l10n.pontajDeleted),
           ],
         ),
         backgroundColor: Colors.orange,
@@ -199,6 +202,8 @@ class _PontajPageState extends State<PontajPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return BlocBuilder<TimeEntryBloc, TimeEntryState>(
       builder: (context, state) {
         final entries =
@@ -213,7 +218,7 @@ class _PontajPageState extends State<PontajPage> {
           isCelebrating: _isCelebrating,
           child: Scaffold(
             appBar: AppBar(
-              title: const Text('Adauga pontaj'),
+              title: Text(l10n.addPontaj),
               leading: widget.adminMode
                   ? IconButton(
                       icon: const Icon(Icons.arrow_back),
@@ -222,7 +227,7 @@ class _PontajPageState extends State<PontajPage> {
                   : null,
             ),
             body: GradientBackground(
-              animated: true,
+              animated: false,
               child: SafeArea(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
@@ -262,6 +267,7 @@ class _PontajPageState extends State<PontajPage> {
                                     DateTime.now().add(const Duration(days: 1));
                               });
                             },
+                            l10n: l10n,
                           ),
                         if (hasExisting) const SizedBox(height: 16),
                         _UserInfoCard(
@@ -276,6 +282,7 @@ class _PontajPageState extends State<PontajPage> {
                           locations: locations,
                           onLocationSelected: (loc) =>
                               setState(() => _locationController.text = loc),
+                          l10n: l10n,
                         ),
                         const SizedBox(height: 16),
                         _QuickHoursCard(
@@ -284,6 +291,7 @@ class _PontajPageState extends State<PontajPage> {
                           onSelected: (hours) =>
                               setState(() => _quickHours = hours),
                           onClear: () => setState(() => _quickHours = null),
+                          l10n: l10n,
                         ),
                         if (_quickHours == null) ...[
                           const SizedBox(height: 16),
@@ -292,10 +300,11 @@ class _PontajPageState extends State<PontajPage> {
                             endController: _endTimeController,
                             onChanged: () => setState(() {}),
                             validator: (v) {
-                              if (v == null || v.isEmpty) return 'Obligatoriu';
-                              if (_parseTime(v) == null) return 'Format invalid';
+                              if (v == null || v.isEmpty) return l10n.required;
+                              if (_parseTime(v) == null) return l10n.invalidFormat;
                               return null;
                             },
+                            l10n: l10n,
                           ),
                         ],
                         const SizedBox(height: 16),
@@ -304,9 +313,10 @@ class _PontajPageState extends State<PontajPage> {
                           options: _breakOptions,
                           onSelected: (mins) =>
                               setState(() => _breakMinutes = mins),
+                          l10n: l10n,
                         ),
                         const SizedBox(height: 16),
-                        _SummaryCard(workedTime: workedTime),
+                        _SummaryCard(workedTime: workedTime, l10n: l10n),
                         const SizedBox(height: 24),
                         PulsingWidget(
                           enabled: workedTime.inMinutes > 0 && !hasExisting,
@@ -325,7 +335,7 @@ class _PontajPageState extends State<PontajPage> {
                                         Theme.of(context).colorScheme.primary),
                                 const SizedBox(width: 12),
                                 Text(
-                                  'Salveaza pontaj',
+                                  l10n.savePontaj,
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -355,11 +365,13 @@ class _ExistingEntryWarning extends StatelessWidget {
   final TimeEntry entry;
   final VoidCallback onDelete;
   final VoidCallback onChangeDate;
+  final AppLocalizations l10n;
 
   const _ExistingEntryWarning({
     required this.entry,
     required this.onDelete,
     required this.onChangeDate,
+    required this.l10n,
   });
 
   @override
@@ -367,6 +379,7 @@ class _ExistingEntryWarning extends StatelessWidget {
     return GlassCard(
       padding: const EdgeInsets.all(16),
       color: Colors.orange.withValues(alpha: 0.1),
+      enableBlur: false,
       child: Column(
         children: [
           Row(
@@ -375,7 +388,7 @@ class _ExistingEntryWarning extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Ai deja un pontaj pentru ziua selectata!',
+                  l10n.existingPontajWarning,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.orange[900],
@@ -404,7 +417,7 @@ class _ExistingEntryWarning extends StatelessWidget {
                   style: const TextStyle(fontSize: 13),
                 ),
                 Text(
-                  'Total: ${TimeEntry.formatDuration(entry.totalWorked)}',
+                  '${l10n.total}: ${TimeEntry.formatDuration(entry.totalWorked)}',
                   style: const TextStyle(fontSize: 13),
                 ),
               ],
@@ -418,12 +431,13 @@ class _ExistingEntryWarning extends StatelessWidget {
                   onPressed: onDelete,
                   color: Colors.red.withValues(alpha: 0.1),
                   padding: const EdgeInsets.symmetric(vertical: 12),
+                  enableBlur: false,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.delete, size: 18, color: Colors.red[700]),
                       const SizedBox(width: 8),
-                      Text('Sterge', style: TextStyle(color: Colors.red[700])),
+                      Text(l10n.delete, style: TextStyle(color: Colors.red[700])),
                     ],
                   ),
                 ),
@@ -433,12 +447,13 @@ class _ExistingEntryWarning extends StatelessWidget {
                 child: GlassButton(
                   onPressed: onChangeDate,
                   padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: const Row(
+                  enableBlur: false,
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.calendar_today, size: 18),
-                      SizedBox(width: 8),
-                      Text('Alta zi'),
+                      const Icon(Icons.calendar_today, size: 18),
+                      const SizedBox(width: 8),
+                      Text(l10n.otherDay),
                     ],
                   ),
                 ),
@@ -465,6 +480,7 @@ class _UserInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GlassCard(
+      enableBlur: false,
       child: Row(
         children: [
           Container(
@@ -535,21 +551,24 @@ class _LocationCard extends StatelessWidget {
   final TextEditingController controller;
   final List<String> locations;
   final ValueChanged<String> onLocationSelected;
+  final AppLocalizations l10n;
 
   const _LocationCard({
     required this.controller,
     required this.locations,
     required this.onLocationSelected,
+    required this.l10n,
   });
 
   @override
   Widget build(BuildContext context) {
     return GlassCard(
+      enableBlur: false,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Locatie',
+            l10n.location,
             style: Theme.of(context)
                 .textTheme
                 .titleMedium
@@ -582,7 +601,7 @@ class _LocationCard extends StatelessWidget {
                 controller: textController,
                 focusNode: focusNode,
                 decoration: InputDecoration(
-                  hintText: 'Ex: Casa A, Fabrica',
+                  hintText: l10n.locationHint,
                   filled: true,
                   fillColor:
                       Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
@@ -593,7 +612,7 @@ class _LocationCard extends StatelessWidget {
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Introdu locatia';
+                    return l10n.enterLocation;
                   }
                   return null;
                 },
@@ -630,22 +649,25 @@ class _QuickHoursCard extends StatelessWidget {
   final List<int> options;
   final ValueChanged<int> onSelected;
   final VoidCallback onClear;
+  final AppLocalizations l10n;
 
   const _QuickHoursCard({
     required this.quickHours,
     required this.options,
     required this.onSelected,
     required this.onClear,
+    required this.l10n,
   });
 
   @override
   Widget build(BuildContext context) {
     return GlassCard(
+      enableBlur: false,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Ore lucrate rapide',
+            l10n.quickHours,
             style: Theme.of(context)
                 .textTheme
                 .titleMedium
@@ -682,7 +704,7 @@ class _QuickHoursCard extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    '$hours ore',
+                    l10n.nHours(hours),
                     style: TextStyle(
                       color: isSelected ? Colors.white : Colors.black87,
                       fontWeight:
@@ -697,7 +719,7 @@ class _QuickHoursCard extends StatelessWidget {
             const SizedBox(height: 12),
             TextButton.icon(
               icon: const Icon(Icons.clear),
-              label: const Text('Foloseste interval personalizat'),
+              label: Text(l10n.useCustomInterval),
               onPressed: onClear,
             ),
           ],
@@ -712,22 +734,25 @@ class _TimeIntervalCard extends StatelessWidget {
   final TextEditingController endController;
   final VoidCallback onChanged;
   final String? Function(String?) validator;
+  final AppLocalizations l10n;
 
   const _TimeIntervalCard({
     required this.startController,
     required this.endController,
     required this.onChanged,
     required this.validator,
+    required this.l10n,
   });
 
   @override
   Widget build(BuildContext context) {
     return GlassCard(
+      enableBlur: false,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Interval personalizat',
+            l10n.customInterval,
             style: Theme.of(context)
                 .textTheme
                 .titleMedium
@@ -740,7 +765,7 @@ class _TimeIntervalCard extends StatelessWidget {
                 child: TextFormField(
                   controller: startController,
                   decoration: InputDecoration(
-                    labelText: 'Ora inceput',
+                    labelText: l10n.startTime,
                     hintText: '08:00',
                     filled: true,
                     fillColor: Theme.of(context)
@@ -766,7 +791,7 @@ class _TimeIntervalCard extends StatelessWidget {
                 child: TextFormField(
                   controller: endController,
                   decoration: InputDecoration(
-                    labelText: 'Ora sfarsit',
+                    labelText: l10n.endTime,
                     hintText: '17:00',
                     filled: true,
                     fillColor: Theme.of(context)
@@ -799,21 +824,24 @@ class _BreakCard extends StatelessWidget {
   final int breakMinutes;
   final List<int> options;
   final ValueChanged<int> onSelected;
+  final AppLocalizations l10n;
 
   const _BreakCard({
     required this.breakMinutes,
     required this.options,
     required this.onSelected,
+    required this.l10n,
   });
 
   @override
   Widget build(BuildContext context) {
     return GlassCard(
+      enableBlur: false,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Pauza',
+            l10n.breakTime,
             style: Theme.of(context)
                 .textTheme
                 .titleMedium
@@ -828,7 +856,7 @@ class _BreakCard extends StatelessWidget {
               return GestureDetector(
                 onTap: () => onSelected(minutes),
                 child: Chip(
-                  label: Text(minutes == 0 ? 'Fara pauza' : '$minutes min'),
+                  label: Text(minutes == 0 ? l10n.noBreak : l10n.nMinutes(minutes)),
                   backgroundColor: isSelected
                       ? Theme.of(context).colorScheme.primaryContainer
                       : null,
@@ -844,12 +872,14 @@ class _BreakCard extends StatelessWidget {
 
 class _SummaryCard extends StatelessWidget {
   final Duration workedTime;
+  final AppLocalizations l10n;
 
-  const _SummaryCard({required this.workedTime});
+  const _SummaryCard({required this.workedTime, required this.l10n});
 
   @override
   Widget build(BuildContext context) {
     return GlassCard(
+      enableBlur: false,
       color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -858,7 +888,7 @@ class _SummaryCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Total ore lucrate',
+                l10n.totalHoursWorked,
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               const SizedBox(height: 4),

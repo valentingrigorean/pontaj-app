@@ -17,6 +17,19 @@ final class TimeEntryLoading extends TimeEntryState {
   const TimeEntryLoading();
 }
 
+final class TimeEntrySaving extends TimeEntryState {
+  const TimeEntrySaving();
+}
+
+final class TimeEntrySaved extends TimeEntryState {
+  final TimeEntry entry;
+
+  const TimeEntrySaved(this.entry);
+
+  @override
+  List<Object?> get props => [entry];
+}
+
 final class TimeEntryLoaded extends TimeEntryState {
   final List<TimeEntry> entries;
   final List<String> locations;

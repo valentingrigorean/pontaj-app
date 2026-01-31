@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_state.dart';
+import '../l10n/app_localizations.dart';
 import '../../pages/splash_page.dart';
 import '../../pages/login_page.dart';
 import '../../pages/register_page.dart';
@@ -59,7 +60,12 @@ class AppRouter {
         GoRoute(
           path: '/entries',
           name: 'entries',
-          builder: (context, state) => const AllEntriesPage(),
+          builder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>?;
+            return AllEntriesPage(
+              initialTab: extra?['initialTab'] as int? ?? 0,
+            );
+          },
         ),
         GoRoute(
           path: '/userEntries',
@@ -134,13 +140,15 @@ class _UnknownRouteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Ruta necunoscuta')),
+      appBar: AppBar(title: Text(l10n.unknownRoute)),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Ruta solicitata nu este definita.'),
+            Text(l10n.routeNotDefined),
             if (error != null)
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -152,7 +160,7 @@ class _UnknownRouteScreen extends StatelessWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => context.go('/login'),
-              child: const Text('Inapoi la Login'),
+              child: Text(l10n.backToLogin),
             ),
           ],
         ),

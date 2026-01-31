@@ -1,0 +1,166 @@
+{
+  "@@locale": "ro",
+  "appTitle": "Pontaj PRO",
+  "appSubtitle": "10,000x Better Edition",
+
+  "login": "Autentificare",
+  "loginTitle": "Intra in cont",
+  "loginSubtitle": "Gestioneaza pontajele rapid si intuitiv",
+  "loginButton": "Intra in aplicatie",
+  "createAccount": "Creeaza un cont nou",
+
+  "register": "Inregistrare",
+  "createAccountButton": "Creeaza cont",
+  "processing": "Se proceseaza...",
+  "accountCreated": "Cont creat. Autentificati-va.",
+
+  "username": "Utilizator",
+  "password": "Parola",
+  "confirmPassword": "Confirma parola",
+  "required": "Obligatoriu",
+  "minCharacters": "Minim {count} caractere",
+  "@minCharacters": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "passwordsDoNotMatch": "Parolele nu coincid",
+
+  "administrator": "Administrator",
+  "settings": "Setari",
+  "logout": "Deconectare",
+
+  "hello": "Salut, {name}",
+  "@hello": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "chooseAction": "Alege actiunea dorita pentru a continua",
+
+  "pontajAs": "Pontaj ca {name}",
+  "@pontajAs": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "addPontajForToday": "Adauga pontaj pentru ziua curenta",
+  "viewAllEntries": "Vezi pontajele tuturor",
+  "manageAndAnalyze": "Gestioneaza si analizeaza toate intrarile",
+  "manageSalaries": "Gestioneaza salarii",
+  "configureAndCalculate": "Configureaza si calculeaza salariile",
+
+  "addPontaj": "Adauga pontaj",
+  "location": "Locatie",
+  "locationHint": "Ex: Casa A, Fabrica",
+  "enterLocation": "Introdu locatia",
+  "quickHours": "Ore lucrate rapide",
+  "nHours": "{count} ore",
+  "@nHours": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "useCustomInterval": "Foloseste interval personalizat",
+  "customInterval": "Interval personalizat",
+  "startTime": "Ora inceput",
+  "endTime": "Ora sfarsit",
+
+  "breakTime": "Pauza",
+  "noBreak": "Fara pauza",
+  "nMinutes": "{count} min",
+  "@nMinutes": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "totalHoursWorked": "Total ore lucrate",
+  "savePontaj": "Salveaza pontaj",
+  "pontajSaved": "Pontaj salvat",
+  "pontajDeleted": "Pontaj sters",
+  "workedTimeMustBePositive": "Timpul lucrat trebuie sa fie pozitiv",
+
+  "existingPontajWarning": "Ai deja un pontaj pentru ziua selectata!",
+  "delete": "Sterge",
+  "otherDay": "Alta zi",
+  "total": "Total",
+
+  "pontajAdmin": "Pontaje - Administrator",
+  "dashboard": "Tablou de Bord",
+  "users": "Utilizatori",
+  "table": "Tabel",
+  "salaries": "Salarii",
+
+  "noPontaj": "Niciun pontaj",
+  "couldNotLoadData": "Nu s-au putut incarca datele",
+  "nDays": "{count} zile",
+  "@nDays": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "nDaysRegistered": "{count} zile inregistrate",
+  "@nDaysRegistered": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "nDaysWorked": "{count} zile lucrate",
+  "@nDaysWorked": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "usersTable": "Tabel Utilizatori",
+  "user": "Utilizator",
+  "days": "Zile",
+  "totalHours": "Total ore",
+  "totalDays": "Total Zile",
+  "averagePerDay": "Medie/Zi",
+
+  "pontajUser": "Pontaje - {name}",
+  "@pontajUser": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "noPontajForUser": "Nu exista pontaje pentru acest utilizator.",
+  "date": "Data",
+  "interval": "Interval",
+
+  "hoursPerUser": "Ore pe utilizator",
+  "recentActivity": "Activitate recenta",
+  "noActivity": "Nicio activitate",
+
+  "salarySummary": "Sumar Salarii",
+  "calculationBasedOnPontaj": "Calcul pe baza pontajelor inregistrate",
+  "noPontajForSalary": "Niciun pontaj pentru calcul salarii",
+  "hoursDecimal": "Ore (decimal)",
+
+  "appearance": "Aspect",
+  "darkMode": "Mod intunecat",
+  "light": "Luminos",
+  "dark": "Intunecat",
+  "auto": "Automat",
+  "accentColor": "Culoare accent",
+  "current": "Curent",
+
+  "information": "Informatii",
+  "version": "Versiune",
+  "developedBy": "Dezvoltat de",
+  "status": "Status",
+  "allSystemsOperational": "Toate sistemele functionale",
+
+  "language": "Limba",
+  "romanian": "Romana",
+  "english": "Engleza",
+  "italian": "Italiana",
+
+  "unknownRoute": "Ruta necunoscuta",
+  "routeNotDefined": "Ruta solicitata nu este definita.",
+  "backToLogin": "Inapoi la Login",
+
+  "invalidFormat": "Format invalid"
+}

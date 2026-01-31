@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../blocs/auth/auth_bloc.dart';
 import '../blocs/auth/auth_event.dart';
 import '../blocs/auth/auth_state.dart';
+import '../core/l10n/app_localizations.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/gradient_background.dart';
 
@@ -13,23 +14,25 @@ class AdminHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         final adminName =
-            state is AuthAuthenticated ? state.user.username : 'Administrator';
+            state is AuthAuthenticated ? state.user.username : l10n.administrator;
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Administrator'),
+            title: Text(l10n.administrator),
             centerTitle: true,
             actions: [
               IconButton(
-                tooltip: 'Setari',
+                tooltip: l10n.settings,
                 icon: const Icon(Icons.settings),
                 onPressed: () => context.push('/settings'),
               ),
               IconButton(
-                tooltip: 'Deconectare',
+                tooltip: l10n.logout,
                 icon: const Icon(Icons.logout),
                 onPressed: () {
                   context.read<AuthBloc>().add(const AuthLogoutRequested());
@@ -82,7 +85,7 @@ class AdminHomePage extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Salut, $adminName',
+                                      l10n.hello(adminName),
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleLarge
@@ -92,7 +95,7 @@ class AdminHomePage extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      'Alege actiunea dorita pentru a continua',
+                                      l10n.chooseAction,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium
@@ -113,8 +116,8 @@ class AdminHomePage extends StatelessWidget {
                         children: [
                           _AdminActionTile(
                             icon: Icons.person_add_alt,
-                            title: 'Pontaj ca $adminName',
-                            subtitle: 'Adauga pontaj pentru ziua curenta',
+                            title: l10n.pontajAs(adminName),
+                            subtitle: l10n.addPontajForToday,
                             color: Theme.of(context).colorScheme.primary,
                             onTap: () => context.push('/pontaj', extra: {
                               'user': adminName,
@@ -125,18 +128,18 @@ class AdminHomePage extends StatelessWidget {
                           const Divider(height: 1),
                           _AdminActionTile(
                             icon: Icons.table_chart,
-                            title: 'Vezi pontajele tuturor',
-                            subtitle: 'Gestioneaza si analizeaza toate intrarile',
+                            title: l10n.viewAllEntries,
+                            subtitle: l10n.manageAndAnalyze,
                             color: Theme.of(context).colorScheme.secondary,
                             onTap: () => context.push('/entries'),
                           ),
                           const Divider(height: 1),
                           _AdminActionTile(
                             icon: Icons.attach_money,
-                            title: 'Gestioneaza salarii',
-                            subtitle: 'Configureaza si calculeaza salariile',
+                            title: l10n.manageSalaries,
+                            subtitle: l10n.configureAndCalculate,
                             color: Colors.green,
-                            onTap: () => context.push('/entries'),
+                            onTap: () => context.push('/entries', extra: {'initialTab': 3}),
                           ),
                         ],
                       ),

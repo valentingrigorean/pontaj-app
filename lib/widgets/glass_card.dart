@@ -11,6 +11,7 @@ class GlassCard extends StatelessWidget {
   final Color? color;
   final Border? border;
   final List<BoxShadow>? shadows;
+  final bool enableBlur;
 
   const GlassCard({
     super.key,
@@ -23,6 +24,7 @@ class GlassCard extends StatelessWidget {
     this.color,
     this.border,
     this.shadows,
+    this.enableBlur = true,
   });
 
   @override
@@ -32,6 +34,19 @@ class GlassCard extends StatelessWidget {
         (isDark
             ? Colors.white.withValues(alpha: opacity)
             : Colors.white.withValues(alpha: opacity + 0.2));
+
+    final innerContainer = Container(
+      padding: padding ?? const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: defaultColor,
+        borderRadius: BorderRadius.circular(borderRadius ?? 16),
+        border: border ?? Border.all(
+          color: Colors.white.withValues(alpha: isDark ? 0.1 : 0.3),
+          width: 1.5,
+        ),
+      ),
+      child: child,
+    );
 
     return Container(
       margin: margin,
@@ -47,21 +62,12 @@ class GlassCard extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius ?? 16),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-          child: Container(
-            padding: padding ?? const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: defaultColor,
-              borderRadius: BorderRadius.circular(borderRadius ?? 16),
-              border: border ?? Border.all(
-                color: Colors.white.withValues(alpha: isDark ? 0.1 : 0.3),
-                width: 1.5,
-              ),
-            ),
-            child: child,
-          ),
-        ),
+        child: enableBlur
+            ? BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+                child: innerContainer,
+              )
+            : innerContainer,
       ),
     );
   }
@@ -73,6 +79,7 @@ class GlassButton extends StatefulWidget {
   final EdgeInsetsGeometry? padding;
   final double? borderRadius;
   final Color? color;
+  final bool enableBlur;
 
   const GlassButton({
     super.key,
@@ -81,6 +88,7 @@ class GlassButton extends StatefulWidget {
     this.padding,
     this.borderRadius,
     this.color,
+    this.enableBlur = true,
   });
 
   @override
@@ -126,6 +134,32 @@ class _GlassButtonState extends State<GlassButton>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final innerContainer = Container(
+      padding: widget.padding ?? const EdgeInsets.symmetric(
+        horizontal: 24,
+        vertical: 12,
+      ),
+      decoration: BoxDecoration(
+        color: widget.color ??
+            (isDark
+                ? Colors.white.withValues(alpha: 0.15)
+                : Colors.white.withValues(alpha: 0.3)),
+        borderRadius: BorderRadius.circular(widget.borderRadius ?? 12),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: isDark ? 0.2 : 0.4),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: widget.child,
+    );
+
     return GestureDetector(
       onTapDown: widget.onPressed != null ? _handleTapDown : null,
       onTapUp: widget.onPressed != null ? _handleTapUp : null,
@@ -135,34 +169,12 @@ class _GlassButtonState extends State<GlassButton>
         scale: _scaleAnimation,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(widget.borderRadius ?? 12),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-              padding: widget.padding ?? const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 12,
-              ),
-              decoration: BoxDecoration(
-                color: widget.color ??
-                    (isDark
-                        ? Colors.white.withValues(alpha: 0.15)
-                        : Colors.white.withValues(alpha: 0.3)),
-                borderRadius: BorderRadius.circular(widget.borderRadius ?? 12),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: isDark ? 0.2 : 0.4),
-                  width: 1.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: widget.child,
-            ),
-          ),
+          child: widget.enableBlur
+              ? BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: innerContainer,
+                )
+              : innerContainer,
         ),
       ),
     );

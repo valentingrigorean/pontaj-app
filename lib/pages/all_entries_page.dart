@@ -7,6 +7,7 @@ import '../blocs/auth/auth_event.dart';
 import '../blocs/time_entry/time_entry_bloc.dart';
 import '../blocs/time_entry/time_entry_event.dart';
 import '../blocs/time_entry/time_entry_state.dart';
+import '../core/l10n/app_localizations.dart';
 import '../models/time_entry.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/gradient_background.dart';
@@ -15,7 +16,9 @@ import 'dashboard_page.dart';
 import 'salary_page.dart';
 
 class AllEntriesPage extends StatefulWidget {
-  const AllEntriesPage({super.key});
+  final int initialTab;
+
+  const AllEntriesPage({super.key, this.initialTab = 0});
 
   @override
   State<AllEntriesPage> createState() => _AllEntriesPageState();
@@ -29,7 +32,7 @@ class _AllEntriesPageState extends State<AllEntriesPage>
   @override
   void initState() {
     super.initState();
-    tab = TabController(length: 4, vsync: this);
+    tab = TabController(length: 4, vsync: this, initialIndex: widget.initialTab);
     _tableScroll = ScrollController();
     context.read<TimeEntryBloc>().add(const LoadEntries());
   }
@@ -43,26 +46,28 @@ class _AllEntriesPageState extends State<AllEntriesPage>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pontaje - Administrator'),
+        title: Text(l10n.pontajAdmin),
         bottom: TabBar(
           controller: tab,
-          tabs: const [
-            Tab(icon: Icon(Icons.dashboard), text: 'Tablou de Bord'),
-            Tab(icon: Icon(Icons.people), text: 'Utilizatori'),
-            Tab(icon: Icon(Icons.table_chart), text: 'Tabel'),
-            Tab(icon: Icon(Icons.attach_money), text: 'Salarii'),
+          tabs: [
+            Tab(icon: const Icon(Icons.dashboard), text: l10n.dashboard),
+            Tab(icon: const Icon(Icons.people), text: l10n.users),
+            Tab(icon: const Icon(Icons.table_chart), text: l10n.table),
+            Tab(icon: const Icon(Icons.attach_money), text: l10n.salaries),
           ],
         ),
         actions: [
           IconButton(
-            tooltip: 'Setari',
+            tooltip: l10n.settings,
             icon: const Icon(Icons.settings),
             onPressed: () => context.push('/settings'),
           ),
           IconButton(
-            tooltip: 'Deconectare',
+            tooltip: l10n.logout,
             icon: const Icon(Icons.logout),
             onPressed: () {
               context.read<AuthBloc>().add(const AuthLogoutRequested());
@@ -77,7 +82,7 @@ class _AllEntriesPageState extends State<AllEntriesPage>
           }
 
           if (state is! TimeEntryLoaded) {
-            return const Center(child: Text('Nu s-au putut incarca datele'));
+            return Center(child: Text(l10n.couldNotLoadData));
           }
 
           final entriesByUser = state.entriesByUser;
@@ -89,8 +94,8 @@ class _AllEntriesPageState extends State<AllEntriesPage>
             controller: tab,
             children: [
               const DashboardPage(),
-              _buildUsersTab(groupedEntries),
-              _buildTableTab(groupedEntries),
+              _buildUsersTab(groupedEntries, l10n),
+              _buildTableTab(groupedEntries, l10n),
               const SalaryPage(),
             ],
           );
@@ -99,20 +104,21 @@ class _AllEntriesPageState extends State<AllEntriesPage>
     );
   }
 
-  Widget _buildUsersTab(List<MapEntry<String, List<TimeEntry>>> groupedEntries) {
+  Widget _buildUsersTab(List<MapEntry<String, List<TimeEntry>>> groupedEntries, AppLocalizations l10n) {
     if (groupedEntries.isEmpty) {
       return GradientBackground(
-        animated: true,
+        animated: false,
         child: Center(
           child: GlassCard(
             padding: const EdgeInsets.all(40),
+            enableBlur: false,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.people_outline, size: 64, color: Colors.grey[400]),
                 const SizedBox(height: 16),
                 Text(
-                  'Niciun pontaj',
+                  l10n.noPontaj,
                   style: Theme.of(context)
                       .textTheme
                       .titleLarge
@@ -126,7 +132,7 @@ class _AllEntriesPageState extends State<AllEntriesPage>
     }
 
     return GradientBackground(
-      animated: true,
+      animated: false,
       child: ListView.builder(
         padding: const EdgeInsets.all(12),
         itemCount: groupedEntries.length,
@@ -144,6 +150,7 @@ class _AllEntriesPageState extends State<AllEntriesPage>
             child: GlassCard(
               margin: const EdgeInsets.only(bottom: 12),
               padding: const EdgeInsets.all(16),
+              enableBlur: false,
               child: InkWell(
                 onTap: () =>
                     context.push('/userEntries', extra: {'user': user}),
@@ -202,7 +209,7 @@ class _AllEntriesPageState extends State<AllEntriesPage>
                                   size: 14, color: Colors.grey[600]),
                               const SizedBox(width: 4),
                               Text(
-                                '${list.length} zile',
+                                l10n.nDays(list.length),
                                 style: TextStyle(
                                     color: Colors.grey[600], fontSize: 13),
                               ),
@@ -245,20 +252,21 @@ class _AllEntriesPageState extends State<AllEntriesPage>
   }
 
   Widget _buildTableTab(
-      List<MapEntry<String, List<TimeEntry>>> groupedEntries) {
+      List<MapEntry<String, List<TimeEntry>>> groupedEntries, AppLocalizations l10n) {
     if (groupedEntries.isEmpty) {
       return GradientBackground(
-        animated: true,
+        animated: false,
         child: Center(
           child: GlassCard(
             padding: const EdgeInsets.all(40),
+            enableBlur: false,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.table_chart, size: 64, color: Colors.grey[400]),
                 const SizedBox(height: 16),
                 Text(
-                  'Niciun pontaj',
+                  l10n.noPontaj,
                   style: Theme.of(context)
                       .textTheme
                       .titleLarge
@@ -272,11 +280,12 @@ class _AllEntriesPageState extends State<AllEntriesPage>
     }
 
     return GradientBackground(
-      animated: true,
+      animated: false,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: GlassCard(
           padding: const EdgeInsets.all(20),
+          enableBlur: false,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -288,7 +297,7 @@ class _AllEntriesPageState extends State<AllEntriesPage>
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    'Tabel Utilizatori',
+                    l10n.usersTable,
                     style: Theme.of(context)
                         .textTheme
                         .titleLarge
@@ -341,9 +350,9 @@ class _AllEntriesPageState extends State<AllEntriesPage>
                                       color:
                                           Theme.of(context).colorScheme.primary),
                                   const SizedBox(width: 8),
-                                  const Text('Utilizator',
+                                  Text(l10n.user,
                                       style:
-                                          TextStyle(fontWeight: FontWeight.bold)),
+                                          const TextStyle(fontWeight: FontWeight.bold)),
                                 ],
                               ),
                             ),
@@ -355,9 +364,9 @@ class _AllEntriesPageState extends State<AllEntriesPage>
                                       color:
                                           Theme.of(context).colorScheme.primary),
                                   const SizedBox(width: 8),
-                                  const Text('Zile',
+                                  Text(l10n.days,
                                       style:
-                                          TextStyle(fontWeight: FontWeight.bold)),
+                                          const TextStyle(fontWeight: FontWeight.bold)),
                                 ],
                               ),
                             ),
@@ -369,9 +378,9 @@ class _AllEntriesPageState extends State<AllEntriesPage>
                                       color:
                                           Theme.of(context).colorScheme.primary),
                                   const SizedBox(width: 8),
-                                  const Text('Total ore',
+                                  Text(l10n.totalHours,
                                       style:
-                                          TextStyle(fontWeight: FontWeight.bold)),
+                                          const TextStyle(fontWeight: FontWeight.bold)),
                                 ],
                               ),
                             ),

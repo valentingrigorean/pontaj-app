@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blocs/theme/theme_cubit.dart';
+import '../core/l10n/app_localizations.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/gradient_background.dart';
 
@@ -10,20 +11,23 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return BlocBuilder<ThemeCubit, ThemeState>(
       builder: (context, themeState) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Setari'),
+            title: Text(l10n.settings),
             centerTitle: true,
           ),
           body: GradientBackground(
-            animated: true,
+            animated: false,
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
                 GlassCard(
                   padding: const EdgeInsets.all(20),
+                  enableBlur: false,
                   child: Row(
                     children: [
                       Container(
@@ -73,7 +77,7 @@ class SettingsPage extends StatelessWidget {
                                 ],
                               ).createShader(bounds),
                               child: Text(
-                                'PONTAJ PRO',
+                                l10n.appTitle.toUpperCase(),
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleLarge
@@ -85,7 +89,7 @@ class SettingsPage extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '10,000x Better Edition',
+                              l10n.appSubtitle,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodySmall
@@ -98,14 +102,17 @@ class SettingsPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                _SectionHeader(title: 'Aspect'),
-                _ThemeModeSelector(themeState: themeState),
+                _SectionHeader(title: l10n.appearance),
+                _ThemeModeSelector(themeState: themeState, l10n: l10n),
                 const SizedBox(height: 12),
-                _ColorSelector(themeState: themeState),
+                _ColorSelector(themeState: themeState, l10n: l10n),
+                const SizedBox(height: 12),
+                _LanguageSelector(themeState: themeState, l10n: l10n),
                 const SizedBox(height: 32),
-                _SectionHeader(title: 'Informatii'),
+                _SectionHeader(title: l10n.information),
                 GlassCard(
                   padding: EdgeInsets.zero,
+                  enableBlur: false,
                   child: Column(
                     children: [
                       ListTile(
@@ -118,11 +125,11 @@ class SettingsPage extends StatelessWidget {
                           child:
                               const Icon(Icons.info_outline, color: Colors.blue),
                         ),
-                        title: const Text(
-                          'Versiune',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                        title: Text(
+                          l10n.version,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
-                        subtitle: const Text('1.0.0 • 10,000x Better Edition'),
+                        subtitle: Text('1.0.0 • ${l10n.appSubtitle}'),
                         trailing: Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 6),
@@ -155,9 +162,9 @@ class SettingsPage extends StatelessWidget {
                           ),
                           child: const Icon(Icons.code, color: Colors.purple),
                         ),
-                        title: const Text(
-                          'Dezvoltat de',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                        title: Text(
+                          l10n.developedBy,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                         subtitle: const Text('Claude Code x JR Team'),
                       ),
@@ -172,11 +179,11 @@ class SettingsPage extends StatelessWidget {
                           child:
                               const Icon(Icons.verified, color: Colors.green),
                         ),
-                        title: const Text(
-                          'Status',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                        title: Text(
+                          l10n.status,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
-                        subtitle: const Text('Toate sistemele functionale'),
+                        subtitle: Text(l10n.allSystemsOperational),
                         trailing:
                             const Icon(Icons.check_circle, color: Colors.green),
                       ),
@@ -215,13 +222,15 @@ class _SectionHeader extends StatelessWidget {
 
 class _ThemeModeSelector extends StatelessWidget {
   final ThemeState themeState;
+  final AppLocalizations l10n;
 
-  const _ThemeModeSelector({required this.themeState});
+  const _ThemeModeSelector({required this.themeState, required this.l10n});
 
   @override
   Widget build(BuildContext context) {
     return GlassCard(
       padding: const EdgeInsets.all(20),
+      enableBlur: false,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -243,7 +252,7 @@ class _ThemeModeSelector extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                'Mod intunecat',
+                l10n.darkMode,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -252,21 +261,21 @@ class _ThemeModeSelector extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           SegmentedButton<AppThemeMode>(
-            segments: const [
+            segments: [
               ButtonSegment(
                 value: AppThemeMode.light,
-                icon: Icon(Icons.light_mode, size: 20),
-                label: Text('Luminos'),
+                icon: const Icon(Icons.light_mode, size: 20),
+                label: Text(l10n.light),
               ),
               ButtonSegment(
                 value: AppThemeMode.dark,
-                icon: Icon(Icons.dark_mode, size: 20),
-                label: Text('Intunecat'),
+                icon: const Icon(Icons.dark_mode, size: 20),
+                label: Text(l10n.dark),
               ),
               ButtonSegment(
                 value: AppThemeMode.system,
-                icon: Icon(Icons.settings_suggest, size: 20),
-                label: Text('Automat'),
+                icon: const Icon(Icons.settings_suggest, size: 20),
+                label: Text(l10n.auto),
               ),
             ],
             selected: {themeState.themeMode},
@@ -282,13 +291,15 @@ class _ThemeModeSelector extends StatelessWidget {
 
 class _ColorSelector extends StatelessWidget {
   final ThemeState themeState;
+  final AppLocalizations l10n;
 
-  const _ColorSelector({required this.themeState});
+  const _ColorSelector({required this.themeState, required this.l10n});
 
   @override
   Widget build(BuildContext context) {
     return GlassCard(
       padding: const EdgeInsets.all(20),
+      enableBlur: false,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -310,7 +321,7 @@ class _ColorSelector extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                'Culoare accent',
+                l10n.accentColor,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -380,11 +391,80 @@ class _ColorSelector extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Curent: ${AppColors.getColorName(themeState.accentColor)}',
+                  '${l10n.current}: ${AppColors.getColorName(themeState.accentColor)}',
                   style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LanguageSelector extends StatelessWidget {
+  final ThemeState themeState;
+  final AppLocalizations l10n;
+
+  const _LanguageSelector({required this.themeState, required this.l10n});
+
+  @override
+  Widget build(BuildContext context) {
+    final currentLocale = themeState.locale?.languageCode ?? 'ro';
+
+    return GlassCard(
+      padding: const EdgeInsets.all(20),
+      enableBlur: false,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .primary
+                      .withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.language,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                l10n.language,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          SegmentedButton<String>(
+            segments: [
+              ButtonSegment(
+                value: 'ro',
+                label: Text(l10n.romanian),
+              ),
+              ButtonSegment(
+                value: 'en',
+                label: Text(l10n.english),
+              ),
+              ButtonSegment(
+                value: 'it',
+                label: Text(l10n.italian),
+              ),
+            ],
+            selected: {currentLocale},
+            onSelectionChanged: (Set<String> selection) {
+              final locale = selection.first == 'ro' ? null : Locale(selection.first);
+              context.read<ThemeCubit>().setLocale(locale);
+            },
           ),
         ],
       ),

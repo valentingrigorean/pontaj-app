@@ -1,0 +1,166 @@
+{
+  "@@locale": "en",
+  "appTitle": "Pontaj PRO",
+  "appSubtitle": "10,000x Better Edition",
+
+  "login": "Login",
+  "loginTitle": "Sign in",
+  "loginSubtitle": "Manage timesheets quickly and intuitively",
+  "loginButton": "Sign in",
+  "createAccount": "Create a new account",
+
+  "register": "Register",
+  "createAccountButton": "Create account",
+  "processing": "Processing...",
+  "accountCreated": "Account created. Please sign in.",
+
+  "username": "Username",
+  "password": "Password",
+  "confirmPassword": "Confirm password",
+  "required": "Required",
+  "minCharacters": "Minimum {count} characters",
+  "@minCharacters": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "passwordsDoNotMatch": "Passwords do not match",
+
+  "administrator": "Administrator",
+  "settings": "Settings",
+  "logout": "Logout",
+
+  "hello": "Hello, {name}",
+  "@hello": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "chooseAction": "Choose the desired action to continue",
+
+  "pontajAs": "Timesheet as {name}",
+  "@pontajAs": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "addPontajForToday": "Add timesheet for today",
+  "viewAllEntries": "View all entries",
+  "manageAndAnalyze": "Manage and analyze all entries",
+  "manageSalaries": "Manage salaries",
+  "configureAndCalculate": "Configure and calculate salaries",
+
+  "addPontaj": "Add timesheet",
+  "location": "Location",
+  "locationHint": "E.g.: House A, Factory",
+  "enterLocation": "Enter location",
+  "quickHours": "Quick hours worked",
+  "nHours": "{count} hours",
+  "@nHours": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "useCustomInterval": "Use custom interval",
+  "customInterval": "Custom interval",
+  "startTime": "Start time",
+  "endTime": "End time",
+
+  "breakTime": "Break",
+  "noBreak": "No break",
+  "nMinutes": "{count} min",
+  "@nMinutes": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "totalHoursWorked": "Total hours worked",
+  "savePontaj": "Save timesheet",
+  "pontajSaved": "Timesheet saved",
+  "pontajDeleted": "Timesheet deleted",
+  "workedTimeMustBePositive": "Worked time must be positive",
+
+  "existingPontajWarning": "You already have a timesheet for the selected day!",
+  "delete": "Delete",
+  "otherDay": "Other day",
+  "total": "Total",
+
+  "pontajAdmin": "Timesheets - Administrator",
+  "dashboard": "Dashboard",
+  "users": "Users",
+  "table": "Table",
+  "salaries": "Salaries",
+
+  "noPontaj": "No timesheets",
+  "couldNotLoadData": "Could not load data",
+  "nDays": "{count} days",
+  "@nDays": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "nDaysRegistered": "{count} days registered",
+  "@nDaysRegistered": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "nDaysWorked": "{count} days worked",
+  "@nDaysWorked": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "usersTable": "Users Table",
+  "user": "User",
+  "days": "Days",
+  "totalHours": "Total hours",
+  "totalDays": "Total Days",
+  "averagePerDay": "Avg/Day",
+
+  "pontajUser": "Timesheets - {name}",
+  "@pontajUser": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "noPontajForUser": "No timesheets for this user.",
+  "date": "Date",
+  "interval": "Interval",
+
+  "hoursPerUser": "Hours per user",
+  "recentActivity": "Recent activity",
+  "noActivity": "No activity",
+
+  "salarySummary": "Salary Summary",
+  "calculationBasedOnPontaj": "Calculation based on registered entries",
+  "noPontajForSalary": "No entries for salary calculation",
+  "hoursDecimal": "Hours (decimal)",
+
+  "appearance": "Appearance",
+  "darkMode": "Dark mode",
+  "light": "Light",
+  "dark": "Dark",
+  "auto": "Auto",
+  "accentColor": "Accent color",
+  "current": "Current",
+
+  "information": "Information",
+  "version": "Version",
+  "developedBy": "Developed by",
+  "status": "Status",
+  "allSystemsOperational": "All systems operational",
+
+  "language": "Language",
+  "romanian": "Romanian",
+  "english": "English",
+  "italian": "Italian",
+
+  "unknownRoute": "Unknown route",
+  "routeNotDefined": "The requested route is not defined.",
+  "backToLogin": "Back to Login",
+
+  "invalidFormat": "Invalid format"
+}
