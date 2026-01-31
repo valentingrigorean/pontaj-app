@@ -1,30 +1,68 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:nume_proiect/main.dart';
+import 'package:nume_proiect/models/time_entry.dart';
+import 'package:nume_proiect/models/user.dart';
+import 'package:nume_proiect/models/enums.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  group('TimeEntry', () {
+    test('formatDuration formats correctly', () {
+      expect(TimeEntry.formatDuration(const Duration(hours: 8)), '8h');
+      expect(TimeEntry.formatDuration(const Duration(hours: 8, minutes: 30)), '8h 30m');
+      expect(TimeEntry.formatDuration(const Duration(hours: 0, minutes: 45)), '0h 45m');
+    });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    test('toJson and fromJson work correctly', () {
+      final entry = TimeEntry(
+        id: '123',
+        user: 'TestUser',
+        location: 'Office',
+        intervalText: '08:00 - 17:00',
+        breakMinutes: 30,
+        date: DateTime(2024, 1, 15),
+        totalWorked: const Duration(hours: 8, minutes: 30),
+      );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+      final json = entry.toJson();
+      final restored = TimeEntry.fromJson(json);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+      expect(restored.id, entry.id);
+      expect(restored.user, entry.user);
+      expect(restored.location, entry.location);
+      expect(restored.intervalText, entry.intervalText);
+      expect(restored.breakMinutes, entry.breakMinutes);
+      expect(restored.totalWorked, entry.totalWorked);
+    });
+  });
+
+  group('User', () {
+    test('toJson and fromJson work correctly', () {
+      const user = User(
+        username: 'TestUser',
+        password: 'test123',
+        role: Role.admin,
+        salaryAmount: 50.0,
+        salaryType: SalaryType.hourly,
+        currency: Currency.lei,
+      );
+
+      final json = user.toJson();
+      final restored = User.fromJson(json);
+
+      expect(restored.username, user.username);
+      expect(restored.password, user.password);
+      expect(restored.role, user.role);
+      expect(restored.salaryAmount, user.salaryAmount);
+      expect(restored.salaryType, user.salaryType);
+      expect(restored.currency, user.currency);
+    });
+
+    test('isAdmin returns correct value', () {
+      const admin = User(username: 'admin', password: '1234', role: Role.admin);
+      const user = User(username: 'user', password: '1234', role: Role.user);
+
+      expect(admin.isAdmin, true);
+      expect(user.isAdmin, false);
+    });
   });
 }
