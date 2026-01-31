@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -18,6 +19,27 @@ import '../../features/invoice/pages/invoice_detail_page.dart';
 import '../../features/invoice/pages/invoice_list_page.dart';
 import '../../features/settings/pages/settings_page.dart';
 import '../../features/time_entry/pages/pontaj_page.dart';
+
+Page<void> _buildPage({
+  required LocalKey key,
+  required Widget child,
+  Duration duration = const Duration(milliseconds: 300),
+  Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+      transitionsBuilder,
+}) {
+  if (kIsWeb) {
+    return NoTransitionPage(key: key, child: child);
+  }
+  return CustomTransitionPage<void>(
+    key: key,
+    child: child,
+    transitionDuration: duration,
+    transitionsBuilder: transitionsBuilder ??
+        (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+  );
+}
 
 class AppRouter {
   final AuthBloc authBloc;
@@ -39,22 +61,15 @@ class AppRouter {
         GoRoute(
           path: '/login',
           name: 'login',
-          pageBuilder: (context, state) => CustomTransitionPage<void>(
+          pageBuilder: (context, state) => _buildPage(
             key: state.pageKey,
             child: const LoginPage(),
-            transitionDuration: const Duration(milliseconds: 300),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
           ),
         ),
         GoRoute(
           path: '/register',
           name: 'register',
-          pageBuilder: (context, state) => CustomTransitionPage<void>(
+          pageBuilder: (context, state) => _buildPage(
             key: state.pageKey,
             child: const RegisterPage(),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -74,31 +89,17 @@ class AppRouter {
         GoRoute(
           path: '/admin',
           name: 'admin',
-          pageBuilder: (context, state) => CustomTransitionPage<void>(
+          pageBuilder: (context, state) => _buildPage(
             key: state.pageKey,
             child: const AdminHomePage(),
-            transitionDuration: const Duration(milliseconds: 300),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
           ),
         ),
         GoRoute(
           path: '/home',
           name: 'home',
-          pageBuilder: (context, state) => CustomTransitionPage<void>(
+          pageBuilder: (context, state) => _buildPage(
             key: state.pageKey,
             child: const UserHomePage(),
-            transitionDuration: const Duration(milliseconds: 300),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
           ),
         ),
         GoRoute(
@@ -106,7 +107,6 @@ class AppRouter {
           name: 'pontaj',
           pageBuilder: (context, state) {
             final extra = state.extra as Map<String, dynamic>?;
-            // Get userName from extras, or from authBloc if not provided
             String userName = extra?['user'] as String? ?? '';
             if (userName.isEmpty) {
               final authState = authBloc.state;
@@ -116,7 +116,7 @@ class AppRouter {
                 userName = 'User';
               }
             }
-            return CustomTransitionPage<void>(
+            return _buildPage(
               key: state.pageKey,
               child: PontajPage(
                 userName: userName,
