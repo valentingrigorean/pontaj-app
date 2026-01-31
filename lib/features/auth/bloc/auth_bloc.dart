@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/config/env.dart';
@@ -23,6 +24,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthStateChanged>(_onAuthStateChanged);
     on<AuthGoogleSignInRequested>(_onGoogleSignInRequested);
     on<AuthUpgradeToAdminRequested>(_onUpgradeToAdminRequested);
+    on<AuthGoogleRedirectResultRequested>(_onGoogleRedirectResultRequested);
 
     // Listen to Firebase auth state changes
     _authStateSubscription = _authRepository.authStateChanges.listen((user) {
@@ -42,12 +44,28 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthLoading());
 
-    // Check if user is already signed in
+    // On web, check for pending Google Sign-In redirect result first
+    if (kIsWeb) {
+      try {
+        final redirectUser = await _authRepository.getGoogleRedirectResult();
+        if (redirectUser != null) {
+          if (redirectUser.banned) {
+            await _authRepository.signOut();
+            emit(const AuthFailure('Account suspended. Please contact support.'));
+            return;
+          }
+          emit(AuthAuthenticated(redirectUser));
+          return;
+        }
+      } catch (_) {
+        // Redirect result check failed, continue with normal auth check
+      }
+    }
+
     final firebaseUser = _authRepository.currentFirebaseUser;
     if (firebaseUser != null) {
       final user = await _authRepository.getUserProfile(firebaseUser.uid);
       if (user != null) {
-        // Check if user is banned
         if (user.banned) {
           await _authRepository.signOut();
           emit(const AuthFailure('Account suspended. Please contact support.'));
@@ -193,6 +211,32 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(const AuthFailure('Failed to upgrade account'));
       // Re-emit authenticated state so user stays logged in
       emit(currentState);
+    }
+  }
+
+  Future<void> _onGoogleRedirectResultRequested(
+    AuthGoogleRedirectResultRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+
+    try {
+      final user = await _authRepository.getGoogleRedirectResult();
+
+      if (user != null) {
+        if (user.banned) {
+          await _authRepository.signOut();
+          emit(const AuthFailure('Account suspended. Please contact support.'));
+          return;
+        }
+        emit(AuthAuthenticated(user));
+      } else {
+        emit(const AuthUnauthenticated());
+      }
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      emit(AuthFailure(FirebaseAuthRepository.getErrorMessage(e)));
+    } catch (e) {
+      emit(AuthFailure(e.toString()));
     }
   }
 }

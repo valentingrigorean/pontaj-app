@@ -413,4 +413,86 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get requireCustomInterval =>
       'Usa l\'intervallo personalizzato quando aggiungi più registrazioni per lo stesso giorno';
+
+  @override
+  String get thisWeek => 'Questa settimana';
+
+  @override
+  String get lastWeek => 'Settimana scorsa';
+
+  @override
+  String get thisMonth => 'Questo mese';
+
+  @override
+  String get topLocation => 'Posizione frequente';
+
+  @override
+  String get weeklyHours => 'Ore settimanali';
+
+  @override
+  String get dailyTarget => 'Obiettivo giornaliero';
+
+  @override
+  String get goodMorning => 'Buongiorno';
+
+  @override
+  String get goodAfternoon => 'Buon pomeriggio';
+
+  @override
+  String get goodEvening => 'Buonasera';
+
+  @override
+  String get hourlyRate => 'Tariffa oraria';
+
+  @override
+  String get editRate => 'Modifica tariffa';
+
+  @override
+  String get saveChanges => 'Salva modifiche';
+
+  @override
+  String get salarySettings => 'Impostazioni stipendio';
+
+  @override
+  String get selectSalaryType => 'Seleziona tipo di stipendio';
+
+  @override
+  String get selectCurrency => 'Seleziona valuta';
+
+  @override
+  String get invoices => 'Fatture';
+
+  @override
+  String get createInvoice => 'Crea fattura';
+
+  @override
+  String get period => 'Periodo';
+
+  @override
+  String get dueDate => 'Data di scadenza';
+
+  @override
+  String get notSet => 'Non impostato';
+
+  @override
+  String get change => 'Cambia';
+
+  @override
+  String get summary => 'Riepilogo';
+
+  @override
+  String get entries => 'Registrazioni';
+
+  @override
+  String get totalAmount => 'Importo totale';
+
+  @override
+  String get notes => 'Note';
+
+  @override
+  String get addNotesToInvoice => 'Aggiungi note alla fattura...';
+
+  @override
+  String get noEntriesForPeriod =>
+      'Nessuna registrazione trovata per il periodo selezionato';
 }

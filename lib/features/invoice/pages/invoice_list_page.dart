@@ -6,46 +6,66 @@ import '../../../data/models/enums.dart';
 import '../../../data/models/invoice.dart';
 import '../bloc/invoice_bloc.dart';
 import '../bloc/invoice_state.dart';
+import '../widgets/invoice_bottom_sheet.dart';
 
 class InvoiceListPage extends StatelessWidget {
   final bool isAdmin;
+  final bool embedded;
 
   const InvoiceListPage({
     super.key,
     this.isAdmin = false,
+    this.embedded = false,
   });
+
+  void _showCreateInvoiceSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const InvoiceBottomSheet(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Invoices'),
-        actions: [
-          if (isAdmin)
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () => context.push('/invoices/create'),
-              tooltip: 'Create Invoice',
+      appBar: embedded
+          ? null
+          : AppBar(
+              title: const Text('Invoices'),
+              actions: [
+                if (isAdmin)
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () => _showCreateInvoiceSheet(context),
+                    tooltip: 'Create Invoice',
+                  ),
+              ],
             ),
-        ],
-      ),
+      floatingActionButton: embedded && isAdmin
+          ? FloatingActionButton(
+              heroTag: 'invoice_fab',
+              onPressed: () => _showCreateInvoiceSheet(context),
+              child: const Icon(Icons.add),
+            )
+          : null,
       body: BlocBuilder<InvoiceBloc, InvoiceState>(
         builder: (context, state) {
           return switch (state) {
-            InvoiceInitial() => const Center(
-                child: Text('Loading invoices...'),
-              ),
-            InvoiceLoading() => const Center(
-                child: CircularProgressIndicator(),
-              ),
+            InvoiceInitial() || InvoiceLoading() => const Center(
+              child: CircularProgressIndicator(),
+            ),
             InvoiceError(:final message, :final previousInvoices) =>
               previousInvoices != null
                   ? _buildInvoiceList(context, previousInvoices, message)
                   : Center(child: Text('Error: $message')),
             InvoiceLoaded(:final invoices) ||
             InvoicePdfGenerating(:final invoices) ||
-            InvoicePdfGenerated(:final invoices) =>
-              _buildInvoiceList(context, invoices, null),
+            InvoicePdfGenerated(
+              :final invoices,
+            ) => _buildInvoiceList(context, invoices, null),
           };
         },
       ),
@@ -60,7 +80,7 @@ class InvoiceListPage extends StatelessWidget {
     if (invoices.isEmpty) {
       return Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: .center,
           children: [
             Icon(
               Icons.receipt_long_outlined,
@@ -75,7 +95,7 @@ class InvoiceListPage extends StatelessWidget {
             if (isAdmin) ...[
               const SizedBox(height: 8),
               FilledButton.icon(
-                onPressed: () => context.push('/invoices/create'),
+                onPressed: () => _showCreateInvoiceSheet(context),
                 icon: const Icon(Icons.add),
                 label: const Text('Create Invoice'),
               ),
@@ -92,15 +112,12 @@ class InvoiceListPage extends StatelessWidget {
             content: Text(errorMessage),
             backgroundColor: Theme.of(context).colorScheme.errorContainer,
             actions: [
-              TextButton(
-                onPressed: () {},
-                child: const Text('Dismiss'),
-              ),
+              TextButton(onPressed: () {}, child: const Text('Dismiss')),
             ],
           ),
         Expanded(
           child: ListView.builder(
-            padding: const EdgeInsets.all(16),
+            padding: const .all(16),
             itemCount: invoices.length,
             itemBuilder: (context, index) {
               final invoice = invoices[index];
@@ -133,22 +150,22 @@ class _InvoiceCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const .only(bottom: 12),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: .circular(12),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const .all(16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: .spaceBetween,
                 children: [
                   Text(
                     invoice.invoiceNumber,
                     style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: .bold,
                     ),
                   ),
                   _StatusChip(status: invoice.status),
@@ -156,10 +173,7 @@ class _InvoiceCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               if (isAdmin)
-                Text(
-                  invoice.userName,
-                  style: theme.textTheme.bodyLarge,
-                ),
+                Text(invoice.userName, style: theme.textTheme.bodyLarge),
               const SizedBox(height: 4),
               Text(
                 invoice.periodDisplay,
@@ -169,7 +183,7 @@ class _InvoiceCard extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: .spaceBetween,
                 children: [
                   Text(
                     '${invoice.totalHours.toStringAsFixed(1)} hours',
@@ -178,7 +192,7 @@ class _InvoiceCard extends StatelessWidget {
                   Text(
                     invoice.formattedAmount,
                     style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: .bold,
                       color: theme.colorScheme.primary,
                     ),
                   ),
@@ -208,10 +222,10 @@ class _StatusChip extends StatelessWidget {
     };
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const .symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: .circular(12),
         border: Border.all(color: color.withValues(alpha: 0.5)),
       ),
       child: Row(
@@ -221,11 +235,7 @@ class _StatusChip extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             status.name.toUpperCase(),
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: color,
-            ),
+            style: TextStyle(fontSize: 12, fontWeight: .w500, color: color),
           ),
         ],
       ),

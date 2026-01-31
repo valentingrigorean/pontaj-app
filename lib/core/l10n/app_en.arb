@@ -196,5 +196,35 @@
   "addEntry": "Add Entry",
 
   "timeOverlapError": "This time range overlaps with an existing entry",
-  "requireCustomInterval": "Please use custom time interval when adding multiple entries for the same day"
+  "requireCustomInterval": "Please use custom time interval when adding multiple entries for the same day",
+
+  "thisWeek": "This Week",
+  "lastWeek": "Last Week",
+  "thisMonth": "This Month",
+  "topLocation": "Top Location",
+  "weeklyHours": "Weekly Hours",
+  "dailyTarget": "Daily target",
+  "goodMorning": "Good morning",
+  "goodAfternoon": "Good afternoon",
+  "goodEvening": "Good evening",
+
+  "hourlyRate": "Hourly Rate",
+  "editRate": "Edit Rate",
+  "saveChanges": "Save Changes",
+  "salarySettings": "Salary Settings",
+  "selectSalaryType": "Select salary type",
+  "selectCurrency": "Select currency",
+
+  "invoices": "Invoices",
+  "createInvoice": "Create Invoice",
+  "period": "Period",
+  "dueDate": "Due Date",
+  "notSet": "Not set",
+  "change": "Change",
+  "summary": "Summary",
+  "entries": "Entries",
+  "totalAmount": "Total Amount",
+  "notes": "Notes",
+  "addNotesToInvoice": "Add notes to the invoice...",
+  "noEntriesForPeriod": "No entries found for the selected period"
 }

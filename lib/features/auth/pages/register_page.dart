@@ -49,14 +49,16 @@ class _RegisterPageState extends State<RegisterPage> {
 
     final adminCode = _adminCodeCtrl.text.trim();
 
-    context.read<AuthBloc>().add(AuthRegisterRequested(
-          email: _emailCtrl.text.trim(),
-          password: _passCtrl.text,
-          displayName: _displayNameCtrl.text.trim().isNotEmpty
-              ? _displayNameCtrl.text.trim()
-              : null,
-          adminCode: adminCode.isNotEmpty ? adminCode : null,
-        ));
+    context.read<AuthBloc>().add(
+      AuthRegisterRequested(
+        email: _emailCtrl.text.trim(),
+        password: _passCtrl.text,
+        displayName: _displayNameCtrl.text.trim().isNotEmpty
+            ? _displayNameCtrl.text.trim()
+            : null,
+        adminCode: adminCode.isNotEmpty ? adminCode : null,
+      ),
+    );
   }
 
   @override
@@ -81,9 +83,9 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           );
         } else if (state is AuthRegistrationSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.accountCreated)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(l10n.accountCreated)));
           context.pop();
         }
       },
@@ -93,12 +95,12 @@ class _RegisterPageState extends State<RegisterPage> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: const .all(16),
               child: Form(
                 key: _formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  crossAxisAlignment: .stretch,
                   children: [
                     TextFormField(
                       controller: _emailCtrl,
@@ -152,9 +154,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     InkWell(
                       onTap: () =>
                           setState(() => _showAdminCode = !_showAdminCode),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: .circular(8),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        padding: const .symmetric(vertical: 8),
                         child: Row(
                           children: [
                             Icon(
@@ -168,7 +170,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               l10n.adminCodeOptional,
                               style: TextStyle(
                                 color: theme.colorScheme.primary,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: .w500,
                               ),
                             ),
                           ],
@@ -186,8 +188,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                   decoration: InputDecoration(
                                     labelText: l10n.adminCode,
                                     border: const OutlineInputBorder(),
-                                    prefixIcon:
-                                        const Icon(Icons.admin_panel_settings),
+                                    prefixIcon: const Icon(
+                                      Icons.admin_panel_settings,
+                                    ),
                                     helperText: l10n.adminCodeHelper,
                                     helperMaxLines: 2,
                                   ),

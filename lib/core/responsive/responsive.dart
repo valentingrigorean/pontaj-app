@@ -17,7 +17,8 @@ extension ResponsiveContext on BuildContext {
   double get screenHeight => MediaQuery.sizeOf(this).height;
 
   bool get isMobile => screenWidth < Breakpoints.mobile;
-  bool get isTablet => screenWidth >= Breakpoints.mobile && screenWidth < Breakpoints.tablet;
+  bool get isTablet =>
+      screenWidth >= Breakpoints.mobile && screenWidth < Breakpoints.tablet;
   bool get isDesktop => screenWidth >= Breakpoints.tablet;
 
   ScreenType get screenType {
@@ -33,11 +34,7 @@ class ResponsiveValue<T> {
   final T? tablet;
   final T? desktop;
 
-  const ResponsiveValue({
-    required this.mobile,
-    this.tablet,
-    this.desktop,
-  });
+  const ResponsiveValue({required this.mobile, this.tablet, this.desktop});
 
   T resolve(BuildContext context) {
     switch (context.screenType) {
@@ -54,11 +51,11 @@ class ResponsiveValue<T> {
 /// Common responsive spacing values
 class ResponsiveSpacing {
   static EdgeInsets pagePadding(BuildContext context) {
-    return EdgeInsets.all(context.isMobile ? 16 : 24);
+    return .all(context.isMobile ? 16 : 24);
   }
 
   static EdgeInsets cardPadding(BuildContext context) {
-    return EdgeInsets.all(context.isMobile ? 16 : 20);
+    return .all(context.isMobile ? 16 : 20);
   }
 
   static double gap(BuildContext context) {
@@ -123,15 +120,36 @@ class ResponsiveGrid extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final itemWidth = (constraints.maxWidth - (spacing * (columns - 1))) / columns;
+        final itemWidth =
+            (constraints.maxWidth - (spacing * (columns - 1))) / columns;
 
-        return Wrap(
-          spacing: spacing,
-          runSpacing: runSpacing,
-          children: children.map((child) {
-            return SizedBox(
-              width: itemWidth,
-              child: child,
+        final rows = <List<Widget>>[];
+        for (var i = 0; i < children.length; i += columns) {
+          final end = (i + columns < children.length)
+              ? i + columns
+              : children.length;
+          rows.add(children.sublist(i, end));
+        }
+
+        return Column(
+          children: rows.asMap().entries.map((entry) {
+            final rowIndex = entry.key;
+            final rowChildren = entry.value;
+            return Padding(
+              padding: .only(top: rowIndex > 0 ? runSpacing : 0),
+              child: IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: .stretch,
+                  children: rowChildren.asMap().entries.map((childEntry) {
+                    final childIndex = childEntry.key;
+                    final child = childEntry.value;
+                    return Padding(
+                      padding: .only(left: childIndex > 0 ? spacing : 0),
+                      child: SizedBox(width: itemWidth, child: child),
+                    );
+                  }).toList(),
+                ),
+              ),
             );
           }).toList(),
         );

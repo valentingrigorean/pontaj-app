@@ -55,22 +55,21 @@ class _AllEntriesPageState extends State<AllEntriesPage> {
 
         final entriesByUser = state.entriesByUser;
         final groupedEntries = entriesByUser.entries.toList()
-          ..sort(
-              (a, b) => a.key.toLowerCase().compareTo(b.key.toLowerCase()));
+          ..sort((a, b) => a.key.toLowerCase().compareTo(b.key.toLowerCase()));
 
         final content = Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const .symmetric(horizontal: 16, vertical: 8),
               child: SegmentedButton<EntriesViewMode>(
                 segments: [
                   ButtonSegment(
-                    value: EntriesViewMode.users,
+                    value: .users,
                     icon: const Icon(Icons.people, size: 20),
                     label: Text(l10n.users),
                   ),
                   ButtonSegment(
-                    value: EntriesViewMode.table,
+                    value: .table,
                     icon: const Icon(Icons.table_chart, size: 20),
                     label: Text(l10n.table),
                   ),
@@ -82,11 +81,8 @@ class _AllEntriesPageState extends State<AllEntriesPage> {
               ),
             ),
             Expanded(
-              child: _viewMode == EntriesViewMode.users
-                  ? UsersEntriesView(
-                      groupedEntries: groupedEntries,
-                      l10n: l10n,
-                    )
+              child: _viewMode == .users
+                  ? UsersEntriesView(groupedEntries: groupedEntries, l10n: l10n)
                   : EntriesTableView(
                       groupedEntries: groupedEntries,
                       l10n: l10n,
@@ -97,20 +93,12 @@ class _AllEntriesPageState extends State<AllEntriesPage> {
         );
 
         if (widget.embedded) {
-          return GradientBackground(
-            animated: false,
-            child: content,
-          );
+          return GradientBackground(animated: false, child: content);
         }
 
         return Scaffold(
-          appBar: AppBar(
-            title: Text(l10n.entriesTab),
-          ),
-          body: GradientBackground(
-            animated: false,
-            child: content,
-          ),
+          appBar: AppBar(title: Text(l10n.entriesTab)),
+          body: GradientBackground(animated: false, child: content),
         );
       },
     );

@@ -411,4 +411,86 @@ class AppLocalizationsRo extends AppLocalizations {
   @override
   String get requireCustomInterval =>
       'Foloseste intervalul personalizat cand adaugi mai multe inregistrari pentru aceeasi zi';
+
+  @override
+  String get thisWeek => 'Saptamana aceasta';
+
+  @override
+  String get lastWeek => 'Saptamana trecuta';
+
+  @override
+  String get thisMonth => 'Luna aceasta';
+
+  @override
+  String get topLocation => 'Locatie frecventa';
+
+  @override
+  String get weeklyHours => 'Ore saptamanale';
+
+  @override
+  String get dailyTarget => 'Tinta zilnica';
+
+  @override
+  String get goodMorning => 'Buna dimineata';
+
+  @override
+  String get goodAfternoon => 'Buna ziua';
+
+  @override
+  String get goodEvening => 'Buna seara';
+
+  @override
+  String get hourlyRate => 'Tarif pe ora';
+
+  @override
+  String get editRate => 'Editeaza tarif';
+
+  @override
+  String get saveChanges => 'Salveaza modificarile';
+
+  @override
+  String get salarySettings => 'Setari salariu';
+
+  @override
+  String get selectSalaryType => 'Selecteaza tipul de salariu';
+
+  @override
+  String get selectCurrency => 'Selecteaza moneda';
+
+  @override
+  String get invoices => 'Facturi';
+
+  @override
+  String get createInvoice => 'Creeaza factura';
+
+  @override
+  String get period => 'Perioada';
+
+  @override
+  String get dueDate => 'Data scadenta';
+
+  @override
+  String get notSet => 'Nesetat';
+
+  @override
+  String get change => 'Schimba';
+
+  @override
+  String get summary => 'Sumar';
+
+  @override
+  String get entries => 'Inregistrari';
+
+  @override
+  String get totalAmount => 'Suma totala';
+
+  @override
+  String get notes => 'Note';
+
+  @override
+  String get addNotesToInvoice => 'Adauga note la factura...';
+
+  @override
+  String get noEntriesForPeriod =>
+      'Nicio inregistrare gasita pentru perioada selectata';
 }

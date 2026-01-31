@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -5,7 +6,9 @@ import '../../../core/l10n/app_localizations.dart';
 import '../../../core/responsive/responsive.dart';
 import '../../../data/models/time_entry.dart';
 import '../../../shared/widgets/glass_card.dart';
+import '../../../shared/widgets/side_panel.dart';
 import '../../../shared/widgets/staggered_animation.dart';
+import '../pages/user_entries_page.dart';
 import 'user_avatar.dart';
 
 class UsersEntriesView extends StatelessWidget {
@@ -23,7 +26,7 @@ class UsersEntriesView extends StatelessWidget {
     if (groupedEntries.isEmpty) {
       return Center(
         child: GlassCard(
-          padding: const EdgeInsets.all(40),
+          padding: const .all(40),
           enableBlur: false,
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -32,10 +35,9 @@ class UsersEntriesView extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 l10n.noPontaj,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(color: Colors.grey[600]),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(color: Colors.grey[600]),
               ),
             ],
           ),
@@ -66,20 +68,15 @@ class UsersEntriesView extends StatelessWidget {
 
     return SingleChildScrollView(
       padding: ResponsiveSpacing.pagePadding(context),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 900),
-          child: ResponsiveLayout(
-            mobile: Column(children: userCards),
-            tablet: ResponsiveGrid(
-              mobileColumns: 1,
-              tabletColumns: 2,
-              desktopColumns: 2,
-              spacing: 12,
-              runSpacing: 0,
-              children: userCards,
-            ),
-          ),
+      child: ResponsiveLayout(
+        mobile: Column(children: userCards),
+        tablet: ResponsiveGrid(
+          mobileColumns: 1,
+          tabletColumns: 2,
+          desktopColumns: 3,
+          spacing: 12,
+          runSpacing: 0,
+          children: userCards,
         ),
       ),
     );
@@ -99,6 +96,18 @@ class _UserCard extends StatelessWidget {
     required this.l10n,
   });
 
+  void _showUserDetail(BuildContext context) {
+    if (kIsWeb) {
+      showSidePanel(
+        context: context,
+        width: 500,
+        builder: (_) => UserEntriesPage(userName: user, embedded: true),
+      );
+    } else {
+      context.push('/userEntries', extra: {'user': user});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -108,42 +117,43 @@ class _UserCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       enableBlur: false,
       child: InkWell(
-        onTap: () => context.push('/userEntries', extra: {'user': user}),
-        borderRadius: BorderRadius.circular(16),
+        onTap: () => _showUserDetail(context),
+        borderRadius: .circular(16),
         child: Row(
           children: [
             UserAvatar(name: user),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: .start,
                 children: [
                   Text(
                     user,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                    style: const TextStyle(fontWeight: .bold, fontSize: 16),
                   ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(Icons.calendar_today,
-                          size: 14, color: Colors.grey[600]),
+                      Icon(
+                        Icons.calendar_today,
+                        size: 14,
+                        color: Colors.grey[600],
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         l10n.nDays(entryCount),
-                        style:
-                            TextStyle(color: Colors.grey[600], fontSize: 13),
+                        style: TextStyle(color: Colors.grey[600], fontSize: 13),
                       ),
                       const SizedBox(width: 12),
-                      Icon(Icons.access_time,
-                          size: 14, color: Colors.grey[600]),
+                      Icon(
+                        Icons.access_time,
+                        size: 14,
+                        color: Colors.grey[600],
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         TimeEntry.formatDuration(totalDuration),
-                        style:
-                            TextStyle(color: Colors.grey[600], fontSize: 13),
+                        style: TextStyle(color: Colors.grey[600], fontSize: 13),
                       ),
                     ],
                   ),
@@ -151,10 +161,10 @@ class _UserCard extends StatelessWidget {
               ),
             ),
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const .all(8),
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: .circular(8),
               ),
               child: Icon(
                 Icons.chevron_right,

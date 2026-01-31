@@ -65,10 +65,9 @@ class _PontajPageState extends State<PontajPage> {
     final authState = context.read<AuthBloc>().state;
     if (authState is AuthAuthenticated) {
       _currentUserId = authState.user.id;
-      context.read<TimeEntryBloc>().add(LoadEntries(
-        userId: authState.user.id,
-        isAdmin: authState.user.isAdmin,
-      ));
+      context.read<TimeEntryBloc>().add(
+        LoadEntries(userId: authState.user.id, isAdmin: authState.user.isAdmin),
+      );
     } else {
       context.read<TimeEntryBloc>().add(const LoadEntries());
     }
@@ -112,7 +111,12 @@ class _PontajPageState extends State<PontajPage> {
     if (hour < 0 || hour > 23 || minute < 0 || minute > 59) return null;
 
     return DateTime(
-        _selectedDate.year, _selectedDate.month, _selectedDate.day, hour, minute);
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+      hour,
+      minute,
+    );
   }
 
   void _submitPontaj(List<TimeEntry> entries) {
@@ -121,9 +125,9 @@ class _PontajPageState extends State<PontajPage> {
 
     final workedTime = _calculateWorkedTime();
     if (workedTime.inMinutes <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.workedTimeMustBePositive)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.workedTimeMustBePositive)));
       return;
     }
 
@@ -139,7 +143,7 @@ class _PontajPageState extends State<PontajPage> {
           ),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(borderRadius: .circular(12)),
         ),
       );
       return;
@@ -156,7 +160,11 @@ class _PontajPageState extends State<PontajPage> {
       location: _locationController.text.trim(),
       intervalText: intervalText,
       breakMinutes: _breakMinutes,
-      date: DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day),
+      date: DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+      ),
       totalWorked: workedTime,
     );
 
@@ -172,12 +180,14 @@ class _PontajPageState extends State<PontajPage> {
           children: [
             const Icon(Icons.check_circle, color: Colors.white),
             const SizedBox(width: 12),
-            Text('${l10n.pontajSaved} - ${TimeEntry.formatDuration(workedTime)}'),
+            Text(
+              '${l10n.pontajSaved} - ${TimeEntry.formatDuration(workedTime)}',
+            ),
           ],
         ),
         backgroundColor: Colors.green,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: .circular(12)),
       ),
     );
 
@@ -197,17 +207,26 @@ class _PontajPageState extends State<PontajPage> {
   }
 
   List<TimeEntry> _getEntriesForSelectedDate(List<TimeEntry> entries) {
-    final selectedDay =
-        DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
+    final selectedDay = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+    );
     return entries.where((entry) {
-      final entryDate =
-          DateTime(entry.date.year, entry.date.month, entry.date.day);
+      final entryDate = DateTime(
+        entry.date.year,
+        entry.date.month,
+        entry.date.day,
+      );
       return entryDate == selectedDay &&
           entry.userName == _nameController.text.trim();
     }).toList();
   }
 
-  (DateTime?, DateTime?) _parseIntervalText(String intervalText, DateTime date) {
+  (DateTime?, DateTime?) _parseIntervalText(
+    String intervalText,
+    DateTime date,
+  ) {
     if (!intervalText.contains(' - ')) return (null, null);
     final parts = intervalText.split(' - ');
     if (parts.length != 2) return (null, null);
@@ -229,14 +248,24 @@ class _PontajPageState extends State<PontajPage> {
       return (null, null);
     }
 
-    final start = DateTime(date.year, date.month, date.day, startHour, startMinute);
+    final start = DateTime(
+      date.year,
+      date.month,
+      date.day,
+      startHour,
+      startMinute,
+    );
     var end = DateTime(date.year, date.month, date.day, endHour, endMinute);
 
     return (start, end);
   }
 
   bool _timeRangesOverlap(
-      DateTime start1, DateTime end1, DateTime start2, DateTime end2) {
+    DateTime start1,
+    DateTime end1,
+    DateTime start2,
+    DateTime end2,
+  ) {
     var adjustedEnd1 = end1;
     var adjustedEnd2 = end2;
 
@@ -261,8 +290,10 @@ class _PontajPageState extends State<PontajPage> {
     final existingEntries = _getEntriesForSelectedDate(entries);
 
     for (final entry in existingEntries) {
-      final (existingStart, existingEnd) =
-          _parseIntervalText(entry.intervalText, entry.date);
+      final (existingStart, existingEnd) = _parseIntervalText(
+        entry.intervalText,
+        entry.date,
+      );
 
       if (existingStart == null || existingEnd == null) continue;
 
@@ -299,10 +330,12 @@ class _PontajPageState extends State<PontajPage> {
 
     return BlocBuilder<TimeEntryBloc, TimeEntryState>(
       builder: (context, state) {
-        final entries =
-            state is TimeEntryLoaded ? state.entries : <TimeEntry>[];
-        final locations =
-            state is TimeEntryLoaded ? state.locations : <String>[];
+        final entries = state is TimeEntryLoaded
+            ? state.entries
+            : <TimeEntry>[];
+        final locations = state is TimeEntryLoaded
+            ? state.locations
+            : <String>[];
         final workedTime = _calculateWorkedTime();
         final existingEntries = _getEntriesForSelectedDate(entries);
         final hasExistingEntries = existingEntries.isNotEmpty;
@@ -332,118 +365,126 @@ class _PontajPageState extends State<PontajPage> {
                       child: Form(
                         key: _formKey,
                         child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Center(
-                          child: SizedBox(
-                            width: 120,
-                            height: 120,
-                            child: CustomPaint(
-                              painter: _JrLogoPainter(progress: 1.0),
-                              child: const Center(
-                                child: Text(
-                                  'JR',
-                                  style: TextStyle(
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.w800,
-                                    letterSpacing: 2,
-                                    color: Colors.black87,
+                          crossAxisAlignment: .stretch,
+                          children: [
+                            Center(
+                              child: SizedBox(
+                                width: 120,
+                                height: 120,
+                                child: CustomPaint(
+                                  painter: _JrLogoPainter(progress: 1.0),
+                                  child: const Center(
+                                    child: Text(
+                                      'JR',
+                                      style: TextStyle(
+                                        fontSize: 32,
+                                        fontWeight: .w800,
+                                        letterSpacing: 2,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        if (hasExistingEntries)
-                          _ExistingEntriesInfo(
-                            entries: existingEntries,
-                            onDelete: _removeExistingPontaj,
-                            l10n: l10n,
-                          ),
-                        if (hasExistingEntries) const SizedBox(height: 16),
-                        _UserInfoCard(
-                          userName: widget.userName,
-                          selectedDate: _selectedDate,
-                          onDateChanged: (date) =>
-                              setState(() => _selectedDate = date),
-                        ),
-                        const SizedBox(height: 16),
-                        _LocationCard(
-                          controller: _locationController,
-                          locations: locations,
-                          onLocationSelected: (loc) =>
-                              setState(() => _locationController.text = loc),
-                          l10n: l10n,
-                        ),
-                        const SizedBox(height: 16),
-                        _QuickHoursCard(
-                          quickHours: _quickHours,
-                          options: _quickHourOptions,
-                          onSelected: (hours) =>
-                              setState(() => _quickHours = hours),
-                          onClear: () => setState(() => _quickHours = null),
-                          disabled: hasExistingEntries,
-                          l10n: l10n,
-                        ),
-                        if (_quickHours == null || hasExistingEntries) ...[
-                          const SizedBox(height: 16),
-                          _TimeIntervalCard(
-                            startController: _startTimeController,
-                            endController: _endTimeController,
-                            onChanged: () => setState(() {}),
-                            validator: (v) {
-                              if (v == null || v.isEmpty) return l10n.required;
-                              if (_parseTime(v) == null) return l10n.invalidFormat;
-                              return null;
-                            },
-                            l10n: l10n,
-                          ),
-                        ],
-                        const SizedBox(height: 16),
-                        _BreakCard(
-                          breakMinutes: _breakMinutes,
-                          options: _breakOptions,
-                          onSelected: (mins) =>
-                              setState(() => _breakMinutes = mins),
-                          l10n: l10n,
-                        ),
-                        const SizedBox(height: 16),
-                        _SummaryCard(workedTime: workedTime, l10n: l10n),
-                        const SizedBox(height: 24),
-                        PulsingWidget(
-                          enabled: workedTime.inMinutes > 0,
-                          child: GlassButton(
-                            onPressed: () => _submitPontaj(entries),
-                            padding: const EdgeInsets.symmetric(vertical: 18),
-                            color: Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withValues(alpha: 0.2),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.save,
-                                    color:
-                                        Theme.of(context).colorScheme.primary),
-                                const SizedBox(width: 12),
-                                Text(
-                                  l10n.savePontaj,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  ),
-                                ),
-                              ],
+                            const SizedBox(height: 16),
+                            if (hasExistingEntries)
+                              _ExistingEntriesInfo(
+                                entries: existingEntries,
+                                onDelete: _removeExistingPontaj,
+                                l10n: l10n,
+                              ),
+                            if (hasExistingEntries) const SizedBox(height: 16),
+                            _UserInfoCard(
+                              userName: widget.userName,
+                              selectedDate: _selectedDate,
+                              onDateChanged: (date) =>
+                                  setState(() => _selectedDate = date),
                             ),
-                          ),
+                            const SizedBox(height: 16),
+                            _LocationCard(
+                              controller: _locationController,
+                              locations: locations,
+                              onLocationSelected: (loc) => setState(
+                                () => _locationController.text = loc,
+                              ),
+                              l10n: l10n,
+                            ),
+                            const SizedBox(height: 16),
+                            _QuickHoursCard(
+                              quickHours: _quickHours,
+                              options: _quickHourOptions,
+                              onSelected: (hours) =>
+                                  setState(() => _quickHours = hours),
+                              onClear: () => setState(() => _quickHours = null),
+                              disabled: hasExistingEntries,
+                              l10n: l10n,
+                            ),
+                            if (_quickHours == null || hasExistingEntries) ...[
+                              const SizedBox(height: 16),
+                              _TimeIntervalCard(
+                                startController: _startTimeController,
+                                endController: _endTimeController,
+                                onChanged: () => setState(() {}),
+                                validator: (v) {
+                                  if (v == null || v.isEmpty) {
+                                    return l10n.required;
+                                  }
+                                  if (_parseTime(v) == null) {
+                                    return l10n.invalidFormat;
+                                  }
+                                  return null;
+                                },
+                                l10n: l10n,
+                              ),
+                            ],
+                            const SizedBox(height: 16),
+                            _BreakCard(
+                              breakMinutes: _breakMinutes,
+                              options: _breakOptions,
+                              onSelected: (mins) =>
+                                  setState(() => _breakMinutes = mins),
+                              l10n: l10n,
+                            ),
+                            const SizedBox(height: 16),
+                            _SummaryCard(workedTime: workedTime, l10n: l10n),
+                            const SizedBox(height: 24),
+                            PulsingWidget(
+                              enabled: workedTime.inMinutes > 0,
+                              child: GlassButton(
+                                onPressed: () => _submitPontaj(entries),
+                                padding: const .symmetric(vertical: 18),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primary.withValues(alpha: 0.2),
+                                child: Row(
+                                  mainAxisAlignment: .center,
+                                  children: [
+                                    Icon(
+                                      Icons.save,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      l10n.savePontaj,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: .bold,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 80),
+                          ],
                         ),
-                        const SizedBox(height: 80),
-                      ],
-                    ),
-                  ),
+                      ),
                     ),
                   ),
                 ),
@@ -470,11 +511,11 @@ class _ExistingEntriesInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GlassCard(
-      padding: const EdgeInsets.all(16),
+      padding: const .all(16),
       color: Colors.blue.withValues(alpha: 0.1),
       enableBlur: false,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: .start,
         children: [
           Row(
             children: [
@@ -483,50 +524,49 @@ class _ExistingEntriesInfo extends StatelessWidget {
               Expanded(
                 child: Text(
                   l10n.requireCustomInterval,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue[900],
-                  ),
+                  style: TextStyle(fontWeight: .bold, color: Colors.blue[900]),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          ...entries.map((entry) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              entry.location,
-                              style: const TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '${entry.intervalText} • ${TimeEntry.formatDuration(entry.totalWorked)}',
-                              style: const TextStyle(fontSize: 13),
-                            ),
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete_outline, color: Colors.red[700]),
-                        onPressed: () => onDelete(entry),
-                        tooltip: l10n.delete,
-                      ),
-                    ],
-                  ),
+          ...entries.map(
+            (entry) => Padding(
+              padding: const .only(bottom: 8),
+              child: Container(
+                padding: const .all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.5),
+                  borderRadius: .circular(8),
                 ),
-              )),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: .start,
+                        children: [
+                          Text(
+                            entry.location,
+                            style: const TextStyle(fontWeight: .w600),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${entry.intervalText} • ${TimeEntry.formatDuration(entry.totalWorked)}',
+                            style: const TextStyle(fontSize: 13),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete_outline, color: Colors.red[700]),
+                      onPressed: () => onDelete(entry),
+                      tooltip: l10n.delete,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -568,7 +608,7 @@ class _UserInfoCard extends StatelessWidget {
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 24,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: .bold,
                 ),
               ),
             ),
@@ -576,20 +616,19 @@ class _UserInfoCard extends StatelessWidget {
           const SizedBox(width: 16),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: .start,
               children: [
                 Text(
                   userName,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: .bold),
                 ),
                 Text(
                   '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: Colors.grey[600]),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
                 ),
               ],
             ),
@@ -632,14 +671,13 @@ class _LocationCard extends StatelessWidget {
     return GlassCard(
       enableBlur: false,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: .start,
         children: [
           Text(
             l10n.location,
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium
-                ?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: .bold),
           ),
           const SizedBox(height: 12),
           Autocomplete<String>(
@@ -647,45 +685,49 @@ class _LocationCard extends StatelessWidget {
               if (textEditingValue.text.isEmpty) {
                 return locations;
               }
-              return locations.where((option) => option
-                  .toLowerCase()
-                  .contains(textEditingValue.text.toLowerCase()));
-            },
-            onSelected: onLocationSelected,
-            fieldViewBuilder: (context, textController, focusNode, onSubmitted) {
-              controller.addListener(() {
-                if (textController.text != controller.text) {
-                  textController.text = controller.text;
-                }
-              });
-              textController.addListener(() {
-                if (controller.text != textController.text) {
-                  controller.text = textController.text;
-                }
-              });
-
-              return TextFormField(
-                controller: textController,
-                focusNode: focusNode,
-                decoration: InputDecoration(
-                  hintText: l10n.locationHint,
-                  filled: true,
-                  fillColor:
-                      Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
-                  prefixIcon: Icon(
-                    Icons.location_on,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+              return locations.where(
+                (option) => option.toLowerCase().contains(
+                  textEditingValue.text.toLowerCase(),
                 ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return l10n.enterLocation;
-                  }
-                  return null;
-                },
-                onFieldSubmitted: (_) => onSubmitted(),
               );
             },
+            onSelected: onLocationSelected,
+            fieldViewBuilder:
+                (context, textController, focusNode, onSubmitted) {
+                  controller.addListener(() {
+                    if (textController.text != controller.text) {
+                      textController.text = controller.text;
+                    }
+                  });
+                  textController.addListener(() {
+                    if (controller.text != textController.text) {
+                      controller.text = textController.text;
+                    }
+                  });
+
+                  return TextFormField(
+                    controller: textController,
+                    focusNode: focusNode,
+                    decoration: InputDecoration(
+                      hintText: l10n.locationHint,
+                      filled: true,
+                      fillColor: Theme.of(
+                        context,
+                      ).colorScheme.surface.withValues(alpha: 0.5),
+                      prefixIcon: Icon(
+                        Icons.location_on,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return l10n.enterLocation;
+                      }
+                      return null;
+                    },
+                    onFieldSubmitted: (_) => onSubmitted(),
+                  );
+                },
           ),
           if (locations.isNotEmpty) ...[
             const SizedBox(height: 12),
@@ -733,14 +775,13 @@ class _QuickHoursCard extends StatelessWidget {
     return GlassCard(
       enableBlur: false,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: .start,
         children: [
           Text(
             l10n.quickHours,
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium
-                ?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: .bold),
           ),
           const SizedBox(height: 12),
           Wrap(
@@ -752,8 +793,7 @@ class _QuickHoursCard extends StatelessWidget {
                 onTap: disabled ? null : () => onSelected(hours),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  padding: const .symmetric(horizontal: 20, vertical: 12),
                   decoration: BoxDecoration(
                     gradient: isSelected
                         ? LinearGradient(
@@ -766,9 +806,9 @@ class _QuickHoursCard extends StatelessWidget {
                     color: isSelected
                         ? null
                         : disabled
-                            ? Colors.grey[300]
-                            : Colors.grey[200],
-                    borderRadius: BorderRadius.circular(20),
+                        ? Colors.grey[300]
+                        : Colors.grey[200],
+                    borderRadius: .circular(20),
                     border: Border.all(
                       color: isSelected
                           ? Theme.of(context).colorScheme.primary
@@ -782,10 +822,9 @@ class _QuickHoursCard extends StatelessWidget {
                       color: disabled
                           ? Colors.grey[500]
                           : isSelected
-                              ? Colors.white
-                              : Colors.black87,
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
+                          ? Colors.white
+                          : Colors.black87,
+                      fontWeight: isSelected ? .bold : .normal,
                     ),
                   ),
                 ),
@@ -826,14 +865,13 @@ class _TimeIntervalCard extends StatelessWidget {
     return GlassCard(
       enableBlur: false,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: .start,
         children: [
           Text(
             l10n.customInterval,
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium
-                ?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: .bold),
           ),
           const SizedBox(height: 12),
           Row(
@@ -845,10 +883,9 @@ class _TimeIntervalCard extends StatelessWidget {
                     labelText: l10n.startTime,
                     hintText: '08:00',
                     filled: true,
-                    fillColor: Theme.of(context)
-                        .colorScheme
-                        .surface
-                        .withValues(alpha: 0.5),
+                    fillColor: Theme.of(
+                      context,
+                    ).colorScheme.surface.withValues(alpha: 0.5),
                     prefixIcon: Icon(
                       Icons.access_time,
                       color: Theme.of(context).colorScheme.primary,
@@ -871,10 +908,9 @@ class _TimeIntervalCard extends StatelessWidget {
                     labelText: l10n.endTime,
                     hintText: '17:00',
                     filled: true,
-                    fillColor: Theme.of(context)
-                        .colorScheme
-                        .surface
-                        .withValues(alpha: 0.5),
+                    fillColor: Theme.of(
+                      context,
+                    ).colorScheme.surface.withValues(alpha: 0.5),
                     prefixIcon: Icon(
                       Icons.access_time,
                       color: Theme.of(context).colorScheme.primary,
@@ -915,14 +951,13 @@ class _BreakCard extends StatelessWidget {
     return GlassCard(
       enableBlur: false,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: .start,
         children: [
           Text(
             l10n.breakTime,
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium
-                ?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: .bold),
           ),
           const SizedBox(height: 12),
           Wrap(
@@ -933,7 +968,9 @@ class _BreakCard extends StatelessWidget {
               return GestureDetector(
                 onTap: () => onSelected(minutes),
                 child: Chip(
-                  label: Text(minutes == 0 ? l10n.noBreak : l10n.nMinutes(minutes)),
+                  label: Text(
+                    minutes == 0 ? l10n.noBreak : l10n.nMinutes(minutes),
+                  ),
                   backgroundColor: isSelected
                       ? Theme.of(context).colorScheme.primaryContainer
                       : null,
@@ -957,12 +994,14 @@ class _SummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassCard(
       enableBlur: false,
-      color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+      color: Theme.of(
+        context,
+      ).colorScheme.primaryContainer.withValues(alpha: 0.3),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: .spaceBetween,
         children: [
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               Text(
                 l10n.totalHoursWorked,
@@ -972,9 +1011,9 @@ class _SummaryCard extends StatelessWidget {
               Text(
                 TimeEntry.formatDuration(workedTime),
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                  fontWeight: .bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
             ],
           ),

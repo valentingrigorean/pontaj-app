@@ -196,5 +196,35 @@
   "addEntry": "Adauga pontaj",
 
   "timeOverlapError": "Acest interval de timp se suprapune cu o inregistrare existenta",
-  "requireCustomInterval": "Foloseste intervalul personalizat cand adaugi mai multe inregistrari pentru aceeasi zi"
+  "requireCustomInterval": "Foloseste intervalul personalizat cand adaugi mai multe inregistrari pentru aceeasi zi",
+
+  "thisWeek": "Saptamana aceasta",
+  "lastWeek": "Saptamana trecuta",
+  "thisMonth": "Luna aceasta",
+  "topLocation": "Locatie frecventa",
+  "weeklyHours": "Ore saptamanale",
+  "dailyTarget": "Tinta zilnica",
+  "goodMorning": "Buna dimineata",
+  "goodAfternoon": "Buna ziua",
+  "goodEvening": "Buna seara",
+
+  "hourlyRate": "Tarif pe ora",
+  "editRate": "Editeaza tarif",
+  "saveChanges": "Salveaza modificarile",
+  "salarySettings": "Setari salariu",
+  "selectSalaryType": "Selecteaza tipul de salariu",
+  "selectCurrency": "Selecteaza moneda",
+
+  "invoices": "Facturi",
+  "createInvoice": "Creeaza factura",
+  "period": "Perioada",
+  "dueDate": "Data scadenta",
+  "notSet": "Nesetat",
+  "change": "Schimba",
+  "summary": "Sumar",
+  "entries": "Inregistrari",
+  "totalAmount": "Suma totala",
+  "notes": "Note",
+  "addNotesToInvoice": "Adauga note la factura...",
+  "noEntriesForPeriod": "Nicio inregistrare gasita pentru perioada selectata"
 }

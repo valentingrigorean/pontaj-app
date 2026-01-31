@@ -4,17 +4,14 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../core/config/env.dart';
+import '../../core/platform/web_platform.dart';
 import '../models/enums.dart';
 import '../models/user.dart';
 
-/// Firebase Authentication repository for handling user authentication
-/// and Firestore user profile management.
 class FirebaseAuthRepository {
   final firebase_auth.FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
 
-  /// Admin registration secret code - loaded from .env file via envied
-  /// If not set, admin registration is disabled
   static String get adminSecretCode => Env.adminCode;
 
   FirebaseAuthRepository({
@@ -23,14 +20,10 @@ class FirebaseAuthRepository {
   }) : _auth = auth ?? firebase_auth.FirebaseAuth.instance,
        _firestore = firestore ?? FirebaseFirestore.instance;
 
-  /// Stream for auth state changes (for auto-login)
   Stream<firebase_auth.User?> get authStateChanges => _auth.authStateChanges();
 
-  /// Get current Firebase user
   firebase_auth.User? get currentFirebaseUser => _auth.currentUser;
 
-  /// Sign in with email/password
-  /// Returns User on success, null on failure
   Future<User?> signIn(String email, String password) async {
     try {
       final credential = await _auth.signInWithEmailAndPassword(
@@ -47,8 +40,6 @@ class FirebaseAuthRepository {
     }
   }
 
-  /// Register new user with email/password
-  /// Pass adminCode to create admin user (must match [adminSecretCode])
   Future<User?> register(
     String email,
     String password, {
@@ -56,8 +47,6 @@ class FirebaseAuthRepository {
     String? displayName,
   }) async {
     try {
-      // Determine role based on admin code
-      // Admin registration only works if ADMIN_CODE is set via --dart-define
       final Role role =
           (adminCode != null &&
               adminCode.isNotEmpty &&
@@ -66,7 +55,6 @@ class FirebaseAuthRepository {
           ? Role.admin
           : Role.user;
 
-      // Create Firebase Auth user
       final credential = await _auth.createUserWithEmailAndPassword(
         email: email.trim(),
         password: password,
@@ -75,8 +63,6 @@ class FirebaseAuthRepository {
       if (credential.user == null) return null;
 
       final uid = credential.user!.uid;
-
-      // Create user profile in Firestore
       final user = User(
         id: uid,
         email: email.trim(),
@@ -94,47 +80,40 @@ class FirebaseAuthRepository {
     }
   }
 
-  /// Sign out current user
   Future<void> signOut() async {
     try {
       final googleSignIn = GoogleSignIn.instance;
       await googleSignIn.signOut();
-    } catch (_) {
-      // Ignore Google Sign-In sign out errors
-    }
+    } catch (_) {}
     await _auth.signOut();
   }
 
-  /// Sign in with Google (auto-registers new users)
   Future<User?> signInWithGoogle() async {
     firebase_auth.UserCredential userCredential;
 
     if (kIsWeb) {
-      // Web: Use Firebase Auth's signInWithPopup - handles OAuth flow properly
       final provider = firebase_auth.GoogleAuthProvider();
-      userCredential = await _auth.signInWithPopup(provider);
+
+      if (isMobileWebBrowser()) {
+        await _auth.signInWithRedirect(provider);
+        return null;
+      } else {
+        userCredential = await _auth.signInWithPopup(provider);
+      }
     } else {
-      // Mobile: Use google_sign_in package
       final googleSignIn = GoogleSignIn.instance;
       GoogleSignInAccount? googleUser;
 
       if (googleSignIn.supportsAuthenticate()) {
-        // authenticate() throws GoogleSignInException if user cancels or error
         googleUser = await googleSignIn.authenticate();
       } else {
-        // This shouldn't happen on iOS/Android, but handle gracefully
-        // Try lightweight authentication for returning users
         googleUser = await googleSignIn.attemptLightweightAuthentication();
         if (googleUser == null) {
-          // No cached credentials - can't authenticate without user interaction
           throw Exception('Google Sign-In not supported on this platform');
         }
       }
 
-      // Get authentication token (idToken)
       final googleAuth = googleUser.authentication;
-
-      // Create Firebase credential with ID token
       final credential = firebase_auth.GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
       );
@@ -142,13 +121,26 @@ class FirebaseAuthRepository {
       userCredential = await _auth.signInWithCredential(credential);
     }
 
+    return _processGoogleSignInResult(userCredential);
+  }
+
+  Future<User?> getGoogleRedirectResult() async {
+    if (!kIsWeb) return null;
+
+    final userCredential = await _auth.getRedirectResult();
+    if (userCredential.user == null) return null;
+
+    return _processGoogleSignInResult(userCredential);
+  }
+
+  Future<User?> _processGoogleSignInResult(
+    firebase_auth.UserCredential userCredential,
+  ) async {
     final firebaseUser = userCredential.user;
     if (firebaseUser == null) return null;
 
-    // Auto-register: Get existing profile or create new one
     var user = await getUserProfile(firebaseUser.uid);
     if (user == null) {
-      // New user - create default profile
       user = User(
         id: firebaseUser.uid,
         email: firebaseUser.email ?? '',
@@ -165,7 +157,6 @@ class FirebaseAuthRepository {
     return user;
   }
 
-  /// Get user profile from Firestore
   Future<User?> getUserProfile(String uid) async {
     try {
       final doc = await _firestore.collection('users').doc(uid).get();
@@ -178,7 +169,6 @@ class FirebaseAuthRepository {
     }
   }
 
-  /// Stream user profile for real-time updates
   Stream<User?> getUserProfileStream(String uid) {
     return _firestore.collection('users').doc(uid).snapshots().map((doc) {
       if (doc.exists) {
@@ -188,7 +178,6 @@ class FirebaseAuthRepository {
     });
   }
 
-  /// Update user profile in Firestore
   Future<void> updateUserProfile(User user) async {
     await _firestore
         .collection('users')
@@ -196,7 +185,6 @@ class FirebaseAuthRepository {
         .update(user.toFirestoreUpdate());
   }
 
-  /// Update FCM token for push notifications
   Future<void> updateFcmToken(String userId, String? token) async {
     if (token != null) {
       await _firestore.collection('users').doc(userId).update({
@@ -209,7 +197,6 @@ class FirebaseAuthRepository {
     }
   }
 
-  /// Update notification preferences
   Future<void> updateNotificationPrefs(
     String userId,
     NotificationPrefs prefs,
@@ -219,25 +206,21 @@ class FirebaseAuthRepository {
     });
   }
 
-  /// Get all users (admin only)
   Future<List<User>> getAllUsers() async {
     final snapshot = await _firestore.collection('users').get();
     return snapshot.docs.map((doc) => User.fromFirestore(doc)).toList();
   }
 
-  /// Stream all users (admin only)
   Stream<List<User>> getAllUsersStream() {
     return _firestore.collection('users').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) => User.fromFirestore(doc)).toList();
     });
   }
 
-  /// Send password reset email
   Future<void> sendPasswordResetEmail(String email) async {
     await _auth.sendPasswordResetEmail(email: email.trim());
   }
 
-  /// Ban a user (admin only)
   Future<void> banUser(String userId, {String? reason}) async {
     await _firestore.collection('users').doc(userId).update({
       'banned': true,
@@ -246,7 +229,6 @@ class FirebaseAuthRepository {
     });
   }
 
-  /// Unban a user (admin only)
   Future<void> unbanUser(String userId) async {
     await _firestore.collection('users').doc(userId).update({
       'banned': false,
@@ -255,13 +237,10 @@ class FirebaseAuthRepository {
     });
   }
 
-  /// Delete a user completely (admin only)
-  /// This only deletes the Firestore profile, not the Firebase Auth account
   Future<void> deleteUser(String userId) async {
     await _firestore.collection('users').doc(userId).delete();
   }
 
-  /// Translate Firebase Auth error codes to user-friendly messages
   static String getErrorMessage(firebase_auth.FirebaseAuthException e) {
     switch (e.code) {
       case 'user-not-found':

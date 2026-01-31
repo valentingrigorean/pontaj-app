@@ -45,7 +45,8 @@ class _AdminUpgradeCardState extends State<AdminUpgradeCard> {
               backgroundColor: Colors.red,
             ),
           );
-        } else if (state is AuthAuthenticated && state.user.role == Role.admin) {
+        } else if (state is AuthAuthenticated &&
+            state.user.role == Role.admin) {
           setState(() => _isLoading = false);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -56,20 +57,20 @@ class _AdminUpgradeCardState extends State<AdminUpgradeCard> {
         }
       },
       child: GlassCard(
-        padding: const EdgeInsets.all(20),
+        padding: const .all(20),
         enableBlur: false,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: .start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const .all(8),
                   decoration: BoxDecoration(
                     color: isAdmin
                         ? Colors.green.withValues(alpha: 0.1)
                         : Colors.orange.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: .circular(8),
                   ),
                   child: Icon(
                     isAdmin ? Icons.verified_user : Icons.admin_panel_settings,
@@ -79,34 +80,32 @@ class _AdminUpgradeCardState extends State<AdminUpgradeCard> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: .start,
                     children: [
                       Text(
                         l10n.adminUpgrade,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style: Theme.of(
+                          context,
+                        ).textTheme.titleMedium?.copyWith(fontWeight: .bold),
                       ),
                       if (!isAdmin)
                         Text(
                           l10n.adminUpgradeDesc,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Colors.grey[600],
-                              ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: Colors.grey[600]),
                         ),
                     ],
                   ),
                 ),
                 if (isAdmin)
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
+                    padding: const .symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: Colors.green.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                      borderRadius: .circular(12),
+                      border: Border.all(
+                        color: Colors.green.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -121,7 +120,7 @@ class _AdminUpgradeCardState extends State<AdminUpgradeCard> {
                           l10n.youAreAdmin,
                           style: const TextStyle(
                             color: Colors.green,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: .w600,
                             fontSize: 12,
                           ),
                         ),

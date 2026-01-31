@@ -31,10 +31,12 @@ class _LoginFormState extends State<LoginForm> {
 
   void _login() {
     if (!_formKey.currentState!.validate()) return;
-    context.read<AuthBloc>().add(AuthLoginRequested(
-          email: _emailController.text.trim(),
-          password: _passController.text,
-        ));
+    context.read<AuthBloc>().add(
+      AuthLoginRequested(
+        email: _emailController.text.trim(),
+        password: _passController.text,
+      ),
+    );
   }
 
   String? _validateEmail(String? value) {
@@ -56,11 +58,11 @@ class _LoginFormState extends State<LoginForm> {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 460),
       child: GlassCard(
-        padding: const EdgeInsets.all(32),
+        padding: const .all(32),
         child: Form(
           key: _formKey,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: .stretch,
             children: [
               ShaderMask(
                 shaderCallback: (bounds) => LinearGradient(
@@ -73,7 +75,7 @@ class _LoginFormState extends State<LoginForm> {
                   l10n.loginTitle,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: .bold,
                   ),
                 ),
               ),
@@ -159,7 +161,7 @@ class _LoginButton extends StatelessWidget {
         final isLoading = state is AuthLoading;
         return GlassButton(
           onPressed: isLoading ? null : onPressed,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const .symmetric(vertical: 16),
           color: theme.colorScheme.primary.withValues(alpha: 0.2),
           child: isLoading
               ? const Center(
@@ -170,7 +172,7 @@ class _LoginButton extends StatelessWidget {
                   ),
                 )
               : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: .center,
                   children: [
                     Icon(Icons.login, color: theme.colorScheme.primary),
                     const SizedBox(width: 12),
@@ -178,7 +180,7 @@ class _LoginButton extends StatelessWidget {
                       l10n.loginButton,
                       style: TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: .w600,
                         color: theme.colorScheme.primary,
                       ),
                     ),
@@ -201,13 +203,10 @@ class _OrDivider extends StatelessWidget {
       children: [
         Expanded(child: Divider(color: Colors.grey[400])),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const .symmetric(horizontal: 16),
           child: Text(
             l10n.orContinueWith,
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 13,
-            ),
+            style: TextStyle(color: Colors.grey[600], fontSize: 13),
           ),
         ),
         Expanded(child: Divider(color: Colors.grey[400])),
@@ -232,13 +231,13 @@ class _GoogleSignInButton extends StatelessWidget {
         return GlassButton(
           onPressed: isLoading
               ? null
-              : () => context
-                  .read<AuthBloc>()
-                  .add(const AuthGoogleSignInRequested()),
-          padding: const EdgeInsets.symmetric(vertical: 14),
+              : () => context.read<AuthBloc>().add(
+                  const AuthGoogleSignInRequested(),
+                ),
+          padding: const .symmetric(vertical: 14),
           variant: GlassButtonVariant.secondary,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: .center,
             children: [
               Image.network(
                 'https://www.google.com/favicon.ico',
@@ -252,7 +251,7 @@ class _GoogleSignInButton extends StatelessWidget {
                 l10n.continueWithGoogle,
                 style: TextStyle(
                   fontSize: 15,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: .w500,
                   color: textColor,
                 ),
               ),
@@ -275,10 +274,10 @@ class _CreateAccountButton extends StatelessWidget {
 
     return GlassButton(
       onPressed: () => context.push('/register'),
-      padding: const EdgeInsets.symmetric(vertical: 16),
+      padding: const .symmetric(vertical: 16),
       variant: GlassButtonVariant.outlined,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: .center,
         children: [
           Icon(
             Icons.person_add_outlined,
@@ -290,7 +289,7 @@ class _CreateAccountButton extends StatelessWidget {
             l10n.createAccount,
             style: TextStyle(
               fontSize: 15,
-              fontWeight: FontWeight.w500,
+              fontWeight: .w500,
               color: isDark
                   ? theme.colorScheme.primary.withValues(alpha: 0.9)
                   : theme.colorScheme.primary,

@@ -30,12 +30,11 @@ class ThemeState {
     AppThemeMode? themeMode,
     Color? accentColor,
     Locale? locale,
-  }) =>
-      ThemeState(
-        themeMode: themeMode ?? this.themeMode,
-        accentColor: accentColor ?? this.accentColor,
-        locale: locale ?? this.locale,
-      );
+  }) => ThemeState(
+    themeMode: themeMode ?? this.themeMode,
+    accentColor: accentColor ?? this.accentColor,
+    locale: locale ?? this.locale,
+  );
 }
 
 class ThemeCubit extends Cubit<ThemeState> {
@@ -70,7 +69,13 @@ class ThemeCubit extends Cubit<ThemeState> {
       locale = const Locale('ro');
     }
 
-    emit(ThemeState(themeMode: themeMode, accentColor: accentColor, locale: locale));
+    emit(
+      ThemeState(
+        themeMode: themeMode,
+        accentColor: accentColor,
+        locale: locale,
+      ),
+    );
   }
 
   Future<void> setThemeMode(AppThemeMode mode) async {
@@ -101,52 +106,41 @@ class ThemeCubit extends Cubit<ThemeState> {
       ),
       cardTheme: CardThemeData(
         elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: .circular(16)),
       ),
-      appBarTheme: const AppBarTheme(
-        centerTitle: false,
-        elevation: 0,
-      ),
+      appBarTheme: const AppBarTheme(centerTitle: false, elevation: 0),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.grey[100],
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: .circular(12),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: .circular(12),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: .circular(12),
           borderSide: BorderSide(color: state.accentColor, width: 2),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          padding: const .symmetric(horizontal: 24, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: .circular(12)),
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          padding: const .symmetric(horizontal: 24, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: .circular(12)),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          padding: const .symmetric(horizontal: 24, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: .circular(12)),
         ),
       ),
     );
@@ -162,52 +156,41 @@ class ThemeCubit extends Cubit<ThemeState> {
       ),
       cardTheme: CardThemeData(
         elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: .circular(16)),
       ),
-      appBarTheme: const AppBarTheme(
-        centerTitle: false,
-        elevation: 0,
-      ),
+      appBarTheme: const AppBarTheme(centerTitle: false, elevation: 0),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.grey[850],
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: .circular(12),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: .circular(12),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: .circular(12),
           borderSide: BorderSide(color: state.accentColor, width: 2),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          padding: const .symmetric(horizontal: 24, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: .circular(12)),
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          padding: const .symmetric(horizontal: 24, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: .circular(12)),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          padding: const .symmetric(horizontal: 24, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: .circular(12)),
         ),
       ),
     );
@@ -225,15 +208,15 @@ class AppColors {
   static const indigo = Color(0xFF3F51B5);
 
   static List<Color> get allColors => [
-        teal,
-        blue,
-        purple,
-        orange,
-        pink,
-        green,
-        red,
-        indigo,
-      ];
+    teal,
+    blue,
+    purple,
+    orange,
+    pink,
+    green,
+    red,
+    indigo,
+  ];
 
   static String getColorName(Color color) {
     if (color == teal) return 'Teal';

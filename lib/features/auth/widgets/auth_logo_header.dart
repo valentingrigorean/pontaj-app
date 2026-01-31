@@ -11,17 +11,14 @@ class AuthLogoHeader extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: .center,
       children: [
         Container(
           height: 100,
           width: 100,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                theme.colorScheme.primary,
-                theme.colorScheme.secondary,
-              ],
+              colors: [theme.colorScheme.primary, theme.colorScheme.secondary],
             ),
             shape: BoxShape.circle,
             boxShadow: [
@@ -37,7 +34,7 @@ class AuthLogoHeader extends StatelessWidget {
               'JR',
               style: TextStyle(
                 fontSize: 40,
-                fontWeight: FontWeight.w900,
+                fontWeight: .w900,
                 color: Colors.white,
                 letterSpacing: 2,
               ),
@@ -47,16 +44,13 @@ class AuthLogoHeader extends StatelessWidget {
         const SizedBox(height: 24),
         ShaderMask(
           shaderCallback: (bounds) => LinearGradient(
-            colors: [
-              theme.colorScheme.primary,
-              theme.colorScheme.secondary,
-            ],
+            colors: [theme.colorScheme.primary, theme.colorScheme.secondary],
           ).createShader(bounds),
           child: Text(
             l10n.appTitle.toUpperCase(),
             style: theme.textTheme.headlineMedium?.copyWith(
               color: Colors.white,
-              fontWeight: FontWeight.bold,
+              fontWeight: .bold,
               letterSpacing: 4,
             ),
           ),
@@ -67,7 +61,7 @@ class AuthLogoHeader extends StatelessWidget {
           style: theme.textTheme.bodyMedium?.copyWith(
             color: Colors.grey[500],
             letterSpacing: 1,
-            fontWeight: FontWeight.w300,
+            fontWeight: .w300,
           ),
         ),
       ],

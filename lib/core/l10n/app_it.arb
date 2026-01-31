@@ -196,5 +196,35 @@
   "addEntry": "Aggiungi registrazione",
 
   "timeOverlapError": "Questo intervallo di tempo si sovrappone con una registrazione esistente",
-  "requireCustomInterval": "Usa l'intervallo personalizzato quando aggiungi più registrazioni per lo stesso giorno"
+  "requireCustomInterval": "Usa l'intervallo personalizzato quando aggiungi più registrazioni per lo stesso giorno",
+
+  "thisWeek": "Questa settimana",
+  "lastWeek": "Settimana scorsa",
+  "thisMonth": "Questo mese",
+  "topLocation": "Posizione frequente",
+  "weeklyHours": "Ore settimanali",
+  "dailyTarget": "Obiettivo giornaliero",
+  "goodMorning": "Buongiorno",
+  "goodAfternoon": "Buon pomeriggio",
+  "goodEvening": "Buonasera",
+
+  "hourlyRate": "Tariffa oraria",
+  "editRate": "Modifica tariffa",
+  "saveChanges": "Salva modifiche",
+  "salarySettings": "Impostazioni stipendio",
+  "selectSalaryType": "Seleziona tipo di stipendio",
+  "selectCurrency": "Seleziona valuta",
+
+  "invoices": "Fatture",
+  "createInvoice": "Crea fattura",
+  "period": "Periodo",
+  "dueDate": "Data di scadenza",
+  "notSet": "Non impostato",
+  "change": "Cambia",
+  "summary": "Riepilogo",
+  "entries": "Registrazioni",
+  "totalAmount": "Importo totale",
+  "notes": "Note",
+  "addNotesToInvoice": "Aggiungi note alla fattura...",
+  "noEntriesForPeriod": "Nessuna registrazione trovata per il periodo selezionato"
 }

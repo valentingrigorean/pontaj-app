@@ -13,7 +13,9 @@ import '../bloc/time_entry_event.dart';
 import '../bloc/time_entry_state.dart';
 
 class MyEntriesPage extends StatefulWidget {
-  const MyEntriesPage({super.key});
+  final bool embedded;
+
+  const MyEntriesPage({super.key, this.embedded = false});
 
   @override
   State<MyEntriesPage> createState() => _MyEntriesPageState();
@@ -29,10 +31,9 @@ class _MyEntriesPageState extends State<MyEntriesPage> {
   void _loadEntries() {
     final authState = context.read<AuthBloc>().state;
     if (authState is AuthAuthenticated) {
-      context.read<TimeEntryBloc>().add(LoadEntries(
-            userId: authState.user.id,
-            isAdmin: false,
-          ));
+      context.read<TimeEntryBloc>().add(
+        LoadEntries(userId: authState.user.id, isAdmin: false),
+      );
     }
   }
 
@@ -41,10 +42,9 @@ class _MyEntriesPageState extends State<MyEntriesPage> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.myEntries),
-        centerTitle: true,
-      ),
+      appBar: widget.embedded
+          ? null
+          : AppBar(title: Text(l10n.myEntries), centerTitle: true),
       body: GradientBackground(
         animated: false,
         child: BlocBuilder<TimeEntryBloc, TimeEntryState>(
@@ -74,8 +74,8 @@ class _MyEntriesPageState extends State<MyEntriesPage> {
                     Text(
                       l10n.noPontaj,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: Theme.of(context).colorScheme.outline,
-                          ),
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
                     ),
                   ],
                 ),
@@ -95,16 +95,15 @@ class _MyEntriesPageState extends State<MyEntriesPage> {
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 700),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    crossAxisAlignment: .stretch,
                     children: [
                       GlassCard(
                         enableBlur: false,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .primaryContainer
-                            .withValues(alpha: 0.3),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer.withValues(alpha: 0.3),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          mainAxisAlignment: .spaceAround,
                           children: [
                             _SummaryItem(
                               icon: Icons.calendar_today,
@@ -164,24 +163,20 @@ class _SummaryItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Icon(
-          icon,
-          color: Theme.of(context).colorScheme.primary,
-          size: 28,
-        ),
+        Icon(icon, color: Theme.of(context).colorScheme.primary, size: 28),
         const SizedBox(height: 8),
         Text(
           value,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+            fontWeight: .bold,
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
         Text(
           label,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.grey[600],
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
         ),
       ],
     );
@@ -201,16 +196,46 @@ class _MonthSection extends StatelessWidget {
 
   String _getMonthName(int month, String locale) {
     const monthsRo = [
-      'Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie',
-      'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'
+      'Ianuarie',
+      'Februarie',
+      'Martie',
+      'Aprilie',
+      'Mai',
+      'Iunie',
+      'Iulie',
+      'August',
+      'Septembrie',
+      'Octombrie',
+      'Noiembrie',
+      'Decembrie',
     ];
     const monthsEn = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     const monthsIt = [
-      'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
-      'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'
+      'Gennaio',
+      'Febbraio',
+      'Marzo',
+      'Aprile',
+      'Maggio',
+      'Giugno',
+      'Luglio',
+      'Agosto',
+      'Settembre',
+      'Ottobre',
+      'Novembre',
+      'Dicembre',
     ];
 
     final months = switch (locale) {
@@ -236,31 +261,31 @@ class _MonthSection extends StatelessWidget {
     );
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: .start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          padding: const .symmetric(vertical: 12),
           child: Row(
             children: [
               Text(
                 '$monthName $year',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                  fontWeight: .bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
               const Spacer(),
               Text(
                 '${entries.length} ${l10n.days} - ${TimeEntry.formatDuration(monthTotal)}',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
               ),
             ],
           ),
         ),
         GlassCard(
-          padding: EdgeInsets.zero,
+          padding: .zero,
           enableBlur: false,
           child: Column(
             children: entries.asMap().entries.map((indexed) {
@@ -273,47 +298,44 @@ class _MonthSection extends StatelessWidget {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .primaryContainer
-                            .withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(12),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer.withValues(alpha: 0.5),
+                        borderRadius: .circular(12),
                       ),
                       child: Center(
                         child: Text(
                           '${entry.date.day}',
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).colorScheme.primary,
-                                  ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
+                                fontWeight: .bold,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                         ),
                       ),
                     ),
                     title: Text(
                       entry.location,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+                      style: const TextStyle(fontWeight: .w600),
                     ),
                     subtitle: Text(entry.intervalText),
                     trailing: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: .center,
+                      crossAxisAlignment: .end,
                       children: [
                         Text(
                           TimeEntry.formatDuration(entry.totalWorked),
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).colorScheme.primary,
-                                  ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
+                                fontWeight: .bold,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                         ),
                         if (entry.breakMinutes > 0)
                           Text(
                             '${l10n.breakTime}: ${entry.breakMinutes}m',
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Colors.grey[600],
-                                    ),
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(color: Colors.grey[600]),
                           ),
                       ],
                     ),
