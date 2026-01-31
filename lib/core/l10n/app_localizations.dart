@@ -166,11 +166,41 @@ abstract class AppLocalizations {
   /// **'Cont creat. Autentificati-va.'**
   String get accountCreated;
 
-  /// No description provided for @username.
+  /// No description provided for @email.
   ///
   /// In ro, this message translates to:
-  /// **'Utilizator'**
-  String get username;
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @displayName.
+  ///
+  /// In ro, this message translates to:
+  /// **'Nume afisat'**
+  String get displayName;
+
+  /// No description provided for @optional.
+  ///
+  /// In ro, this message translates to:
+  /// **'(optional)'**
+  String get optional;
+
+  /// No description provided for @adminCode.
+  ///
+  /// In ro, this message translates to:
+  /// **'Cod administrator'**
+  String get adminCode;
+
+  /// No description provided for @adminCodeOptional.
+  ///
+  /// In ro, this message translates to:
+  /// **'Ai un cod de administrator?'**
+  String get adminCodeOptional;
+
+  /// No description provided for @adminCodeHelper.
+  ///
+  /// In ro, this message translates to:
+  /// **'Introdu codul secret pentru a te inregistra ca admin'**
+  String get adminCodeHelper;
 
   /// No description provided for @password.
   ///

@@ -14,7 +14,12 @@
   "processing": "Processing...",
   "accountCreated": "Account created. Please sign in.",
 
-  "username": "Username",
+  "email": "Email",
+  "displayName": "Display name",
+  "optional": "(optional)",
+  "adminCode": "Admin code",
+  "adminCodeOptional": "Have an admin code?",
+  "adminCodeHelper": "Enter the secret code to register as admin",
   "password": "Password",
   "confirmPassword": "Confirm password",
   "required": "Required",

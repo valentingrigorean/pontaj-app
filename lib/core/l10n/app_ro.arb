@@ -14,7 +14,12 @@
   "processing": "Se proceseaza...",
   "accountCreated": "Cont creat. Autentificati-va.",
 
-  "username": "Utilizator",
+  "email": "Email",
+  "displayName": "Nume afisat",
+  "optional": "(optional)",
+  "adminCode": "Cod administrator",
+  "adminCodeOptional": "Ai un cod de administrator?",
+  "adminCodeHelper": "Introdu codul secret pentru a te inregistra ca admin",
   "password": "Parola",
   "confirmPassword": "Confirma parola",
   "required": "Obligatoriu",

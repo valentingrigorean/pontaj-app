@@ -14,7 +14,12 @@
   "processing": "Elaborazione...",
   "accountCreated": "Account creato. Effettua l'accesso.",
 
-  "username": "Nome utente",
+  "email": "Email",
+  "displayName": "Nome visualizzato",
+  "optional": "(opzionale)",
+  "adminCode": "Codice amministratore",
+  "adminCodeOptional": "Hai un codice amministratore?",
+  "adminCodeHelper": "Inserisci il codice segreto per registrarti come admin",
   "password": "Password",
   "confirmPassword": "Conferma password",
   "required": "Obbligatorio",

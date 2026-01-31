@@ -2,17 +2,17 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'blocs/auth/auth_bloc.dart';
-import 'blocs/time_entry/time_entry_bloc.dart';
-import 'blocs/theme/theme_cubit.dart';
 import 'core/l10n/app_localizations.dart';
 import 'core/router/app_router.dart';
-import 'repositories/auth_repository.dart';
-import 'repositories/time_entry_repository.dart';
+import 'core/theme/theme_cubit.dart';
+import 'data/repositories/firebase_auth_repository.dart';
+import 'data/repositories/firestore_time_entry_repository.dart';
+import 'features/auth/bloc/auth_bloc.dart';
+import 'features/time_entry/bloc/time_entry_bloc.dart';
 
 class PontajApp extends StatefulWidget {
-  final AuthRepository authRepository;
-  final TimeEntryRepository timeEntryRepository;
+  final FirebaseAuthRepository authRepository;
+  final FirestoreTimeEntryRepository timeEntryRepository;
 
   const PontajApp({
     super.key,
@@ -33,10 +33,10 @@ class _PontajAppState extends State<PontajApp> {
   @override
   void initState() {
     super.initState();
-    _authBloc = AuthBloc(authRepository: widget.authRepository);
-    _timeEntryBloc = TimeEntryBloc(repository: widget.timeEntryRepository);
-    _themeCubit = ThemeCubit()..loadTheme();
-    _appRouter = AppRouter(authBloc: _authBloc);
+    _authBloc = .new(authRepository: widget.authRepository);
+    _timeEntryBloc = .new(repository: widget.timeEntryRepository);
+    _themeCubit = .new()..loadTheme();
+    _appRouter = .new(authBloc: _authBloc);
   }
 
   @override

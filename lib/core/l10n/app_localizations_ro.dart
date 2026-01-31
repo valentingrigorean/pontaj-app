@@ -42,7 +42,23 @@ class AppLocalizationsRo extends AppLocalizations {
   String get accountCreated => 'Cont creat. Autentificati-va.';
 
   @override
-  String get username => 'Utilizator';
+  String get email => 'Email';
+
+  @override
+  String get displayName => 'Nume afisat';
+
+  @override
+  String get optional => '(optional)';
+
+  @override
+  String get adminCode => 'Cod administrator';
+
+  @override
+  String get adminCodeOptional => 'Ai un cod de administrator?';
+
+  @override
+  String get adminCodeHelper =>
+      'Introdu codul secret pentru a te inregistra ca admin';
 
   @override
   String get password => 'Parola';

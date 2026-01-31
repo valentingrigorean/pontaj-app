@@ -30,6 +30,14 @@ dependencies:
   path_provider: ^2.1.5
   path: ^1.9.1
 
+  # Firebase
+  firebase_core: ^4.4.0
+  firebase_auth: ^6.1.4
+  cloud_firestore: ^6.1.2
+
+  # Local preferences
+  shared_preferences: ^2.5.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

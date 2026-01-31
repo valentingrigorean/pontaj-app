@@ -3,17 +3,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../blocs/auth/auth_bloc.dart';
-import '../../blocs/auth/auth_state.dart';
 import '../l10n/app_localizations.dart';
-import '../../pages/splash_page.dart';
-import '../../pages/login_page.dart';
-import '../../pages/register_page.dart';
-import '../../pages/admin_home_page.dart';
-import '../../pages/pontaj_page.dart';
-import '../../pages/all_entries_page.dart';
-import '../../pages/user_entries_page.dart';
-import '../../pages/settings_page.dart';
+import '../../features/admin/pages/admin_home_page.dart';
+import '../../features/admin/pages/all_entries_page.dart';
+import '../../features/admin/pages/user_entries_page.dart';
+import '../../features/auth/bloc/auth_bloc.dart';
+import '../../features/auth/bloc/auth_state.dart';
+import '../../features/auth/pages/login_page.dart';
+import '../../features/auth/pages/register_page.dart';
+import '../../features/auth/pages/splash_page.dart';
+import '../../features/settings/pages/settings_page.dart';
+import '../../features/time_entry/pages/pontaj_page.dart';
 
 class AppRouter {
   final AuthBloc authBloc;
@@ -50,8 +50,18 @@ class AppRouter {
           name: 'pontaj',
           builder: (context, state) {
             final extra = state.extra as Map<String, dynamic>?;
+            // Get userName from extras, or from authBloc if not provided
+            String userName = extra?['user'] as String? ?? '';
+            if (userName.isEmpty) {
+              final authState = authBloc.state;
+              if (authState is AuthAuthenticated) {
+                userName = authState.user.displayNameOrEmail;
+              } else {
+                userName = 'User';
+              }
+            }
             return PontajPage(
-              userName: extra?['user'] as String? ?? 'Utilizator',
+              userName: userName,
               adminMode: extra?['adminMode'] as bool? ?? false,
               lockName: extra?['lockName'] as bool? ?? false,
             );
@@ -110,7 +120,11 @@ class AppRouter {
 
     if (authState is AuthAuthenticated) {
       if (isOnSplash || isOnLogin || isOnRegister) {
-        return authState.user.isAdmin ? '/admin' : '/pontaj';
+        if (authState.user.isAdmin) {
+          return '/admin';
+        }
+        // Regular user - go to pontaj with their info
+        return '/pontaj';
       }
     }
 

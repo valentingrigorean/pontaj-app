@@ -42,7 +42,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountCreated => 'Account created. Please sign in.';
 
   @override
-  String get username => 'Username';
+  String get email => 'Email';
+
+  @override
+  String get displayName => 'Display name';
+
+  @override
+  String get optional => '(optional)';
+
+  @override
+  String get adminCode => 'Admin code';
+
+  @override
+  String get adminCodeOptional => 'Have an admin code?';
+
+  @override
+  String get adminCodeHelper => 'Enter the secret code to register as admin';
 
   @override
   String get password => 'Password';

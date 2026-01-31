@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pontaj_app/models/enums.dart';
-import 'package:pontaj_app/models/time_entry.dart';
-import 'package:pontaj_app/models/user.dart';
+import 'package:pontaj_app/data/models/enums.dart';
+import 'package:pontaj_app/data/models/time_entry.dart';
+import 'package:pontaj_app/data/models/user.dart';
 
 void main() {
   group('TimeEntry', () {
@@ -20,6 +20,7 @@ void main() {
     test('toJson and fromJson work correctly', () {
       final entry = TimeEntry(
         id: '123',
+        userId: 'user-123',
         user: 'TestUser',
         location: 'Office',
         intervalText: '08:00 - 17:00',
@@ -32,6 +33,7 @@ void main() {
       final restored = TimeEntry.fromJson(json);
 
       expect(restored.id, entry.id);
+      expect(restored.userId, entry.userId);
       expect(restored.user, entry.user);
       expect(restored.location, entry.location);
       expect(restored.intervalText, entry.intervalText);
@@ -43,8 +45,9 @@ void main() {
   group('User', () {
     test('toJson and fromJson work correctly', () {
       const user = User(
-        username: 'TestUser',
-        password: 'test123',
+        id: 'user-123',
+        email: 'test@example.com',
+        displayName: 'Test User',
         role: Role.admin,
         salaryAmount: 50.0,
         salaryType: SalaryType.hourly,
@@ -54,8 +57,9 @@ void main() {
       final json = user.toJson();
       final restored = User.fromJson(json);
 
-      expect(restored.username, user.username);
-      expect(restored.password, user.password);
+      expect(restored.id, user.id);
+      expect(restored.email, user.email);
+      expect(restored.displayName, user.displayName);
       expect(restored.role, user.role);
       expect(restored.salaryAmount, user.salaryAmount);
       expect(restored.salaryType, user.salaryType);
@@ -63,11 +67,28 @@ void main() {
     });
 
     test('isAdmin returns correct value', () {
-      const admin = User(username: 'admin', password: '1234', role: Role.admin);
-      const user = User(username: 'user', password: '1234', role: Role.user);
+      const admin = User(id: '1', email: 'admin@test.com', role: Role.admin);
+      const user = User(id: '2', email: 'user@test.com', role: Role.user);
 
       expect(admin.isAdmin, true);
       expect(user.isAdmin, false);
+    });
+
+    test('displayNameOrEmail returns correct value', () {
+      const userWithName = User(
+        id: '1',
+        email: 'test@example.com',
+        displayName: 'Test User',
+        role: Role.user,
+      );
+      const userWithoutName = User(
+        id: '2',
+        email: 'another@example.com',
+        role: Role.user,
+      );
+
+      expect(userWithName.displayNameOrEmail, 'Test User');
+      expect(userWithoutName.displayNameOrEmail, 'another');
     });
   });
 }
