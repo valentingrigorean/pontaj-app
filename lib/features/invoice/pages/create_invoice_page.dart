@@ -18,13 +18,9 @@ class CreateInvoicePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authState = context.read<AuthBloc>().state;
-    final currentUserId = authState is AuthAuthenticated ? authState.user.id : null;
-
     return BlocProvider(
       create: (context) => UsersCubit(
         authRepository: context.read<FirebaseAuthRepository>(),
-        excludeUserId: currentUserId,
       )..loadUsers(),
       child: const _CreateInvoiceView(),
     );
@@ -74,9 +70,9 @@ class _CreateInvoiceViewState extends State<_CreateInvoiceView> {
     } catch (e) {
       setState(() => _isLoadingEntries = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error loading entries: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error loading entries: $e')));
       }
     }
   }
@@ -150,22 +146,24 @@ class _CreateInvoiceViewState extends State<_CreateInvoiceView> {
     return Scaffold(
       appBar: AppBar(title: const Text('Create Invoice')),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const .all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: .stretch,
           children: [
             Card(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const .all(16),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: .start,
                   children: [
                     Text('Worker', style: theme.textTheme.titleMedium),
                     const SizedBox(height: 8),
                     BlocBuilder<UsersCubit, UsersState>(
                       builder: (context, state) {
                         if (state is UsersLoading || state is UsersInitial) {
-                          return const Center(child: CircularProgressIndicator());
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
                         }
                         if (state is UsersError) {
                           return Text(
@@ -205,9 +203,9 @@ class _CreateInvoiceViewState extends State<_CreateInvoiceView> {
             const SizedBox(height: 16),
             Card(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const .all(16),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: .start,
                   children: [
                     Text('Period', style: theme.textTheme.titleMedium),
                     const SizedBox(height: 8),
@@ -225,9 +223,9 @@ class _CreateInvoiceViewState extends State<_CreateInvoiceView> {
             const SizedBox(height: 16),
             Card(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const .all(16),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: .start,
                   children: [
                     Text(
                       'Due Date (Optional)',
@@ -251,16 +249,16 @@ class _CreateInvoiceViewState extends State<_CreateInvoiceView> {
             if (_isLoadingEntries)
               const Card(
                 child: Padding(
-                  padding: EdgeInsets.all(32),
+                  padding: .all(32),
                   child: Center(child: CircularProgressIndicator()),
                 ),
               )
             else if (_selectedUser != null)
               Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const .all(16),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: .start,
                     children: [
                       Text('Summary', style: theme.textTheme.titleMedium),
                       const SizedBox(height: 16),
@@ -288,9 +286,9 @@ class _CreateInvoiceViewState extends State<_CreateInvoiceView> {
             const SizedBox(height: 16),
             Card(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const .all(16),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: .start,
                   children: [
                     Text(
                       'Notes (Optional)',
@@ -338,21 +336,21 @@ class _CreateInvoiceViewState extends State<_CreateInvoiceView> {
 
   Widget _buildSummaryRow(String label, String value, {bool isTotal = false}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const .symmetric(vertical: 4),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: .spaceBetween,
         children: [
           Text(
             label,
             style: isTotal
-                ? const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)
+                ? const TextStyle(fontWeight: .bold, fontSize: 16)
                 : null,
           ),
           Text(
             value,
             style: isTotal
                 ? TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: .bold,
                     fontSize: 16,
                     color: Theme.of(context).colorScheme.primary,
                   )

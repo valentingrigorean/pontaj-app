@@ -28,9 +28,10 @@ class _LoginPageState extends State<LoginPage>
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animController, curve: Curves.easeOut),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _animController, curve: Curves.easeOut));
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
@@ -49,9 +50,9 @@ class _LoginPageState extends State<LoginPage>
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
       child: Scaffold(
@@ -59,7 +60,7 @@ class _LoginPageState extends State<LoginPage>
           child: SafeArea(
             child: Center(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(
+                padding: .symmetric(
                   horizontal: context.isMobile ? 24 : 32,
                   vertical: 32,
                 ),
@@ -68,7 +69,7 @@ class _LoginPageState extends State<LoginPage>
                   child: SlideTransition(
                     position: _slideAnimation,
                     child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment: .center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         AuthLogoHeader(),

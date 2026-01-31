@@ -73,7 +73,7 @@ class InvoiceDetailPage extends StatelessWidget {
                         child: ListTile(
                           leading: Icon(Icons.send),
                           title: Text('Send Invoice'),
-                          contentPadding: EdgeInsets.zero,
+                          contentPadding: .zero,
                         ),
                       ),
                     if (invoice.status == InvoiceStatus.sent)
@@ -82,7 +82,7 @@ class InvoiceDetailPage extends StatelessWidget {
                         child: ListTile(
                           leading: Icon(Icons.check_circle),
                           title: Text('Mark as Paid'),
-                          contentPadding: EdgeInsets.zero,
+                          contentPadding: .zero,
                         ),
                       ),
                     if (invoice.canCancel)
@@ -91,7 +91,7 @@ class InvoiceDetailPage extends StatelessWidget {
                         child: ListTile(
                           leading: Icon(Icons.cancel),
                           title: Text('Cancel Invoice'),
-                          contentPadding: EdgeInsets.zero,
+                          contentPadding: .zero,
                         ),
                       ),
                     if (invoice.status == InvoiceStatus.draft)
@@ -99,9 +99,11 @@ class InvoiceDetailPage extends StatelessWidget {
                         value: 'delete',
                         child: ListTile(
                           leading: Icon(Icons.delete, color: Colors.red),
-                          title:
-                              Text('Delete', style: TextStyle(color: Colors.red)),
-                          contentPadding: EdgeInsets.zero,
+                          title: Text(
+                            'Delete',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                          contentPadding: .zero,
                         ),
                       ),
                   ],
@@ -109,9 +111,9 @@ class InvoiceDetailPage extends StatelessWidget {
             ],
           ),
           body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: const .all(16),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              crossAxisAlignment: .stretch,
               children: [
                 _buildStatusBanner(context, invoice),
                 const SizedBox(height: 16),
@@ -126,9 +128,9 @@ class InvoiceDetailPage extends StatelessWidget {
                   const SizedBox(height: 16),
                   const Card(
                     child: Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: .all(16),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: .center,
                         children: [
                           SizedBox(
                             width: 20,
@@ -153,37 +155,37 @@ class InvoiceDetailPage extends StatelessWidget {
   Widget _buildStatusBanner(BuildContext context, Invoice invoice) {
     final (color, icon, message) = switch (invoice.status) {
       InvoiceStatus.draft => (
-          Colors.grey,
-          Icons.edit_outlined,
-          'This invoice is a draft'
-        ),
+        Colors.grey,
+        Icons.edit_outlined,
+        'This invoice is a draft',
+      ),
       InvoiceStatus.sent => (
-          Colors.blue,
-          Icons.send_outlined,
-          'Invoice sent to worker'
-        ),
+        Colors.blue,
+        Icons.send_outlined,
+        'Invoice sent to worker',
+      ),
       InvoiceStatus.paid => (
-          Colors.green,
-          Icons.check_circle_outlined,
-          'Invoice has been paid'
-        ),
+        Colors.green,
+        Icons.check_circle_outlined,
+        'Invoice has been paid',
+      ),
       InvoiceStatus.overdue => (
-          Colors.orange,
-          Icons.warning_outlined,
-          'Payment is overdue'
-        ),
+        Colors.orange,
+        Icons.warning_outlined,
+        'Payment is overdue',
+      ),
       InvoiceStatus.cancelled => (
-          Colors.red,
-          Icons.cancel_outlined,
-          'Invoice was cancelled'
-        ),
+        Colors.red,
+        Icons.cancel_outlined,
+        'Invoice was cancelled',
+      ),
     };
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const .all(16),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: .circular(12),
         border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
@@ -193,7 +195,7 @@ class InvoiceDetailPage extends StatelessWidget {
           Expanded(
             child: Text(
               message,
-              style: TextStyle(color: color, fontWeight: FontWeight.w500),
+              style: TextStyle(color: color, fontWeight: .w500),
             ),
           ),
         ],
@@ -206,18 +208,18 @@ class InvoiceDetailPage extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const .all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: .start,
           children: [
-            Text(
-              'Invoice Details',
-              style: theme.textTheme.titleMedium,
-            ),
+            Text('Invoice Details', style: theme.textTheme.titleMedium),
             const Divider(),
             _buildDetailRow('Worker', invoice.userName),
             _buildDetailRow('Period', invoice.periodDisplay),
-            _buildDetailRow('Total Hours', invoice.totalHours.toStringAsFixed(2)),
+            _buildDetailRow(
+              'Total Hours',
+              invoice.totalHours.toStringAsFixed(2),
+            ),
             _buildDetailRow(
               'Hourly Rate',
               '${invoice.hourlyRate.toStringAsFixed(2)} ${invoice.currency.symbol}',
@@ -236,7 +238,7 @@ class InvoiceDetailPage extends StatelessWidget {
     return Card(
       color: theme.colorScheme.primaryContainer,
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const .all(24),
         child: Column(
           children: [
             Text(
@@ -249,7 +251,7 @@ class InvoiceDetailPage extends StatelessWidget {
             Text(
               invoice.formattedAmount,
               style: theme.textTheme.headlineLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+                fontWeight: .bold,
                 color: theme.colorScheme.onPrimaryContainer,
               ),
             ),
@@ -264,14 +266,11 @@ class InvoiceDetailPage extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const .all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: .start,
           children: [
-            Text(
-              'Notes',
-              style: theme.textTheme.titleMedium,
-            ),
+            Text('Notes', style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
             Text(invoice.notes!),
           ],
@@ -282,9 +281,9 @@ class InvoiceDetailPage extends StatelessWidget {
 
   Widget _buildDetailRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const .symmetric(vertical: 4),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: .spaceBetween,
         children: [
           Text(label, style: const TextStyle(color: Colors.grey)),
           Text(value),
@@ -308,14 +307,21 @@ class InvoiceDetailPage extends StatelessWidget {
         bloc.add(SendInvoice(invoice: invoice));
         break;
       case 'paid':
-        bloc.add(UpdateInvoiceStatus(invoiceId: invoiceId, status: InvoiceStatus.paid));
+        bloc.add(
+          UpdateInvoiceStatus(invoiceId: invoiceId, status: InvoiceStatus.paid),
+        );
         break;
       case 'cancel':
         _showConfirmDialog(
           context,
           'Cancel Invoice',
           'Are you sure you want to cancel this invoice?',
-          () => bloc.add(UpdateInvoiceStatus(invoiceId: invoiceId, status: InvoiceStatus.cancelled)),
+          () => bloc.add(
+            UpdateInvoiceStatus(
+              invoiceId: invoiceId,
+              status: InvoiceStatus.cancelled,
+            ),
+          ),
         );
         break;
       case 'delete':
@@ -372,9 +378,9 @@ class InvoiceDetailPage extends StatelessWidget {
 
   Future<void> _downloadPdf(BuildContext context, Invoice invoice) async {
     if (invoice.pdfDownloadUrl == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('PDF not available')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('PDF not available')));
       return;
     }
 
@@ -384,16 +390,16 @@ class InvoiceDetailPage extends StatelessWidget {
         await launchUrl(url, mode: LaunchMode.externalApplication);
       } else {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Could not open PDF')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Could not open PDF')));
         }
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error opening PDF: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error opening PDF: $e')));
       }
     }
   }

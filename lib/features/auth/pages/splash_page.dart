@@ -27,10 +27,7 @@ class _SplashPageState extends State<SplashPage>
   @override
   void initState() {
     super.initState();
-    _controller = .new(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    );
+    _controller = .new(vsync: this, duration: const Duration(seconds: 3));
     _scale = Tween<double>(begin: 0.55, end: 1.1).animate(
       CurvedAnimation(
         parent: _controller,
@@ -38,10 +35,7 @@ class _SplashPageState extends State<SplashPage>
       ),
     );
     _rotation = Tween<double>(begin: 0, end: 4 * pi).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeInOutCubic,
-      ),
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic),
     );
     _jrOpacity = CurvedAnimation(
       parent: _controller,
@@ -103,10 +97,12 @@ class _SplashPageState extends State<SplashPage>
                                     shape: BoxShape.circle,
                                     gradient: RadialGradient(
                                       colors: [
-                                        const Color(0xFF0F8D6E)
-                                            .withValues(alpha: 0.5),
-                                        const Color(0xFF0F8D6E)
-                                            .withValues(alpha: 0),
+                                        const Color(
+                                          0xFF0F8D6E,
+                                        ).withValues(alpha: 0.5),
+                                        const Color(
+                                          0xFF0F8D6E,
+                                        ).withValues(alpha: 0),
                                       ],
                                     ),
                                   ),
@@ -132,17 +128,17 @@ class _SplashPageState extends State<SplashPage>
                                     ShaderMask(
                                       shaderCallback: (bounds) =>
                                           const LinearGradient(
-                                        colors: [
-                                          Color(0xFF0F8D6E),
-                                          Color(0xFF0A6B54),
-                                        ],
-                                      ).createShader(bounds),
+                                            colors: [
+                                              Color(0xFF0F8D6E),
+                                              Color(0xFF0A6B54),
+                                            ],
+                                          ).createShader(bounds),
                                       child: Text(
                                         l10n.appTitle.toUpperCase(),
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 32,
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: .bold,
                                           letterSpacing: 8,
                                         ),
                                       ),
@@ -154,7 +150,7 @@ class _SplashPageState extends State<SplashPage>
                                         color: Colors.grey[600],
                                         fontSize: 14,
                                         letterSpacing: 2,
-                                        fontWeight: FontWeight.w300,
+                                        fontWeight: .w300,
                                       ),
                                     ),
                                   ],
@@ -170,15 +166,16 @@ class _SplashPageState extends State<SplashPage>
                             child: SizedBox(
                               width: 200,
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: .circular(10),
                                 child: LinearProgressIndicator(
                                   value: progress,
-                                  backgroundColor:
-                                      Colors.grey[800]!.withValues(alpha: 0.2),
+                                  backgroundColor: Colors.grey[800]!.withValues(
+                                    alpha: 0.2,
+                                  ),
                                   valueColor:
                                       const AlwaysStoppedAnimation<Color>(
-                                    Color(0xFF0F8D6E),
-                                  ),
+                                        Color(0xFF0F8D6E),
+                                      ),
                                   minHeight: 6,
                                 ),
                               ),
@@ -232,10 +229,7 @@ class _FloatingParticleState extends State<_FloatingParticle>
     _position = Tween<Offset>(
       begin: Offset(startX, 1.2),
       end: Offset(endX, -0.2),
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.linear,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
 
     Future.delayed(Duration(milliseconds: (delay * 1000).toInt()), () {
       if (mounted) {
@@ -309,7 +303,7 @@ class _AnimatedLogo extends StatelessWidget {
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 72,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: .w800,
                   letterSpacing: 4,
                 ),
               ),

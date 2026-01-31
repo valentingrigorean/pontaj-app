@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 class GlassCard extends StatelessWidget {
@@ -30,20 +31,23 @@ class GlassCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final defaultColor = color ??
+    final defaultColor =
+        color ??
         (isDark
             ? Colors.white.withValues(alpha: opacity)
             : Colors.white.withValues(alpha: opacity + 0.2));
 
     final innerContainer = Container(
-      padding: padding ?? const EdgeInsets.all(16),
+      padding: padding ?? const .all(16),
       decoration: BoxDecoration(
         color: defaultColor,
-        borderRadius: BorderRadius.circular(borderRadius ?? 16),
-        border: border ?? Border.all(
-          color: Colors.white.withValues(alpha: isDark ? 0.1 : 0.3),
-          width: 1.5,
-        ),
+        borderRadius: .circular(borderRadius ?? 16),
+        border:
+            border ??
+            Border.all(
+              color: Colors.white.withValues(alpha: isDark ? 0.1 : 0.3),
+              width: 1.5,
+            ),
       ),
       child: child,
     );
@@ -51,17 +55,19 @@ class GlassCard extends StatelessWidget {
     return Container(
       margin: margin,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(borderRadius ?? 16),
-        boxShadow: shadows ?? [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        borderRadius: .circular(borderRadius ?? 16),
+        boxShadow:
+            shadows ??
+            [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(borderRadius ?? 16),
+        borderRadius: .circular(borderRadius ?? 16),
         child: enableBlur
             ? BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),

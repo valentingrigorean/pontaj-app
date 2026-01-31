@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 enum GlassButtonVariant {
@@ -45,9 +46,10 @@ class _GlassButtonState extends State<GlassButton>
       duration: const Duration(milliseconds: 150),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -81,7 +83,8 @@ class _GlassButtonState extends State<GlassButton>
 
     switch (widget.variant) {
       case GlassButtonVariant.outlined:
-        backgroundColor = widget.color ??
+        backgroundColor =
+            widget.color ??
             (isDark
                 ? primaryColor.withValues(alpha: 0.08)
                 : primaryColor.withValues(alpha: 0.05));
@@ -103,7 +106,8 @@ class _GlassButtonState extends State<GlassButton>
         ];
         break;
       case GlassButtonVariant.secondary:
-        backgroundColor = widget.color ??
+        backgroundColor =
+            widget.color ??
             (isDark
                 ? Colors.white.withValues(alpha: 0.08)
                 : Colors.grey.shade100.withValues(alpha: 0.8));
@@ -124,14 +128,10 @@ class _GlassButtonState extends State<GlassButton>
     }
 
     final innerContainer = Container(
-      padding: widget.padding ??
-          const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 12,
-          ),
+      padding: widget.padding ?? const .symmetric(horizontal: 24, vertical: 12),
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(radius),
+        borderRadius: .circular(radius),
         border: border,
         boxShadow: shadows,
       ),
@@ -146,7 +146,7 @@ class _GlassButtonState extends State<GlassButton>
       child: ScaleTransition(
         scale: _scaleAnimation,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(radius),
+          borderRadius: .circular(radius),
           child: widget.enableBlur
               ? BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),

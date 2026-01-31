@@ -23,10 +23,7 @@ class UserAvatar extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            theme.colorScheme.primary,
-            theme.colorScheme.secondary,
-          ],
+          colors: [theme.colorScheme.primary, theme.colorScheme.secondary],
         ),
         shape: BoxShape.circle,
         boxShadow: showShadow
@@ -44,7 +41,7 @@ class UserAvatar extends StatelessWidget {
           name.isNotEmpty ? name[0].toUpperCase() : '?',
           style: TextStyle(
             color: Colors.white,
-            fontWeight: FontWeight.bold,
+            fontWeight: .bold,
             fontSize: fontSize,
           ),
         ),

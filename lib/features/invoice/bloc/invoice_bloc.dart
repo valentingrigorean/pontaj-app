@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/models/enums.dart';
@@ -16,8 +14,6 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
   final PdfService _pdfService;
   final StorageService _storageService;
   final NotificationService _notificationService;
-
-  StreamSubscription<List<Invoice>>? _invoicesSubscription;
 
   InvoiceBloc({
     required FirestoreInvoiceRepository invoiceRepository,
@@ -41,24 +37,17 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     LoadInvoices event,
     Emitter<InvoiceState> emit,
   ) async {
-    emit(const InvoiceState.loading());
+    if (!event.isAdmin && event.userId == null) {
+      emit(const InvoiceState.error(message: 'User ID is required for non-admin users'));
+      return;
+    }
 
-    await _invoicesSubscription?.cancel();
+    emit(const InvoiceState.loading());
 
     final stream = event.isAdmin
         ? _invoiceRepository.getAllInvoicesStream()
         : _invoiceRepository.getInvoicesForUserStream(event.userId!);
 
-    _invoicesSubscription = stream.listen(
-      (invoices) {
-        add(LoadInvoices(userId: event.userId, isAdmin: event.isAdmin));
-      },
-      onError: (error) {
-        emit(InvoiceState.error(message: error.toString()));
-      },
-    );
-
-    // For initial load, get snapshot
     try {
       await emit.forEach(
         stream,
@@ -212,9 +201,4 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     }
   }
 
-  @override
-  Future<void> close() {
-    _invoicesSubscription?.cancel();
-    return super.close();
-  }
 }

@@ -92,13 +92,10 @@ class _PontajAppState extends State<PontajApp> {
         SnackBar(
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               if (title != null)
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
+                Text(title, style: const TextStyle(fontWeight: .bold)),
               if (body != null) Text(body),
             ],
           ),

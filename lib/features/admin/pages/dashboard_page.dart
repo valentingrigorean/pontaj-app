@@ -1,6 +1,6 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fl_chart/fl_chart.dart';
 
 import '../../../core/l10n/app_localizations.dart';
 import '../../../core/responsive/responsive.dart';
@@ -26,11 +26,12 @@ class DashboardPage extends StatelessWidget {
         }
 
         final entries = state.entries;
-        final totalHours =
-            entries.fold<double>(0, (sum, e) => sum + e.totalWorked.inMinutes / 60);
+        final totalHours = entries.fold<double>(
+          0,
+          (sum, e) => sum + e.totalWorked.inMinutes / 60,
+        );
         final totalDays = entries.length;
-        final uniqueUsers =
-            entries.map((e) => e.userName).toSet().length;
+        final uniqueUsers = entries.map((e) => e.userName).toSet().length;
         final avgHoursPerDay = totalDays > 0 ? totalHours / totalDays : 0.0;
 
         final hoursPerUser = <String, double>{};
@@ -47,7 +48,7 @@ class DashboardPage extends StatelessWidget {
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 900),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: .start,
                   children: [
                     ResponsiveGrid(
                       mobileColumns: 2,
@@ -83,131 +84,139 @@ class DashboardPage extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 24),
-                if (hoursPerUser.isNotEmpty) ...[
-                  GlassCard(
-                    padding: const EdgeInsets.all(20),
-                    enableBlur: false,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.hoursPerUser,
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                        ),
-                        const SizedBox(height: 20),
-                        SizedBox(
-                          height: 200,
-                          child: BarChart(
-                            BarChartData(
-                              alignment: BarChartAlignment.spaceAround,
-                              maxY: hoursPerUser.values.isEmpty
-                                  ? 100
-                                  : hoursPerUser.values
-                                          .reduce((a, b) => a > b ? a : b) *
-                                      1.2,
-                              barTouchData: BarTouchData(enabled: true),
-                              titlesData: FlTitlesData(
-                                show: true,
-                                bottomTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    getTitlesWidget: (value, meta) {
-                                      final users = hoursPerUser.keys.toList();
-                                      if (value.toInt() >= users.length) {
-                                        return const SizedBox.shrink();
-                                      }
-                                      return Padding(
-                                        padding: const EdgeInsets.only(top: 8),
-                                        child: Text(
-                                          users[value.toInt()].length > 6
-                                              ? '${users[value.toInt()].substring(0, 6)}...'
-                                              : users[value.toInt()],
-                                          style: const TextStyle(fontSize: 10),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                leftTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    reservedSize: 40,
-                                    getTitlesWidget: (value, meta) {
-                                      return Text(
-                                        '${value.toInt()}h',
-                                        style: const TextStyle(fontSize: 10),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                topTitles: const AxisTitles(
-                                    sideTitles: SideTitles(showTitles: false)),
-                                rightTitles: const AxisTitles(
-                                    sideTitles: SideTitles(showTitles: false)),
-                              ),
-                              borderData: FlBorderData(show: false),
-                              barGroups: hoursPerUser.entries
-                                  .toList()
-                                  .asMap()
-                                  .entries
-                                  .map((entry) {
-                                return BarChartGroupData(
-                                  x: entry.key,
-                                  barRods: [
-                                    BarChartRodData(
-                                      toY: entry.value.value,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      width: 20,
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(6),
-                                        topRight: Radius.circular(6),
+                    if (hoursPerUser.isNotEmpty) ...[
+                      GlassCard(
+                        padding: const .all(20),
+                        enableBlur: false,
+                        child: Column(
+                          crossAxisAlignment: .start,
+                          children: [
+                            Text(
+                              l10n.hoursPerUser,
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: .bold),
+                            ),
+                            const SizedBox(height: 20),
+                            SizedBox(
+                              height: 200,
+                              child: BarChart(
+                                BarChartData(
+                                  alignment: .spaceAround,
+                                  maxY: hoursPerUser.values.isEmpty
+                                      ? 100
+                                      : hoursPerUser.values.reduce(
+                                              (a, b) => a > b ? a : b,
+                                            ) *
+                                            1.2,
+                                  barTouchData: BarTouchData(enabled: true),
+                                  titlesData: FlTitlesData(
+                                    show: true,
+                                    bottomTitles: AxisTitles(
+                                      sideTitles: SideTitles(
+                                        showTitles: true,
+                                        getTitlesWidget: (value, meta) {
+                                          final users = hoursPerUser.keys
+                                              .toList();
+                                          if (value.toInt() >= users.length) {
+                                            return const SizedBox.shrink();
+                                          }
+                                          return Padding(
+                                            padding: const .only(top: 8),
+                                            child: Text(
+                                              users[value.toInt()].length > 6
+                                                  ? '${users[value.toInt()].substring(0, 6)}...'
+                                                  : users[value.toInt()],
+                                              style: const TextStyle(
+                                                fontSize: 10,
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ),
-                                  ],
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                ],
-                GlassCard(
-                  padding: const EdgeInsets.all(20),
-                  enableBlur: false,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.recentActivity,
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
+                                    leftTitles: AxisTitles(
+                                      sideTitles: SideTitles(
+                                        showTitles: true,
+                                        reservedSize: 40,
+                                        getTitlesWidget: (value, meta) {
+                                          return Text(
+                                            '${value.toInt()}h',
+                                            style: const TextStyle(
+                                              fontSize: 10,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    topTitles: const AxisTitles(
+                                      sideTitles: SideTitles(showTitles: false),
+                                    ),
+                                    rightTitles: const AxisTitles(
+                                      sideTitles: SideTitles(showTitles: false),
+                                    ),
+                                  ),
+                                  borderData: FlBorderData(show: false),
+                                  barGroups: hoursPerUser.entries
+                                      .toList()
+                                      .asMap()
+                                      .entries
+                                      .map((entry) {
+                                        return BarChartGroupData(
+                                          x: entry.key,
+                                          barRods: [
+                                            BarChartRodData(
+                                              toY: entry.value.value,
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.primary,
+                                              width: 20,
+                                              borderRadius: const .only(
+                                                topLeft: .circular(6),
+                                                topRight: .circular(6),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      })
+                                      .toList(),
                                 ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       const SizedBox(height: 16),
-                      if (entries.isEmpty)
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Text(
-                              l10n.noActivity,
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                          ),
-                        )
-                      else
-                        ...entries.take(5).map((e) => _ActivityTile(entry: e)),
                     ],
-                  ),
-                ),
-              ],
+                    GlassCard(
+                      padding: const .all(20),
+                      enableBlur: false,
+                      child: Column(
+                        crossAxisAlignment: .start,
+                        children: [
+                          Text(
+                            l10n.recentActivity,
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: .bold),
+                          ),
+                          const SizedBox(height: 16),
+                          if (entries.isEmpty)
+                            Center(
+                              child: Padding(
+                                padding: const .all(20),
+                                child: Text(
+                                  l10n.noActivity,
+                                  style: TextStyle(color: Colors.grey[600]),
+                                ),
+                              ),
+                            )
+                          else
+                            ...entries
+                                .take(5)
+                                .map((e) => _ActivityTile(entry: e)),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -234,30 +243,27 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GlassCard(
-      padding: const EdgeInsets.all(16),
+      padding: const .all(16),
       enableBlur: false,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: .start,
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const .all(8),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: .circular(8),
             ),
             child: Icon(icon, color: color, size: 24),
           ),
           const SizedBox(height: 12),
           Text(
             value,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: .bold),
           ),
-          Text(
-            label,
-            style: TextStyle(color: Colors.grey[600], fontSize: 13),
-          ),
+          Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 13)),
         ],
       ),
     );
@@ -272,7 +278,7 @@ class _ActivityTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const .symmetric(vertical: 8),
       child: Row(
         children: [
           Container(
@@ -290,22 +296,16 @@ class _ActivityTile extends StatelessWidget {
             child: Center(
               child: Text(
                 entry.userName[0].toUpperCase(),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: const TextStyle(color: Colors.white, fontWeight: .bold),
               ),
             ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: .start,
               children: [
-                Text(
-                  entry.userName,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
+                Text(entry.userName, style: const TextStyle(fontWeight: .w600)),
                 Text(
                   '${entry.location} • ${TimeEntry.formatDuration(entry.totalWorked)}',
                   style: TextStyle(color: Colors.grey[600], fontSize: 12),

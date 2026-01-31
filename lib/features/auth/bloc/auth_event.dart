@@ -52,3 +52,8 @@ final class AuthUpgradeToAdminRequested extends AuthEvent {
 
   const AuthUpgradeToAdminRequested({required this.adminCode});
 }
+
+/// Event fired to check for pending Google Sign-In redirect result (mobile web)
+final class AuthGoogleRedirectResultRequested extends AuthEvent {
+  const AuthGoogleRedirectResultRequested();
+}

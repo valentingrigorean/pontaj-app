@@ -13,11 +13,11 @@ class PdfService {
 
     pdf.addPage(
       pw.Page(
-        pageFormat: PdfPageFormat.a4,
+        pageFormat: .a4,
         margin: const pw.EdgeInsets.all(40),
         build: (context) {
           return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               _buildHeader(invoice),
               pw.SizedBox(height: 40),
@@ -39,16 +39,16 @@ class PdfService {
 
   pw.Widget _buildHeader(Invoice invoice) {
     return pw.Row(
-      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: .spaceBetween,
       children: [
         pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          crossAxisAlignment: .start,
           children: [
             pw.Text(
               'INVOICE',
               style: pw.TextStyle(
                 fontSize: 32,
-                fontWeight: pw.FontWeight.bold,
+                fontWeight: .bold,
                 color: PdfColors.blue800,
               ),
             ),
@@ -60,11 +60,11 @@ class PdfService {
           ],
         ),
         pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.end,
+          crossAxisAlignment: .end,
           children: [
             pw.Text(
               'Pontaj PRO',
-              style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
+              style: pw.TextStyle(fontSize: 20, fontWeight: .bold),
             ),
             pw.Text('Time Tracking System'),
           ],
@@ -78,32 +78,29 @@ class PdfService {
         '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
 
     return pw.Row(
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      crossAxisAlignment: .start,
       children: [
         pw.Expanded(
           child: pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               pw.Text(
                 'Bill To:',
                 style: pw.TextStyle(
-                  fontWeight: pw.FontWeight.bold,
+                  fontWeight: .bold,
                   color: PdfColors.grey700,
                 ),
               ),
               pw.SizedBox(height: 4),
               pw.Text(
                 invoice.userName,
-                style: pw.TextStyle(
-                  fontSize: 14,
-                  fontWeight: pw.FontWeight.bold,
-                ),
+                style: pw.TextStyle(fontSize: 14, fontWeight: .bold),
               ),
             ],
           ),
         ),
         pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.end,
+          crossAxisAlignment: .end,
           children: [
             _buildInfoRow('Period:', invoice.periodDisplay),
             if (invoice.dueDate != null)
@@ -152,9 +149,11 @@ class PdfService {
             _buildTableCell('Work hours for period ${invoice.periodDisplay}'),
             _buildTableCell(invoice.totalHours.toStringAsFixed(2)),
             _buildTableCell(
-              '${invoice.hourlyRate.toStringAsFixed(2)} ${invoice.currency.symbol}',
+              '${invoice.hourlyRate.toStringAsFixed(2)} ${invoice.currency.pdfSymbol}',
             ),
-            _buildTableCell(invoice.formattedAmount),
+            _buildTableCell(
+              '${invoice.totalAmount.toStringAsFixed(2)} ${invoice.currency.pdfSymbol}',
+            ),
           ],
         ),
       ],
@@ -166,7 +165,7 @@ class PdfService {
       padding: const pw.EdgeInsets.all(8),
       child: pw.Text(
         text,
-        style: pw.TextStyle(fontWeight: isHeader ? pw.FontWeight.bold : null),
+        style: pw.TextStyle(fontWeight: isHeader ? .bold : null),
       ),
     );
   }
@@ -182,17 +181,17 @@ class PdfService {
           border: pw.Border.all(color: PdfColors.blue200),
         ),
         child: pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: .spaceBetween,
           children: [
             pw.Text(
               'TOTAL:',
-              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+              style: pw.TextStyle(fontSize: 16, fontWeight: .bold),
             ),
             pw.Text(
-              invoice.formattedAmount,
+              '${invoice.totalAmount.toStringAsFixed(2)} ${invoice.currency.pdfSymbol}',
               style: pw.TextStyle(
                 fontSize: 16,
-                fontWeight: pw.FontWeight.bold,
+                fontWeight: .bold,
                 color: PdfColors.blue800,
               ),
             ),
@@ -204,15 +203,12 @@ class PdfService {
 
   pw.Widget _buildFooter(Invoice invoice) {
     return pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      crossAxisAlignment: .start,
       children: [
         if (invoice.notes != null && invoice.notes!.isNotEmpty) ...[
           pw.Text(
             'Notes:',
-            style: pw.TextStyle(
-              fontWeight: pw.FontWeight.bold,
-              color: PdfColors.grey700,
-            ),
+            style: pw.TextStyle(fontWeight: .bold, color: PdfColors.grey700),
           ),
           pw.SizedBox(height: 4),
           pw.Text(invoice.notes!),

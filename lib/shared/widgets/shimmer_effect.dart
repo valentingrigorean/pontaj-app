@@ -27,10 +27,7 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
   @override
   void initState() {
     super.initState();
-    _controller = .new(
-      duration: widget.duration,
-      vsync: this,
-    )..repeat();
+    _controller = .new(duration: widget.duration, vsync: this)..repeat();
   }
 
   @override
@@ -46,9 +43,10 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
     }
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final baseColor = widget.baseColor ??
-        (isDark ? Colors.grey[800]! : Colors.grey[300]!);
-    final highlightColor = widget.highlightColor ??
+    final baseColor =
+        widget.baseColor ?? (isDark ? Colors.grey[800]! : Colors.grey[300]!);
+    final highlightColor =
+        widget.highlightColor ??
         (isDark ? Colors.grey[700]! : Colors.grey[100]!);
 
     return AnimatedBuilder(
@@ -60,11 +58,7 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
             return LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                baseColor,
-                highlightColor,
-                baseColor,
-              ],
+              colors: [baseColor, highlightColor, baseColor],
               stops: [
                 _controller.value - 0.3,
                 _controller.value,
@@ -100,7 +94,7 @@ class ShimmerBox extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[800] : Colors.grey[300],
-        borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius: .circular(borderRadius),
       ),
     );
   }

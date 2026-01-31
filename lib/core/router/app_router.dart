@@ -4,28 +4,25 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../l10n/app_localizations.dart';
-import '../../features/admin/pages/admin_home_page.dart';
-import '../../features/admin/pages/all_entries_page.dart';
 import '../../features/admin/pages/user_entries_page.dart';
 import '../../features/auth/bloc/auth_bloc.dart';
 import '../../features/auth/bloc/auth_state.dart';
 import '../../features/auth/pages/login_page.dart';
 import '../../features/auth/pages/register_page.dart';
 import '../../features/auth/pages/splash_page.dart';
-import '../../features/home/pages/user_home_page.dart';
+import '../../features/home/pages/home_page.dart';
 import '../../features/invoice/pages/create_invoice_page.dart';
 import '../../features/invoice/pages/invoice_detail_page.dart';
 import '../../features/invoice/pages/invoice_list_page.dart';
 import '../../features/settings/pages/settings_page.dart';
-import '../../features/time_entry/pages/pontaj_page.dart';
+import '../l10n/app_localizations.dart';
 
 Page<void> _buildPage({
   required LocalKey key,
   required Widget child,
   Duration duration = const Duration(milliseconds: 300),
   Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
-      transitionsBuilder,
+  transitionsBuilder,
 }) {
   if (kIsWeb) {
     return NoTransitionPage(key: key, child: child);
@@ -34,7 +31,8 @@ Page<void> _buildPage({
     key: key,
     child: child,
     transitionDuration: duration,
-    transitionsBuilder: transitionsBuilder ??
+    transitionsBuilder:
+        transitionsBuilder ??
         (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
@@ -54,17 +52,14 @@ class AppRouter {
         GoRoute(
           path: '/',
           name: 'splash',
-          pageBuilder: (context, state) => const NoTransitionPage(
-            child: SplashPage(),
-          ),
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: SplashPage()),
         ),
         GoRoute(
           path: '/login',
           name: 'login',
-          pageBuilder: (context, state) => _buildPage(
-            key: state.pageKey,
-            child: const LoginPage(),
-          ),
+          pageBuilder: (context, state) =>
+              _buildPage(key: state.pageKey, child: const LoginPage()),
         ),
         GoRoute(
           path: '/register',
@@ -72,125 +67,94 @@ class AppRouter {
           pageBuilder: (context, state) => _buildPage(
             key: state.pageKey,
             child: const RegisterPage(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(1.0, 0.0),
-                  end: Offset.zero,
-                ).animate(CurvedAnimation(
-                  parent: animation,
-                  curve: Curves.easeOutCubic,
-                )),
-                child: child,
-              );
-            },
-          ),
-        ),
-        GoRoute(
-          path: '/admin',
-          name: 'admin',
-          pageBuilder: (context, state) => _buildPage(
-            key: state.pageKey,
-            child: const AdminHomePage(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return SlideTransition(
+                    position:
+                        Tween<Offset>(
+                          begin: const Offset(1.0, 0.0),
+                          end: Offset.zero,
+                        ).animate(
+                          CurvedAnimation(
+                            parent: animation,
+                            curve: Curves.easeOutCubic,
+                          ),
+                        ),
+                    child: child,
+                  );
+                },
           ),
         ),
         GoRoute(
           path: '/home',
           name: 'home',
-          pageBuilder: (context, state) => _buildPage(
-            key: state.pageKey,
-            child: const UserHomePage(),
-          ),
-        ),
-        GoRoute(
-          path: '/pontaj',
-          name: 'pontaj',
-          pageBuilder: (context, state) {
-            final extra = state.extra as Map<String, dynamic>?;
-            String userName = extra?['user'] as String? ?? '';
-            if (userName.isEmpty) {
-              final authState = authBloc.state;
-              if (authState is AuthAuthenticated) {
-                userName = authState.user.displayNameOrEmail;
-              } else {
-                userName = 'User';
-              }
-            }
-            return _buildPage(
-              key: state.pageKey,
-              child: PontajPage(
-                userName: userName,
-                adminMode: extra?['adminMode'] as bool? ?? false,
-                lockName: extra?['lockName'] as bool? ?? false,
-              ),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                return SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(1.0, 0.0),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeOutCubic,
-                  )),
-                  child: child,
-                );
-              },
-            );
-          },
-        ),
-        GoRoute(
-          path: '/entries',
-          name: 'entries',
-          builder: (context, state) => const AllEntriesPage(),
+          pageBuilder: (context, state) =>
+              _buildPage(key: state.pageKey, child: const HomePage()),
         ),
         GoRoute(
           path: '/userEntries',
           name: 'userEntries',
-          builder: (context, state) {
+          pageBuilder: (context, state) {
             final extra = state.extra as Map<String, dynamic>?;
-            return UserEntriesPage(
-              userName: extra?['user'] as String? ?? 'Utilizator',
+            return _buildPage(
+              key: state.pageKey,
+              child: UserEntriesPage(
+                userName: extra?['user'] as String? ?? 'Utilizator',
+              ),
             );
           },
         ),
         GoRoute(
           path: '/settings',
           name: 'settings',
-          builder: (context, state) => const SettingsPage(),
+          pageBuilder: (context, state) => _buildPage(
+            key: state.pageKey,
+            child: const SettingsPage(),
+          ),
         ),
         GoRoute(
           path: '/invoices',
           name: 'invoices',
-          builder: (context, state) {
+          pageBuilder: (context, state) {
             final authState = authBloc.state;
-            final isAdmin = authState is AuthAuthenticated && authState.user.isAdmin;
-            return InvoiceListPage(isAdmin: isAdmin);
+            final isAdmin =
+                authState is AuthAuthenticated && authState.user.isAdmin;
+            return _buildPage(
+              key: state.pageKey,
+              child: InvoiceListPage(isAdmin: isAdmin),
+            );
           },
           routes: [
             GoRoute(
               path: 'create',
               name: 'create-invoice',
-              builder: (context, state) => const CreateInvoicePage(),
+              pageBuilder: (context, state) => _buildPage(
+                key: state.pageKey,
+                child: const CreateInvoicePage(),
+              ),
             ),
             GoRoute(
               path: ':invoiceId',
               name: 'invoice-detail',
-              builder: (context, state) {
+              pageBuilder: (context, state) {
                 final invoiceId = state.pathParameters['invoiceId']!;
                 final authState = authBloc.state;
-                final isAdmin = authState is AuthAuthenticated && authState.user.isAdmin;
-                return InvoiceDetailPage(
-                  invoiceId: invoiceId,
-                  isAdmin: isAdmin,
+                final isAdmin =
+                    authState is AuthAuthenticated && authState.user.isAdmin;
+                return _buildPage(
+                  key: state.pageKey,
+                  child: InvoiceDetailPage(
+                    invoiceId: invoiceId,
+                    isAdmin: isAdmin,
+                  ),
                 );
               },
             ),
           ],
         ),
       ],
-      errorBuilder: (context, state) => _UnknownRouteScreen(
-        error: state.error?.toString(),
-      ),
+      errorBuilder: (context, state) =>
+          _UnknownRouteScreen(error: state.error?.toString()),
     );
   }
 
@@ -217,10 +181,7 @@ class AppRouter {
 
     if (authState is AuthAuthenticated) {
       if (isOnSplash || isOnLogin || isOnRegister) {
-        if (authState.user.isAdmin) {
-          return '/admin';
-        }
-        // Regular user - go to home with bottom/rail navigation
+        // Both admin and user go to the same unified home page
         return '/home';
       }
     }
@@ -262,7 +223,7 @@ class _UnknownRouteScreen extends StatelessWidget {
             Text(l10n.routeNotDefined),
             if (error != null)
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const .all(16),
                 child: Text(
                   error!,
                   style: TextStyle(color: Colors.grey[600], fontSize: 12),

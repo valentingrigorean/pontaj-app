@@ -855,6 +855,168 @@ abstract class AppLocalizations {
   /// In ro, this message translates to:
   /// **'Foloseste intervalul personalizat cand adaugi mai multe inregistrari pentru aceeasi zi'**
   String get requireCustomInterval;
+
+  /// No description provided for @thisWeek.
+  ///
+  /// In ro, this message translates to:
+  /// **'Saptamana aceasta'**
+  String get thisWeek;
+
+  /// No description provided for @lastWeek.
+  ///
+  /// In ro, this message translates to:
+  /// **'Saptamana trecuta'**
+  String get lastWeek;
+
+  /// No description provided for @thisMonth.
+  ///
+  /// In ro, this message translates to:
+  /// **'Luna aceasta'**
+  String get thisMonth;
+
+  /// No description provided for @topLocation.
+  ///
+  /// In ro, this message translates to:
+  /// **'Locatie frecventa'**
+  String get topLocation;
+
+  /// No description provided for @weeklyHours.
+  ///
+  /// In ro, this message translates to:
+  /// **'Ore saptamanale'**
+  String get weeklyHours;
+
+  /// No description provided for @dailyTarget.
+  ///
+  /// In ro, this message translates to:
+  /// **'Tinta zilnica'**
+  String get dailyTarget;
+
+  /// No description provided for @goodMorning.
+  ///
+  /// In ro, this message translates to:
+  /// **'Buna dimineata'**
+  String get goodMorning;
+
+  /// No description provided for @goodAfternoon.
+  ///
+  /// In ro, this message translates to:
+  /// **'Buna ziua'**
+  String get goodAfternoon;
+
+  /// No description provided for @goodEvening.
+  ///
+  /// In ro, this message translates to:
+  /// **'Buna seara'**
+  String get goodEvening;
+
+  /// No description provided for @hourlyRate.
+  ///
+  /// In ro, this message translates to:
+  /// **'Tarif pe ora'**
+  String get hourlyRate;
+
+  /// No description provided for @editRate.
+  ///
+  /// In ro, this message translates to:
+  /// **'Editeaza tarif'**
+  String get editRate;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In ro, this message translates to:
+  /// **'Salveaza modificarile'**
+  String get saveChanges;
+
+  /// No description provided for @salarySettings.
+  ///
+  /// In ro, this message translates to:
+  /// **'Setari salariu'**
+  String get salarySettings;
+
+  /// No description provided for @selectSalaryType.
+  ///
+  /// In ro, this message translates to:
+  /// **'Selecteaza tipul de salariu'**
+  String get selectSalaryType;
+
+  /// No description provided for @selectCurrency.
+  ///
+  /// In ro, this message translates to:
+  /// **'Selecteaza moneda'**
+  String get selectCurrency;
+
+  /// No description provided for @invoices.
+  ///
+  /// In ro, this message translates to:
+  /// **'Facturi'**
+  String get invoices;
+
+  /// No description provided for @createInvoice.
+  ///
+  /// In ro, this message translates to:
+  /// **'Creeaza factura'**
+  String get createInvoice;
+
+  /// No description provided for @period.
+  ///
+  /// In ro, this message translates to:
+  /// **'Perioada'**
+  String get period;
+
+  /// No description provided for @dueDate.
+  ///
+  /// In ro, this message translates to:
+  /// **'Data scadenta'**
+  String get dueDate;
+
+  /// No description provided for @notSet.
+  ///
+  /// In ro, this message translates to:
+  /// **'Nesetat'**
+  String get notSet;
+
+  /// No description provided for @change.
+  ///
+  /// In ro, this message translates to:
+  /// **'Schimba'**
+  String get change;
+
+  /// No description provided for @summary.
+  ///
+  /// In ro, this message translates to:
+  /// **'Sumar'**
+  String get summary;
+
+  /// No description provided for @entries.
+  ///
+  /// In ro, this message translates to:
+  /// **'Inregistrari'**
+  String get entries;
+
+  /// No description provided for @totalAmount.
+  ///
+  /// In ro, this message translates to:
+  /// **'Suma totala'**
+  String get totalAmount;
+
+  /// No description provided for @notes.
+  ///
+  /// In ro, this message translates to:
+  /// **'Note'**
+  String get notes;
+
+  /// No description provided for @addNotesToInvoice.
+  ///
+  /// In ro, this message translates to:
+  /// **'Adauga note la factura...'**
+  String get addNotesToInvoice;
+
+  /// No description provided for @noEntriesForPeriod.
+  ///
+  /// In ro, this message translates to:
+  /// **'Nicio inregistrare gasita pentru perioada selectata'**
+  String get noEntriesForPeriod;
 }
 
 class _AppLocalizationsDelegate

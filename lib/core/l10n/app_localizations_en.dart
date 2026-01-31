@@ -408,4 +408,85 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get requireCustomInterval =>
       'Please use custom time interval when adding multiple entries for the same day';
+
+  @override
+  String get thisWeek => 'This Week';
+
+  @override
+  String get lastWeek => 'Last Week';
+
+  @override
+  String get thisMonth => 'This Month';
+
+  @override
+  String get topLocation => 'Top Location';
+
+  @override
+  String get weeklyHours => 'Weekly Hours';
+
+  @override
+  String get dailyTarget => 'Daily target';
+
+  @override
+  String get goodMorning => 'Good morning';
+
+  @override
+  String get goodAfternoon => 'Good afternoon';
+
+  @override
+  String get goodEvening => 'Good evening';
+
+  @override
+  String get hourlyRate => 'Hourly Rate';
+
+  @override
+  String get editRate => 'Edit Rate';
+
+  @override
+  String get saveChanges => 'Save Changes';
+
+  @override
+  String get salarySettings => 'Salary Settings';
+
+  @override
+  String get selectSalaryType => 'Select salary type';
+
+  @override
+  String get selectCurrency => 'Select currency';
+
+  @override
+  String get invoices => 'Invoices';
+
+  @override
+  String get createInvoice => 'Create Invoice';
+
+  @override
+  String get period => 'Period';
+
+  @override
+  String get dueDate => 'Due Date';
+
+  @override
+  String get notSet => 'Not set';
+
+  @override
+  String get change => 'Change';
+
+  @override
+  String get summary => 'Summary';
+
+  @override
+  String get entries => 'Entries';
+
+  @override
+  String get totalAmount => 'Total Amount';
+
+  @override
+  String get notes => 'Notes';
+
+  @override
+  String get addNotesToInvoice => 'Add notes to the invoice...';
+
+  @override
+  String get noEntriesForPeriod => 'No entries found for the selected period';
 }
