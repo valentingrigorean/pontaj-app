@@ -1017,6 +1017,120 @@ abstract class AppLocalizations {
   /// In ro, this message translates to:
   /// **'Nicio inregistrare gasita pentru perioada selectata'**
   String get noEntriesForPeriod;
+
+  /// No description provided for @week.
+  ///
+  /// In ro, this message translates to:
+  /// **'Saptamana'**
+  String get week;
+
+  /// No description provided for @year.
+  ///
+  /// In ro, this message translates to:
+  /// **'An'**
+  String get year;
+
+  /// No description provided for @custom.
+  ///
+  /// In ro, this message translates to:
+  /// **'Personalizat'**
+  String get custom;
+
+  /// No description provided for @selectPeriod.
+  ///
+  /// In ro, this message translates to:
+  /// **'Selecteaza perioada'**
+  String get selectPeriod;
+
+  /// No description provided for @selectDateRange.
+  ///
+  /// In ro, this message translates to:
+  /// **'Selecteaza intervalul de date'**
+  String get selectDateRange;
+
+  /// No description provided for @timeOverlapDetected.
+  ///
+  /// In ro, this message translates to:
+  /// **'Suprapunere de timp detectata'**
+  String get timeOverlapDetected;
+
+  /// No description provided for @yourNewEntry.
+  ///
+  /// In ro, this message translates to:
+  /// **'Noua ta inregistrare'**
+  String get yourNewEntry;
+
+  /// No description provided for @conflictsWithEntry.
+  ///
+  /// In ro, this message translates to:
+  /// **'Se suprapune cu inregistrarea existenta'**
+  String get conflictsWithEntry;
+
+  /// No description provided for @adjustTimesSuggestion.
+  ///
+  /// In ro, this message translates to:
+  /// **'Ajusteaza ora de inceput sau sfarsit pentru a evita suprapunerea cu inregistrarile existente.'**
+  String get adjustTimesSuggestion;
+
+  /// No description provided for @editTimes.
+  ///
+  /// In ro, this message translates to:
+  /// **'Editeaza orele'**
+  String get editTimes;
+
+  /// No description provided for @thisPeriod.
+  ///
+  /// In ro, this message translates to:
+  /// **'Aceasta perioada'**
+  String get thisPeriod;
+
+  /// No description provided for @lastPeriod.
+  ///
+  /// In ro, this message translates to:
+  /// **'Perioada trecuta'**
+  String get lastPeriod;
+
+  /// No description provided for @periodComparison.
+  ///
+  /// In ro, this message translates to:
+  /// **'Comparatie perioade'**
+  String get periodComparison;
+
+  /// No description provided for @teamTrend.
+  ///
+  /// In ro, this message translates to:
+  /// **'Tendinta echipa'**
+  String get teamTrend;
+
+  /// No description provided for @hoursByLocation.
+  ///
+  /// In ro, this message translates to:
+  /// **'Ore pe locatie'**
+  String get hoursByLocation;
+
+  /// No description provided for @activeUsers.
+  ///
+  /// In ro, this message translates to:
+  /// **'Utilizatori activi'**
+  String get activeUsers;
+
+  /// No description provided for @topUser.
+  ///
+  /// In ro, this message translates to:
+  /// **'Utilizator top'**
+  String get topUser;
+
+  /// No description provided for @daysWorked.
+  ///
+  /// In ro, this message translates to:
+  /// **'Zile lucrate'**
+  String get daysWorked;
+
+  /// No description provided for @vsLastPeriod.
+  ///
+  /// In ro, this message translates to:
+  /// **'vs Perioada trecuta'**
+  String get vsLastPeriod;
 }
 
 class _AppLocalizationsDelegate

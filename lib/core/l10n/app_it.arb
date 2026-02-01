@@ -226,5 +226,25 @@
   "totalAmount": "Importo totale",
   "notes": "Note",
   "addNotesToInvoice": "Aggiungi note alla fattura...",
-  "noEntriesForPeriod": "Nessuna registrazione trovata per il periodo selezionato"
+  "noEntriesForPeriod": "Nessuna registrazione trovata per il periodo selezionato",
+
+  "week": "Settimana",
+  "year": "Anno",
+  "custom": "Personalizzato",
+  "selectPeriod": "Seleziona periodo",
+  "selectDateRange": "Seleziona intervallo di date",
+  "timeOverlapDetected": "Sovrapposizione di tempo rilevata",
+  "yourNewEntry": "La tua nuova registrazione",
+  "conflictsWithEntry": "Si sovrappone alla registrazione esistente",
+  "adjustTimesSuggestion": "Regola l'ora di inizio o di fine per evitare sovrapposizioni con le registrazioni esistenti.",
+  "editTimes": "Modifica orari",
+  "thisPeriod": "Questo periodo",
+  "lastPeriod": "Periodo precedente",
+  "periodComparison": "Confronto periodi",
+  "teamTrend": "Tendenza del team",
+  "hoursByLocation": "Ore per posizione",
+  "activeUsers": "Utenti attivi",
+  "topUser": "Utente top",
+  "daysWorked": "Giorni lavorati",
+  "vsLastPeriod": "vs Periodo precedente"
 }

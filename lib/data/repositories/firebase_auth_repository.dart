@@ -133,6 +133,15 @@ class FirebaseAuthRepository {
     return _processGoogleSignInResult(userCredential);
   }
 
+  Future<User?> signInWithOneTapCredential(GoogleSignInAccount account) async {
+    final googleAuth = account.authentication;
+    final credential = firebase_auth.GoogleAuthProvider.credential(
+      idToken: googleAuth.idToken,
+    );
+    final userCredential = await _auth.signInWithCredential(credential);
+    return _processGoogleSignInResult(userCredential);
+  }
+
   Future<User?> _processGoogleSignInResult(
     firebase_auth.UserCredential userCredential,
   ) async {

@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../core/l10n/app_localizations.dart';
 import '../../../shared/widgets/gradient_background.dart';
@@ -23,6 +25,7 @@ class _SplashPageState extends State<SplashPage>
   late final Animation<double> _rotation;
   late final Animation<double> _jrOpacity;
   late final Animation<double> _glowOpacity;
+  StreamSubscription<GoogleSignInAuthenticationEvent>? _oneTapSubscription;
 
   @override
   void initState() {
@@ -48,7 +51,14 @@ class _SplashPageState extends State<SplashPage>
 
     _controller.forward();
 
-    // Trigger auth check after animation
+    if (kIsWeb) {
+      _oneTapSubscription = GoogleSignIn.instance.authenticationEvents.listen((event) {
+        if (event is GoogleSignInAuthenticationEventSignIn && mounted) {
+          context.read<AuthBloc>().add(AuthOneTapSignInReceived(event.user));
+        }
+      });
+    }
+
     Timer(const Duration(seconds: 3), () {
       if (mounted) {
         context.read<AuthBloc>().add(const AuthCheckRequested());
@@ -58,6 +68,7 @@ class _SplashPageState extends State<SplashPage>
 
   @override
   void dispose() {
+    _oneTapSubscription?.cancel();
     _controller.dispose();
     super.dispose();
   }

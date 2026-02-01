@@ -3,15 +3,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/l10n/app_localizations.dart';
 import '../../../core/responsive/responsive.dart';
+import '../../../data/models/date_period.dart';
 import '../../../data/models/time_entry.dart';
 import '../../../shared/widgets/glass_card.dart';
 import '../../../shared/widgets/gradient_background.dart';
+import '../../../shared/widgets/period_selector.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_state.dart';
 import '../../time_entry/bloc/time_entry_bloc.dart';
 import '../../time_entry/bloc/time_entry_event.dart';
 import '../../time_entry/bloc/time_entry_state.dart';
+import '../bloc/dashboard_cubit.dart';
+import '../bloc/dashboard_state.dart';
+import '../widgets/distribution_pie_chart.dart';
 import '../widgets/stat_card.dart';
+import '../widgets/trend_line_chart.dart';
 import '../widgets/weekly_chart.dart';
 
 class UserDashboardPage extends StatefulWidget {
@@ -24,10 +30,19 @@ class UserDashboardPage extends StatefulWidget {
 }
 
 class _UserDashboardPageState extends State<UserDashboardPage> {
+  late DashboardCubit _dashboardCubit;
+
   @override
   void initState() {
     super.initState();
+    _dashboardCubit = DashboardCubit();
     _loadEntries();
+  }
+
+  @override
+  void dispose() {
+    _dashboardCubit.close();
+    super.dispose();
   }
 
   void _loadEntries() {
@@ -54,86 +69,59 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
       body: GradientBackground(
         animated: false,
         child: BlocBuilder<TimeEntryBloc, TimeEntryState>(
-          builder: (context, state) {
-            if (state is TimeEntryLoading) {
+          builder: (context, timeEntryState) {
+            if (timeEntryState is TimeEntryLoading) {
               return const Center(child: CircularProgressIndicator());
             }
 
-            if (state is! TimeEntryLoaded) {
+            if (timeEntryState is! TimeEntryLoaded) {
               return Center(child: Text(l10n.couldNotLoadData));
             }
 
-            final entries = state.entries.toList()
+            final entries = timeEntryState.entries.toList()
               ..sort((a, b) => b.date.compareTo(a.date));
 
-            final stats = _calculateStats(entries);
+            _dashboardCubit.setEntries(entries);
 
-            return SingleChildScrollView(
-              padding: ResponsiveSpacing.pagePadding(context),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 900),
-                  child: Column(
-                    crossAxisAlignment: .start,
-                    children: [
-                      _buildGreeting(context, l10n, userName),
-                      const SizedBox(height: 24),
-                      ResponsiveGrid(
-                        mobileColumns: 2,
-                        tabletColumns: 4,
-                        desktopColumns: 4,
-                        spacing: 12,
-                        runSpacing: 12,
+            return BlocBuilder<DashboardCubit, DashboardState>(
+              bloc: _dashboardCubit,
+              builder: (context, dashState) {
+                return SingleChildScrollView(
+                  padding: ResponsiveSpacing.pagePadding(context),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 900),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          StatCard(
-                            icon: Icons.access_time,
-                            label: l10n.thisWeek,
-                            value: '${stats.hoursThisWeek.toStringAsFixed(1)}h',
-                            color: Colors.blue,
-                            trailing: stats.weekTrend != 0
-                                ? TrendIndicator(
-                                    percentage: stats.weekTrend,
-                                    isPositive: stats.weekTrend > 0,
-                                  )
-                                : null,
+                          _buildGreeting(context, l10n, userName),
+                          const SizedBox(height: 20),
+                          PeriodSelector(
+                            selectedPeriod: dashState.selectedPeriod,
+                            onPeriodChanged: _dashboardCubit.setPeriod,
                           ),
-                          StatCard(
-                            icon: Icons.calendar_month,
-                            label: l10n.thisMonth,
-                            value:
-                                '${stats.hoursThisMonth.toStringAsFixed(1)}h',
-                            color: Colors.green,
-                            subtitle: '${stats.daysThisMonth} ${l10n.days}',
-                          ),
-                          StatCard(
-                            icon: Icons.trending_up,
-                            label: l10n.averagePerDay,
-                            value:
-                                '${stats.avgHoursPerDay.toStringAsFixed(1)}h',
-                            color: Colors.orange,
-                          ),
-                          StatCard(
-                            icon: Icons.location_on,
-                            label: l10n.topLocation,
-                            value: stats.topLocation.isNotEmpty
-                                ? stats.topLocation
-                                : '-',
-                            color: Colors.purple,
-                          ),
+                          const SizedBox(height: 20),
+                          _buildStatCards(context, l10n, dashState),
+                          const SizedBox(height: 24),
+                          _buildTrendChart(context, l10n, dashState),
+                          const SizedBox(height: 24),
+                          _buildLocationChart(context, l10n, dashState),
+                          const SizedBox(height: 24),
+                          if (dashState.selectedPeriod.type == PeriodType.week)
+                            WeeklyChart(
+                              hoursPerDay: dashState.weeklyHours,
+                              targetHours: 8.0,
+                            ),
+                          if (dashState.selectedPeriod.type == PeriodType.week)
+                            const SizedBox(height: 24),
+                          _buildRecentEntries(context, l10n, entries),
+                          const SizedBox(height: 80),
                         ],
                       ),
-                      const SizedBox(height: 24),
-                      WeeklyChart(
-                        hoursPerDay: stats.weeklyHours,
-                        targetHours: 8.0,
-                      ),
-                      const SizedBox(height: 24),
-                      _buildRecentEntries(context, l10n, entries),
-                      const SizedBox(height: 80),
-                    ],
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             );
           },
         ),
@@ -186,7 +174,7 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 24,
-                  fontWeight: .bold,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -194,7 +182,7 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
           const SizedBox(width: 16),
           Expanded(
             child: Column(
-              crossAxisAlignment: .start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
@@ -213,13 +201,108 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
                   name,
                   style: Theme.of(
                     context,
-                  ).textTheme.titleLarge?.copyWith(fontWeight: .bold),
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildStatCards(
+    BuildContext context,
+    AppLocalizations l10n,
+    DashboardState state,
+  ) {
+    return ResponsiveGrid(
+      mobileColumns: 2,
+      tabletColumns: 4,
+      desktopColumns: 4,
+      spacing: 12,
+      runSpacing: 12,
+      children: [
+        StatCard(
+          icon: Icons.access_time,
+          label: l10n.thisPeriod,
+          value: '${state.totalHoursThisPeriod.toStringAsFixed(1)}h',
+          color: Colors.blue,
+          trailing: state.periodTrend != 0
+              ? TrendIndicator(
+                  percentage: state.periodTrend,
+                  isPositive: state.periodTrend > 0,
+                )
+              : null,
+        ),
+        StatCard(
+          icon: Icons.compare_arrows,
+          label: l10n.vsLastPeriod,
+          value: '${state.totalHoursLastPeriod.toStringAsFixed(1)}h',
+          color: Colors.green,
+          subtitle: l10n.lastPeriod,
+        ),
+        StatCard(
+          icon: Icons.trending_up,
+          label: l10n.averagePerDay,
+          value: '${state.avgHoursPerDay.toStringAsFixed(1)}h',
+          color: Colors.orange,
+        ),
+        StatCard(
+          icon: Icons.calendar_today,
+          label: l10n.daysWorked,
+          value: '${state.daysWorkedThisPeriod}',
+          color: Colors.purple,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTrendChart(
+    BuildContext context,
+    AppLocalizations l10n,
+    DashboardState state,
+  ) {
+    final dailyData = state.dailyHours.entries.map((e) {
+      return TrendDataPoint(date: e.key, hours: e.value);
+    }).toList()
+      ..sort((a, b) => a.date.compareTo(b.date));
+
+    return TrendLineChart(
+      title: l10n.weeklyHours,
+      targetHours: 8.0,
+      series: [
+        TrendLineSeries(
+          label: l10n.totalHours,
+          data: dailyData,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLocationChart(
+    BuildContext context,
+    AppLocalizations l10n,
+    DashboardState state,
+  ) {
+    final locationData = state.hoursByLocation;
+    final colors = generateChartColors(locationData.length);
+    var colorIndex = 0;
+
+    final items = locationData.entries.map((e) {
+      return DistributionItem(
+        label: e.key,
+        value: e.value,
+        color: colors[colorIndex++ % colors.length],
+      );
+    }).toList();
+
+    return DistributionPieChart(
+      title: l10n.hoursByLocation,
+      items: items,
+      centerText: '${state.totalHoursThisPeriod.toStringAsFixed(1)}h',
+      centerSubtext: l10n.total,
     );
   }
 
@@ -231,22 +314,22 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
     final recentEntries = entries.take(5).toList();
 
     return GlassCard(
-      padding: const .all(20),
+      padding: const EdgeInsets.all(20),
       enableBlur: false,
       child: Column(
-        crossAxisAlignment: .start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             l10n.recentActivity,
             style: Theme.of(
               context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: .bold),
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           if (recentEntries.isEmpty)
             Center(
               child: Padding(
-                padding: const .all(20),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
                     Icon(Icons.history, size: 48, color: Colors.grey[400]),
@@ -268,7 +351,7 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
 
   Widget _buildEntryTile(BuildContext context, TimeEntry entry) {
     return Padding(
-      padding: const .symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
           Container(
@@ -278,13 +361,13 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
               color: Theme.of(
                 context,
               ).colorScheme.primaryContainer.withValues(alpha: 0.5),
-              borderRadius: .circular(12),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
               child: Text(
                 '${entry.date.day}',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: .bold,
+                  fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.primary,
                 ),
               ),
@@ -293,9 +376,9 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
           const SizedBox(width: 12),
           Expanded(
             child: Column(
-              crossAxisAlignment: .start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(entry.location, style: const TextStyle(fontWeight: .w600)),
+                Text(entry.location, style: const TextStyle(fontWeight: FontWeight.w600)),
                 Text(
                   entry.intervalText,
                   style: TextStyle(color: Colors.grey[600], fontSize: 12),
@@ -306,7 +389,7 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
           Text(
             TimeEntry.formatDuration(entry.totalWorked),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: .bold,
+              fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.primary,
             ),
           ),
@@ -314,106 +397,4 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
       ),
     );
   }
-
-  _DashboardStats _calculateStats(List<TimeEntry> entries) {
-    final now = DateTime.now();
-    final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-    final startOfLastWeek = startOfWeek.subtract(const Duration(days: 7));
-    final startOfMonth = DateTime(now.year, now.month, 1);
-
-    double hoursThisWeek = 0;
-    double hoursLastWeek = 0;
-    double hoursThisMonth = 0;
-    int daysThisMonth = 0;
-    final weeklyHours = <int, double>{};
-    final locationCount = <String, int>{};
-
-    for (final entry in entries) {
-      final entryDate = DateTime(
-        entry.date.year,
-        entry.date.month,
-        entry.date.day,
-      );
-      final hours = entry.totalWorked.inMinutes / 60;
-
-      locationCount[entry.location] = (locationCount[entry.location] ?? 0) + 1;
-
-      if (entryDate.isAfter(startOfWeek.subtract(const Duration(days: 1)))) {
-        hoursThisWeek += hours;
-        final dayIndex = entry.date.weekday - 1;
-        weeklyHours[dayIndex] = (weeklyHours[dayIndex] ?? 0) + hours;
-      }
-
-      if (entryDate.isAfter(
-            startOfLastWeek.subtract(const Duration(days: 1)),
-          ) &&
-          entryDate.isBefore(startOfWeek)) {
-        hoursLastWeek += hours;
-      }
-
-      if (entryDate.isAfter(startOfMonth.subtract(const Duration(days: 1)))) {
-        hoursThisMonth += hours;
-        daysThisMonth++;
-      }
-    }
-
-    double weekTrend = 0;
-    if (hoursLastWeek > 0) {
-      weekTrend = ((hoursThisWeek - hoursLastWeek) / hoursLastWeek) * 100;
-    }
-
-    final avgHoursPerDay = entries.isEmpty
-        ? 0.0
-        : entries.fold<double>(
-                0,
-                (sum, e) => sum + e.totalWorked.inMinutes / 60,
-              ) /
-              entries.length;
-
-    String topLocation = '';
-    int maxCount = 0;
-    for (final entry in locationCount.entries) {
-      if (entry.value > maxCount) {
-        maxCount = entry.value;
-        topLocation = entry.key;
-      }
-    }
-
-    if (topLocation.length > 10) {
-      topLocation = '${topLocation.substring(0, 10)}...';
-    }
-
-    return _DashboardStats(
-      hoursThisWeek: hoursThisWeek,
-      hoursLastWeek: hoursLastWeek,
-      hoursThisMonth: hoursThisMonth,
-      daysThisMonth: daysThisMonth,
-      avgHoursPerDay: avgHoursPerDay,
-      weekTrend: weekTrend,
-      weeklyHours: weeklyHours,
-      topLocation: topLocation,
-    );
-  }
-}
-
-class _DashboardStats {
-  final double hoursThisWeek;
-  final double hoursLastWeek;
-  final double hoursThisMonth;
-  final int daysThisMonth;
-  final double avgHoursPerDay;
-  final double weekTrend;
-  final Map<int, double> weeklyHours;
-  final String topLocation;
-
-  _DashboardStats({
-    required this.hoursThisWeek,
-    required this.hoursLastWeek,
-    required this.hoursThisMonth,
-    required this.daysThisMonth,
-    required this.avgHoursPerDay,
-    required this.weekTrend,
-    required this.weeklyHours,
-    required this.topLocation,
-  });
 }

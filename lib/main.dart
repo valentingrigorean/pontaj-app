@@ -5,19 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'app.dart';
-import 'url_strategy_stub.dart' if (dart.library.js_interop) 'url_strategy_web.dart';
+import 'core/platform/url_strategy.dart';
 import 'data/repositories/firebase_auth_repository.dart';
 import 'data/repositories/firestore_time_entry_repository.dart';
 import 'firebase_options.dart';
 
 void main() async {
-  usePathUrlStrategy(); // Enable clean URLs (no hash)
+  usePathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Initialize Firebase App Check
   await FirebaseAppCheck.instance.activate(
     providerWeb: ReCaptchaEnterpriseProvider(
       '6LfnX1wsAAAAACvw99E-e3JQ8wjvUBlLp9uB_8DR',
@@ -30,8 +28,6 @@ void main() async {
         : const AppleDeviceCheckProvider(),
   );
 
-  // Initialize Google Sign-In for web
-  // Client ID is public (visible in browser), not a secret
   if (kIsWeb) {
     await GoogleSignIn.instance.initialize(
       clientId:
@@ -39,7 +35,6 @@ void main() async {
     );
   }
 
-  // Create repositories
   final authRepository = FirebaseAuthRepository();
   final timeEntryRepository = FirestoreTimeEntryRepository();
 

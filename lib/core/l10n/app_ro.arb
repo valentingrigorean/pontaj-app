@@ -226,5 +226,25 @@
   "totalAmount": "Suma totala",
   "notes": "Note",
   "addNotesToInvoice": "Adauga note la factura...",
-  "noEntriesForPeriod": "Nicio inregistrare gasita pentru perioada selectata"
+  "noEntriesForPeriod": "Nicio inregistrare gasita pentru perioada selectata",
+
+  "week": "Saptamana",
+  "year": "An",
+  "custom": "Personalizat",
+  "selectPeriod": "Selecteaza perioada",
+  "selectDateRange": "Selecteaza intervalul de date",
+  "timeOverlapDetected": "Suprapunere de timp detectata",
+  "yourNewEntry": "Noua ta inregistrare",
+  "conflictsWithEntry": "Se suprapune cu inregistrarea existenta",
+  "adjustTimesSuggestion": "Ajusteaza ora de inceput sau sfarsit pentru a evita suprapunerea cu inregistrarile existente.",
+  "editTimes": "Editeaza orele",
+  "thisPeriod": "Aceasta perioada",
+  "lastPeriod": "Perioada trecuta",
+  "periodComparison": "Comparatie perioade",
+  "teamTrend": "Tendinta echipa",
+  "hoursByLocation": "Ore pe locatie",
+  "activeUsers": "Utilizatori activi",
+  "topUser": "Utilizator top",
+  "daysWorked": "Zile lucrate",
+  "vsLastPeriod": "vs Perioada trecuta"
 }
