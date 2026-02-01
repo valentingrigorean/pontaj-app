@@ -13,13 +13,12 @@ class TimeEntryBloc extends Bloc<TimeEntryEvent, TimeEntryState> {
   StreamSubscription<List<TimeEntry>>? _entriesSubscription;
   StreamSubscription<List<String>>? _locationsSubscription;
 
-  String? _currentUserFilter;
   bool _isAdmin = false;
   List<String> _currentLocations = [];
 
   TimeEntryBloc({required FirestoreTimeEntryRepository repository})
-      : _repository = repository,
-        super(const TimeEntryInitial()) {
+    : _repository = repository,
+      super(const TimeEntryInitial()) {
     on<LoadEntries>(_onLoadEntries);
     on<EntriesUpdated>(_onEntriesUpdated);
     on<LocationsUpdated>(_onLocationsUpdated);
@@ -42,41 +41,27 @@ class TimeEntryBloc extends Bloc<TimeEntryEvent, TimeEntryState> {
   ) async {
     emit(const TimeEntryLoading());
 
-    _currentUserFilter = event.userId;
     _isAdmin = event.isAdmin;
 
-    // Cancel existing subscriptions
     await _entriesSubscription?.cancel();
     await _locationsSubscription?.cancel();
 
-    // Subscribe to entries stream
-    // Admin sees all entries if no userId filter is set
     final entriesStream = (_isAdmin && event.userId == null)
         ? _repository.getEntriesStream()
         : _repository.getEntriesStream(userId: event.userId);
 
     _entriesSubscription = entriesStream.listen(
       (entries) => add(EntriesUpdated(entries)),
-      onError: (error) {
-        // Don't emit failure for stream errors, just log
-        // The bloc will continue trying to receive updates
-      },
+      onError: (error) {},
     );
 
-    // Subscribe to locations stream
     _locationsSubscription = _repository.getLocationsStream().listen(
       (locations) => add(LocationsUpdated(locations)),
     );
   }
 
-  void _onEntriesUpdated(
-    EntriesUpdated event,
-    Emitter<TimeEntryState> emit,
-  ) {
-    emit(TimeEntryLoaded(
-      entries: event.entries,
-      locations: _currentLocations,
-    ));
+  void _onEntriesUpdated(EntriesUpdated event, Emitter<TimeEntryState> emit) {
+    emit(TimeEntryLoaded(entries: event.entries, locations: _currentLocations));
   }
 
   void _onLocationsUpdated(
@@ -85,31 +70,39 @@ class TimeEntryBloc extends Bloc<TimeEntryEvent, TimeEntryState> {
   ) {
     _currentLocations = event.locations;
 
-    // If we already have a loaded state, update it with new locations
     if (state is TimeEntryLoaded) {
       final current = state as TimeEntryLoaded;
-      emit(TimeEntryLoaded(
-        entries: current.entries,
-        locations: event.locations,
-      ));
+      emit(
+        TimeEntryLoaded(entries: current.entries, locations: event.locations),
+      );
     }
   }
 
-  Future<void> _onAddEntry(
-    AddEntry event,
-    Emitter<TimeEntryState> emit,
-  ) async {
+  Future<void> _onAddEntry(AddEntry event, Emitter<TimeEntryState> emit) async {
+    List<TimeEntry> currentEntries = [];
+    if (state is TimeEntryLoaded) {
+      currentEntries = (state as TimeEntryLoaded).entries.toList();
+    }
+
     emit(const TimeEntrySaving());
     try {
       final savedEntry = await _repository.addEntry(event.entry);
       emit(TimeEntrySaved(savedEntry));
-      // Don't need to reload - the stream will update automatically
+      emit(
+        TimeEntryLoaded(
+          entries: [savedEntry, ...currentEntries],
+          locations: _currentLocations,
+        ),
+      );
     } catch (e) {
       emit(TimeEntryFailure(e.toString()));
-      // Re-emit loaded state so UI can continue working
-      if (_currentLocations.isNotEmpty) {
-        final entries = await _repository.getEntries(userId: _currentUserFilter);
-        emit(TimeEntryLoaded(entries: entries, locations: _currentLocations));
+      if (currentEntries.isNotEmpty || _currentLocations.isNotEmpty) {
+        emit(
+          TimeEntryLoaded(
+            entries: currentEntries,
+            locations: _currentLocations,
+          ),
+        );
       }
     }
   }
@@ -120,7 +113,6 @@ class TimeEntryBloc extends Bloc<TimeEntryEvent, TimeEntryState> {
   ) async {
     try {
       await _repository.updateEntry(event.entry);
-      // Don't need to reload - the stream will update automatically
     } catch (e) {
       emit(TimeEntryFailure(e.toString()));
     }
@@ -132,7 +124,6 @@ class TimeEntryBloc extends Bloc<TimeEntryEvent, TimeEntryState> {
   ) async {
     try {
       await _repository.deleteEntry(event.id);
-      // Don't need to reload - the stream will update automatically
     } catch (e) {
       emit(TimeEntryFailure(e.toString()));
     }
@@ -144,9 +135,8 @@ class TimeEntryBloc extends Bloc<TimeEntryEvent, TimeEntryState> {
   ) async {
     try {
       await _repository.addLocation(event.name);
-      // Location stream will update automatically
     } catch (e) {
-      // Silently fail for location additions
+      emit(TimeEntryFailure(e.toString()));
     }
   }
 }

@@ -493,4 +493,62 @@ class AppLocalizationsRo extends AppLocalizations {
   @override
   String get noEntriesForPeriod =>
       'Nicio inregistrare gasita pentru perioada selectata';
+
+  @override
+  String get week => 'Saptamana';
+
+  @override
+  String get year => 'An';
+
+  @override
+  String get custom => 'Personalizat';
+
+  @override
+  String get selectPeriod => 'Selecteaza perioada';
+
+  @override
+  String get selectDateRange => 'Selecteaza intervalul de date';
+
+  @override
+  String get timeOverlapDetected => 'Suprapunere de timp detectata';
+
+  @override
+  String get yourNewEntry => 'Noua ta inregistrare';
+
+  @override
+  String get conflictsWithEntry => 'Se suprapune cu inregistrarea existenta';
+
+  @override
+  String get adjustTimesSuggestion =>
+      'Ajusteaza ora de inceput sau sfarsit pentru a evita suprapunerea cu inregistrarile existente.';
+
+  @override
+  String get editTimes => 'Editeaza orele';
+
+  @override
+  String get thisPeriod => 'Aceasta perioada';
+
+  @override
+  String get lastPeriod => 'Perioada trecuta';
+
+  @override
+  String get periodComparison => 'Comparatie perioade';
+
+  @override
+  String get teamTrend => 'Tendinta echipa';
+
+  @override
+  String get hoursByLocation => 'Ore pe locatie';
+
+  @override
+  String get activeUsers => 'Utilizatori activi';
+
+  @override
+  String get topUser => 'Utilizator top';
+
+  @override
+  String get daysWorked => 'Zile lucrate';
+
+  @override
+  String get vsLastPeriod => 'vs Perioada trecuta';
 }

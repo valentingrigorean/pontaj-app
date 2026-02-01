@@ -12,6 +12,7 @@ import '../../../shared/widgets/confetti_widget.dart';
 import '../../../shared/widgets/glass_button.dart';
 import '../../../shared/widgets/glass_card.dart';
 import '../../../shared/widgets/gradient_background.dart';
+import '../../../shared/widgets/overlap_dialog.dart';
 import '../../../shared/widgets/pulsing_widget.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_state.dart';
@@ -119,7 +120,7 @@ class _PontajPageState extends State<PontajPage> {
     );
   }
 
-  void _submitPontaj(List<TimeEntry> entries) {
+  void _submitPontaj(List<TimeEntry> entries) async {
     final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
 
@@ -131,21 +132,19 @@ class _PontajPageState extends State<PontajPage> {
       return;
     }
 
-    if (_hasOverlappingEntry(entries)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(Icons.error, color: Colors.white),
-              const SizedBox(width: 12),
-              Expanded(child: Text(l10n.timeOverlapError)),
-            ],
-          ),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: .circular(12)),
-        ),
+    final overlappingEntries = _getOverlappingEntries(entries);
+    if (overlappingEntries.isNotEmpty) {
+      final newInterval = _quickHours != null
+          ? l10n.nHours(_quickHours!)
+          : '${_startTimeController.text} - ${_endTimeController.text}';
+
+      final shouldEdit = await OverlapDialog.show(
+        context: context,
+        newEntryInterval: newInterval,
+        conflictingEntries: overlappingEntries,
       );
+
+      if (shouldEdit != true) return;
       return;
     }
 
@@ -279,15 +278,16 @@ class _PontajPageState extends State<PontajPage> {
     return start1.isBefore(adjustedEnd2) && start2.isBefore(adjustedEnd1);
   }
 
-  bool _hasOverlappingEntry(List<TimeEntry> entries) {
-    if (_quickHours != null) return false;
+  List<TimeEntry> _getOverlappingEntries(List<TimeEntry> entries) {
+    if (_quickHours != null) return [];
 
     final newStart = _parseTime(_startTimeController.text);
     final newEnd = _parseTime(_endTimeController.text);
 
-    if (newStart == null || newEnd == null) return false;
+    if (newStart == null || newEnd == null) return [];
 
     final existingEntries = _getEntriesForSelectedDate(entries);
+    final overlapping = <TimeEntry>[];
 
     for (final entry in existingEntries) {
       final (existingStart, existingEnd) = _parseIntervalText(
@@ -298,11 +298,11 @@ class _PontajPageState extends State<PontajPage> {
       if (existingStart == null || existingEnd == null) continue;
 
       if (_timeRangesOverlap(newStart, newEnd, existingStart, existingEnd)) {
-        return true;
+        overlapping.add(entry);
       }
     }
 
-    return false;
+    return overlapping;
   }
 
   void _removeExistingPontaj(TimeEntry entry) {

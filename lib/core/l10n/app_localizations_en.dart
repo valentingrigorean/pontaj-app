@@ -489,4 +489,62 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noEntriesForPeriod => 'No entries found for the selected period';
+
+  @override
+  String get week => 'Week';
+
+  @override
+  String get year => 'Year';
+
+  @override
+  String get custom => 'Custom';
+
+  @override
+  String get selectPeriod => 'Select period';
+
+  @override
+  String get selectDateRange => 'Select date range';
+
+  @override
+  String get timeOverlapDetected => 'Time Overlap Detected';
+
+  @override
+  String get yourNewEntry => 'Your new entry';
+
+  @override
+  String get conflictsWithEntry => 'Conflicts with existing entry';
+
+  @override
+  String get adjustTimesSuggestion =>
+      'Adjust your start or end time to avoid overlapping with existing entries.';
+
+  @override
+  String get editTimes => 'Edit Times';
+
+  @override
+  String get thisPeriod => 'This Period';
+
+  @override
+  String get lastPeriod => 'Last Period';
+
+  @override
+  String get periodComparison => 'Period Comparison';
+
+  @override
+  String get teamTrend => 'Team Trend';
+
+  @override
+  String get hoursByLocation => 'Hours by Location';
+
+  @override
+  String get activeUsers => 'Active Users';
+
+  @override
+  String get topUser => 'Top User';
+
+  @override
+  String get daysWorked => 'Days Worked';
+
+  @override
+  String get vsLastPeriod => 'vs Last Period';
 }

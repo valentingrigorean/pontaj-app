@@ -25,8 +25,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthGoogleSignInRequested>(_onGoogleSignInRequested);
     on<AuthUpgradeToAdminRequested>(_onUpgradeToAdminRequested);
     on<AuthGoogleRedirectResultRequested>(_onGoogleRedirectResultRequested);
+    on<AuthOneTapSignInReceived>(_onOneTapSignInReceived);
 
-    // Listen to Firebase auth state changes
     _authStateSubscription = _authRepository.authStateChanges.listen((user) {
       add(AuthStateChanged(userId: user?.uid));
     });
@@ -44,7 +44,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthLoading());
 
-    // On web, check for pending Google Sign-In redirect result first
     if (kIsWeb) {
       try {
         final redirectUser = await _authRepository.getGoogleRedirectResult();
@@ -57,9 +56,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(AuthAuthenticated(redirectUser));
           return;
         }
-      } catch (_) {
-        // Redirect result check failed, continue with normal auth check
-      }
+      } catch (_) {}
     }
 
     final firebaseUser = _authRepository.currentFirebaseUser;
@@ -89,7 +86,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final user = await _authRepository.signIn(event.email, event.password);
 
       if (user != null) {
-        // Check if user is banned
         if (user.banned) {
           await _authRepository.signOut();
           emit(const AuthFailure('Account suspended. Please contact support.'));
@@ -144,8 +140,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthStateChanged event,
     Emitter<AuthState> emit,
   ) async {
-    // Only handle sign out from this event
-    // Sign in is handled by login/register events
     if (event.userId == null && state is AuthAuthenticated) {
       emit(const AuthUnauthenticated());
     }
@@ -161,7 +155,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final user = await _authRepository.signInWithGoogle();
 
       if (user != null) {
-        // Check if user is banned
         if (user.banned) {
           await _authRepository.signOut();
           emit(const AuthFailure('Account suspended. Please contact support.'));
@@ -169,7 +162,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
         emit(AuthAuthenticated(user));
       } else {
-        // User cancelled the sign-in
         emit(const AuthUnauthenticated());
       }
     } on firebase_auth.FirebaseAuthException catch (e) {
@@ -189,27 +181,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
 
-    // Validate admin code - use generic error message to prevent enumeration
     final adminSecretCode = Env.adminCode;
     if (adminSecretCode.isEmpty ||
         event.adminCode.isEmpty ||
         event.adminCode != adminSecretCode) {
       emit(const AuthFailure('Invalid admin code'));
-      // Re-emit authenticated state so user stays logged in
       emit(currentState);
       return;
     }
 
     try {
-      // Update user role to admin
       final updatedUser = currentState.user.copyWith(role: Role.admin);
       await _authRepository.updateUserProfile(updatedUser);
 
-      // Emit success state with updated user - triggers router redirect to /admin
       emit(AuthAuthenticated(updatedUser));
     } catch (e) {
       emit(const AuthFailure('Failed to upgrade account'));
-      // Re-emit authenticated state so user stays logged in
       emit(currentState);
     }
   }
@@ -222,6 +209,32 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     try {
       final user = await _authRepository.getGoogleRedirectResult();
+
+      if (user != null) {
+        if (user.banned) {
+          await _authRepository.signOut();
+          emit(const AuthFailure('Account suspended. Please contact support.'));
+          return;
+        }
+        emit(AuthAuthenticated(user));
+      } else {
+        emit(const AuthUnauthenticated());
+      }
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      emit(AuthFailure(FirebaseAuthRepository.getErrorMessage(e)));
+    } catch (e) {
+      emit(AuthFailure(e.toString()));
+    }
+  }
+
+  Future<void> _onOneTapSignInReceived(
+    AuthOneTapSignInReceived event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+
+    try {
+      final user = await _authRepository.signInWithOneTapCredential(event.account);
 
       if (user != null) {
         if (user.banned) {

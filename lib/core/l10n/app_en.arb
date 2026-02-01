@@ -226,5 +226,25 @@
   "totalAmount": "Total Amount",
   "notes": "Notes",
   "addNotesToInvoice": "Add notes to the invoice...",
-  "noEntriesForPeriod": "No entries found for the selected period"
+  "noEntriesForPeriod": "No entries found for the selected period",
+
+  "week": "Week",
+  "year": "Year",
+  "custom": "Custom",
+  "selectPeriod": "Select period",
+  "selectDateRange": "Select date range",
+  "timeOverlapDetected": "Time Overlap Detected",
+  "yourNewEntry": "Your new entry",
+  "conflictsWithEntry": "Conflicts with existing entry",
+  "adjustTimesSuggestion": "Adjust your start or end time to avoid overlapping with existing entries.",
+  "editTimes": "Edit Times",
+  "thisPeriod": "This Period",
+  "lastPeriod": "Last Period",
+  "periodComparison": "Period Comparison",
+  "teamTrend": "Team Trend",
+  "hoursByLocation": "Hours by Location",
+  "activeUsers": "Active Users",
+  "topUser": "Top User",
+  "daysWorked": "Days Worked",
+  "vsLastPeriod": "vs Last Period"
 }

@@ -495,4 +495,62 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get noEntriesForPeriod =>
       'Nessuna registrazione trovata per il periodo selezionato';
+
+  @override
+  String get week => 'Settimana';
+
+  @override
+  String get year => 'Anno';
+
+  @override
+  String get custom => 'Personalizzato';
+
+  @override
+  String get selectPeriod => 'Seleziona periodo';
+
+  @override
+  String get selectDateRange => 'Seleziona intervallo di date';
+
+  @override
+  String get timeOverlapDetected => 'Sovrapposizione di tempo rilevata';
+
+  @override
+  String get yourNewEntry => 'La tua nuova registrazione';
+
+  @override
+  String get conflictsWithEntry => 'Si sovrappone alla registrazione esistente';
+
+  @override
+  String get adjustTimesSuggestion =>
+      'Regola l\'ora di inizio o di fine per evitare sovrapposizioni con le registrazioni esistenti.';
+
+  @override
+  String get editTimes => 'Modifica orari';
+
+  @override
+  String get thisPeriod => 'Questo periodo';
+
+  @override
+  String get lastPeriod => 'Periodo precedente';
+
+  @override
+  String get periodComparison => 'Confronto periodi';
+
+  @override
+  String get teamTrend => 'Tendenza del team';
+
+  @override
+  String get hoursByLocation => 'Ore per posizione';
+
+  @override
+  String get activeUsers => 'Utenti attivi';
+
+  @override
+  String get topUser => 'Utente top';
+
+  @override
+  String get daysWorked => 'Giorni lavorati';
+
+  @override
+  String get vsLastPeriod => 'vs Periodo precedente';
 }
