@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "986562521840",
+    "project_id": "pontaj-app-7735a",
+    "storage_bucket": "pontaj-app-7735a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:986562521840:android:1c5256eb32dbf58f483035",
+        "android_client_info": {
+          "package_name": "com.pontajpro.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "986562521840-mqlbhtdm63rhm9cfesr9l6gomuoi2dek.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-34EO3GZvXtHRPFR1j8AbBMl9CWwHGX4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "986562521840-mqlbhtdm63rhm9cfesr9l6gomuoi2dek.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "986562521840-o6seltd1r3686m3ssla8muvbo3puc84h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.pontajpro.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
